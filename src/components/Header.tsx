@@ -3,7 +3,7 @@ import React from 'react';
 const Header: React.FC = () => {
   return (
     <header style={headerStyle}>
-      <h1>LabTrac Inventory Management</h1>
+      <h1>LabTrac Inventory Management System</h1>
     </header>
   );
 };

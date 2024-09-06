@@ -3,10 +3,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
 import './loginPage.css';
-import logo from '../assets/logo.png';  // Updated import for the logo
+import logo from '../../assets/logo.png';  // Updated import for the logo
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://your-backend-api.com/login', {
+      const response = await axios.post('https://backend.quantuslms.ca/api/login', {
         username,
         password,
       });
