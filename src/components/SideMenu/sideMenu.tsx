@@ -38,10 +38,10 @@ const SideMenu: React.FC = () => {
   // Dynamically require icons from assets/icons directory
   const getIconPath = (iconName: string | null) => {
     try {
-      return require(`../assets/icons/${iconName}.png`);
+      return require(`../../assets/icons/${iconName}.png`);
     } catch (error) {
       console.error(`Icon not found: ${iconName}`);
-      return require(`../assets/icons/default.png`);
+      return require(`../../assets/icons/default.png`);
     }
   };
 

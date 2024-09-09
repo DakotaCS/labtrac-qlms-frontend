@@ -4,7 +4,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './pages/loginPage/loginPage';
 import LandingPage from './pages/landingPage/landingPage';
-import Layout from './components/Layout';
+import Layout from './components/Layout/Layout';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token'); // Check if the user is authenticated
