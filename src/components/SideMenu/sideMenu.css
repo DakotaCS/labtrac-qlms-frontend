@@ -1,49 +1,55 @@
-.hamburger-icon {
-  font-size: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin: 10px;
-  position: relative;
-  z-index: 1001;
-}
-
-.menu-header {
-  display: flex;
-  align-items: center;
-  padding-left: 15px;
-  height: 50px;
-  position: relative; /* Ensure the header stays within the side menu section */
-}
-
-.menu-title {
-  margin-left: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #de2d2d; /* Ensure the text is visible */
-}
-
+/* Side menu container */
 .side-menu {
   width: 150px;
   background-color: #f4f4f4;
-  padding: 20px;
+  padding: 20px 0;
   position: fixed;
-  top: 70px; /* Start below the header */
+  top: 70px; /* Adjusted to start below the main header */
   bottom: 50px; /* End above the footer */
   left: 0;
   height: calc(100% - 120px); /* Full height minus header and footer */
-  transition: transform 0.3s ease;
+  transition: width 0.3s ease;
   z-index: 1000;
-  overflow-y: auto;
+  overflow-y: auto; /* Allows scrolling for menu items */
 }
 
+/* Collapsed state */
 .side-menu.collapsed {
   width: 40px;
 }
 
+/* Menu header (hamburger icon + "Menu" text) */
+.menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 0px;
+  height: 60px;
+  background-color: #f4f4f4; /* Match the side menu background */
+  border-bottom: 1px solid #ccc; /* Line between the hamburger menu and menu items */
+}
+
+.hamburger-icon {
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 2px;
+  z-index: 1001;
+}
+
+.menu-title {
+  margin-left: 20px;
+  font-size: 18px;
+  font-weight: normal;
+  color: #333;
+  margin-top: 5px; /* Move the "Menu" text down slightly */
+}
+
+/* Menu items */
 .side-menu ul {
   list-style-type: none;
-  padding: 20px 0 0 0;
+  padding: 10px 0 0 0;
   margin: 0;
 }
 
@@ -77,13 +83,4 @@
 
 .side-menu.collapsed .menu-item {
   justify-content: center;
-}
-
-.logout-button {
-  cursor: pointer;
-  color: red;
-}
-
-.logout-button:hover {
-  text-decoration: underline;
 }

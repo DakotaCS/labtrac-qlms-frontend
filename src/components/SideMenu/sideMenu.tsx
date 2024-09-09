@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // No need to import navigate anymore
+import { Link } from 'react-router-dom';
 import './sideMenu.css';
 
 interface MenuItem {
@@ -45,26 +45,27 @@ const SideMenu: React.FC = () => {
   };
 
   return (
-    <>
+    <div className={`side-menu ${collapsed ? 'collapsed' : ''}`}>
+      {/* Hamburger icon and Menu title */}
       <div className="menu-header">
         <button className="hamburger-icon" onClick={toggleMenu}>
           ☰
         </button>
         {!collapsed && <span className="menu-title">Menu</span>}
       </div>
-      <div className={`side-menu ${collapsed ? 'collapsed' : ''}`}>
-        <ul>
-          {menuItems.map(item => (
-            <li key={item.id}>
-              <Link to={item.url} className="menu-item">
-                <img src={getIconPath(item.iconName)} alt={item.name} className="menu-icon" />
-                {!collapsed && <span className="menu-text">{item.name}</span>}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
+      
+      {/* Menu items */}
+      <ul>
+        {menuItems.map(item => (
+          <li key={item.id}>
+            <Link to={item.url} className="menu-item">
+              <img src={getIconPath(item.iconName)} alt={item.name} className="menu-icon" />
+              {!collapsed && <span className="menu-text">{item.name}</span>}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

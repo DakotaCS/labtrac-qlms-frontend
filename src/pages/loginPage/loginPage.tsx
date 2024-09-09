@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './loginPage.css';
+import Footer from '../../components/Footer/Footer';
+import Header from '../../components/Header/Header';
 import logo from '../../assets/logo.png';
 
 const LoginPage: React.FC = () => {
@@ -41,6 +43,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <>
+    <Header></Header>
       <div className="login-container">
         <img src={logo} alt="Logo" />
         <h2>Login</h2>
@@ -65,6 +68,7 @@ const LoginPage: React.FC = () => {
           <button type="submit">Login</button>
         </form>
       </div>
+      <Footer></Footer>
     </>
   );
 };
