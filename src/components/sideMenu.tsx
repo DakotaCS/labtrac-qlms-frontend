@@ -41,6 +41,14 @@ const SideMenu: React.FC = () => {
 
   const toggleMenu = () => {
     setCollapsed(!collapsed);
+    
+    // Dynamically adjust the layout based on menu state
+    const layoutElement = document.querySelector('.layout') as HTMLElement;
+    if (collapsed) {
+      layoutElement.style.marginLeft = '250px'; // Expanded width
+    } else {
+      layoutElement.style.marginLeft = '60px'; // Collapsed width
+    }
   };
 
   return (

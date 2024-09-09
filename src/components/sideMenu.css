@@ -19,13 +19,15 @@
   bottom: 50px; /* End above the footer */
   left: 0;
   height: calc(100% - 120px); /* Full height minus header and footer */
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease; /* Added transition for width */
   z-index: 1000;
   overflow-y: auto; /* Allows scrolling if the content is too long */
 }
 
 .side-menu.collapsed {
-  transform: translateX(-100%);
+  width: 60px; /* Adjust the width when collapsed */
+  padding: 20px 10px; /* Reduce padding for collapsed state */
+  transform: none; /* Remove translateX, adjust the width instead */
 }
 
 .side-menu ul {
@@ -33,7 +35,6 @@
   padding: 60px 0 0 0; /* Adds padding to move the menu items down */
   margin: 0;
 }
-
 
 .side-menu ul li {
   margin-bottom: 10px;
@@ -54,3 +55,33 @@
 .logout-button:hover {
   text-decoration: underline;
 }
+
+/* Added media query to hide text and center items in collapsed mode */
+@media screen and (max-width: 768px) {
+  .side-menu.collapsed ul li a {
+    text-align: center;
+    padding: 10px 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  
+  .side-menu.collapsed ul li {
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .side-menu {
+    width: 60px; /* Smaller width for mobile screens */
+  }
+
+  .side-menu.collapsed + .content {
+    margin-left: 0; /* Full width when collapsed on mobile */
+  }
+
+  .side-menu + .content {
+    margin-left: 60px; /* Adjust accordingly */
+  }
+}
+
