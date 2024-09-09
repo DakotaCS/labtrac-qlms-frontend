@@ -1,7 +1,5 @@
-// ./src/components/Layout.tsx
-
 import React from 'react';
-import Header from './Header';
+import Header from './Header/Header';
 import Footer from './Footer';
 import SideMenu from './sideMenu';
 import './Layout.css';
@@ -15,8 +13,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <Header />
       <div className="layout">
-        <SideMenu />
-        <div className="content">{children}</div>
+        <div className="layout-content">
+          <SideMenu />
+          <div className="content">{children}</div>
+        </div>
       </div>
       <Footer />
     </>

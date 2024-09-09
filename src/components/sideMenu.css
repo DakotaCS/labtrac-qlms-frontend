@@ -1,31 +1,56 @@
-/* ./src/components/SideMenu.css */
+.hamburger-icon {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 10px;
+  position: fixed;
+  top: 75px; /* Adjust this to be below the header */
+  left: 15px;
+  z-index: 1001;  /* Ensure the icon stays above the side menu */
+}
 
 .side-menu {
-    width: 200px;
-    background-color: #f0f0f0;
-    padding: 20px;
-    position: fixed;
-    top: 80px; /* Adjust to match the header height */
-    left: 0;
-    height: calc(100% - 80px); /* Adjust to match the header height */
-    overflow-y: auto;
-  }
-  
-  .side-menu ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .side-menu li {
-    margin: 15px 0;
-  }
-  
-  .side-menu a {
-    text-decoration: none;
-    color: #333;
-  }
-  
-  .side-menu a:hover {
-    text-decoration: underline;
-  }
-  
+  width: 250px;
+  background-color: #f4f4f4;
+  padding: 20px;
+  position: fixed;
+  top: 70px; /* Start below the header */
+  bottom: 50px; /* End above the footer */
+  left: 0;
+  height: calc(100% - 120px); /* Full height minus header and footer */
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto; /* Allows scrolling if the content is too long */
+}
+
+.side-menu.collapsed {
+  transform: translateX(-100%);
+}
+
+.side-menu ul {
+  list-style-type: none;
+  padding: 60px 0 0 0; /* Adds padding to move the menu items down */
+  margin: 0;
+}
+
+
+.side-menu ul li {
+  margin-bottom: 10px;
+}
+
+.side-menu ul li a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+  padding: 10px;
+}
+
+.logout-button {
+  cursor: pointer;
+  color: red;
+}
+
+.logout-button:hover {
+  text-decoration: underline;
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../assets/logo.png'; // Assuming logo is in assets folder
+import logo from '../../assets/logo.png'; // Assuming logo is in assets folder
 import './Header.css';
 
 const Header: React.FC = () => {
