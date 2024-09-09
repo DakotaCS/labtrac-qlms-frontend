@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom'; // No need to import navigate anymore
 import './sideMenu.css';
 
 interface MenuItem {
@@ -13,7 +13,6 @@ interface MenuItem {
 const SideMenu: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -45,13 +44,6 @@ const SideMenu: React.FC = () => {
     }
   };
 
-  // Handle Logout: remove token and user ID, then navigate to login page
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    navigate('/login'); // Redirect to login page after clearing storage
-  };
-
   return (
     <>
       <div className="menu-header">
@@ -70,10 +62,6 @@ const SideMenu: React.FC = () => {
               </Link>
             </li>
           ))}
-          <li key="logout" onClick={handleLogout} className="menu-item">
-            <img src={getIconPath('logout')} alt="Logout" className="menu-icon" />
-            {!collapsed && <span className="menu-text">Logout</span>}
-          </li>
         </ul>
       </div>
     </>

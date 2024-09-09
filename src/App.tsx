@@ -1,10 +1,9 @@
-// ./src/App.tsx
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './pages/loginPage/loginPage';
 import LandingPage from './pages/landingPage/landingPage';
 import Layout from './components/Layout/Layout';
+import Logout from './components/Logout'; // Import the Logout component
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token'); // Check if the user is authenticated
@@ -25,6 +24,18 @@ function App() {
             )
           }
         />
+        {/* Logout Route */}
+        <Route
+          path="/logout"
+          element={
+            isAuthenticated ? (
+              <Logout />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* Default route */}
         <Route
           path="/"
           element={<Navigate to={isAuthenticated ? "/landing" : "/login"} />}
