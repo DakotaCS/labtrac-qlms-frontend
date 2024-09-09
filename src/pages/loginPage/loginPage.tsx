@@ -1,12 +1,8 @@
-// ./pages/LoginPage.tsx
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './loginPage.css';
-import logo from '../../assets/logo.png';  // Updated import for the logo
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer';
+import logo from '../../assets/logo.png';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -17,14 +13,27 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://backend.labtrac.quantuslms.ca/api/login', {
+      // 1. Call login API
+      const loginResponse = await axios.post('https://backend.labtrac.quantuslms.ca/api/login', {
         username,
         password,
       });
 
-      const { jwt } = response.data;
-      localStorage.setItem('token', jwt);
-      navigate('/landing');  // Redirect to landing page after login
+      const { jwt } = loginResponse.data;
+      localStorage.setItem('token', jwt); // Store JWT token
+
+      // 2. Call the additional endpoint to retrieve user ID
+      const userDetailsResponse = await axios.get('https://backend.labtrac.quantuslms.ca/api/system/user/current-user', {
+        headers: {
+          Authorization: `Bearer ${jwt}`, // Send the token in the Authorization header
+        },
+      });
+
+      const { userId } = userDetailsResponse.data;
+      localStorage.setItem('userId', userId); // Store user ID in localStorage
+
+      // 3. Redirect to the landing page
+      navigate('/landing');
     } catch (err) {
       setError('Invalid username or password');
     }
@@ -32,7 +41,6 @@ const LoginPage: React.FC = () => {
 
   return (
     <>
-      <Header />
       <div className="login-container">
         <img src={logo} alt="Logo" />
         <h2>Login</h2>
@@ -57,7 +65,6 @@ const LoginPage: React.FC = () => {
           <button type="submit">Login</button>
         </form>
       </div>
-      <Footer />
     </>
   );
 };

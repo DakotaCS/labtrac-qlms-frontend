@@ -10,15 +10,28 @@
   z-index: 1001;  /* Ensure the icon stays above the side menu */
 }
 
+.menu-header {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  height: 50px;
+}
+
+.menu-text {
+  margin-left: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
 .side-menu {
   width: 250px;
   background-color: #f4f4f4;
   padding: 20px;
   position: fixed;
-  top: 70px; /* Start below the header */
+  top: 120px; /* Start below the header */
   bottom: 50px; /* End above the footer */
   left: 0;
-  height: calc(100% - 120px); /* Full height minus header and footer */
+  height: calc(100% - 170px); /* Full height minus header and footer */
   transition: transform 0.3s ease, width 0.3s ease; /* Added transition for width */
   z-index: 1000;
   overflow-y: auto; /* Allows scrolling if the content is too long */
@@ -26,8 +39,6 @@
 
 .side-menu.collapsed {
   width: 60px; /* Adjust the width when collapsed */
-  padding: 20px 10px; /* Reduce padding for collapsed state */
-  transform: none; /* Remove translateX, adjust the width instead */
 }
 
 .side-menu ul {
@@ -37,14 +48,27 @@
 }
 
 .side-menu ul li {
+  display: flex;
+  align-items: center;
   margin-bottom: 10px;
 }
 
 .side-menu ul li a {
   text-decoration: none;
   color: #333;
-  display: block;
+  display: flex;
+  align-items: center;
   padding: 10px;
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.side-menu.collapsed .menu-text {
+  display: none;
 }
 
 .logout-button {
@@ -56,7 +80,7 @@
   text-decoration: underline;
 }
 
-/* Added media query to hide text and center items in collapsed mode */
+/* Hide text and center icons when the menu is collapsed */
 @media screen and (max-width: 768px) {
   .side-menu.collapsed ul li a {
     text-align: center;
@@ -70,18 +94,3 @@
     margin-bottom: 15px;
   }
 }
-
-@media (max-width: 768px) {
-  .side-menu {
-    width: 60px; /* Smaller width for mobile screens */
-  }
-
-  .side-menu.collapsed + .content {
-    margin-left: 0; /* Full width when collapsed on mobile */
-  }
-
-  .side-menu + .content {
-    margin-left: 60px; /* Adjust accordingly */
-  }
-}
-

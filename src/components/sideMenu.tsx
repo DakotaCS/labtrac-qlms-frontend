@@ -16,39 +16,28 @@ const SideMenu: React.FC = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userId = parseJwt(token).userId;
+    const userId = localStorage.getItem('userId'); // Retrieve user ID from localStorage
 
-    axios
-      .get(`https://backend.labtrac.quantuslms.ca/api/system/menu/${userId}`)
-      .then(response => setMenuItems(response.data))
-      .catch(error => console.error('Error fetching menu items:', error));
-  }, []);
-
-  // Function to parse JWT token
-  const parseJwt = (token: string | null) => {
-    if (!token) return {};
-    try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-      return {};
+    if (token && userId) {
+      axios
+        .get(`https://backend.labtrac.quantuslms.ca/api/system/user/${userId}/menu-items`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then(response => setMenuItems(response.data))
+        .catch(error => console.error('Error fetching menu items:', error));
     }
-  };
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     navigate('/login');
   };
 
   const toggleMenu = () => {
     setCollapsed(!collapsed);
-    
-    // Dynamically adjust the layout based on menu state
-    const layoutElement = document.querySelector('.layout') as HTMLElement;
-    if (collapsed) {
-      layoutElement.style.marginLeft = '250px'; // Expanded width
-    } else {
-      layoutElement.style.marginLeft = '60px'; // Collapsed width
-    }
   };
 
   return (
