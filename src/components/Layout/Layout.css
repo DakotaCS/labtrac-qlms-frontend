@@ -11,38 +11,10 @@
   margin-bottom: 50px; /* Adjusted for the footer */
 }
 
-.side-menu {
-  width: 250px;
-  background-color: #f4f4f4;
-  padding: 20px;
-  position: fixed;
-  top: 70px; /* Start below the header */
-  bottom: 50px; /* End above the footer */
-  left: 0;
-  height: calc(100% - 120px); /* Full height minus header and footer */
-  transition: transform 0.3s ease;
-  z-index: 1000;
-  overflow-y: auto;
-}
-
 .content {
-  margin-left: 250px; /* Adjust this to match the side menu width */
+  margin-left: 150px; /* Adjust this to match the side menu width */
   padding: 20px;
   flex-grow: 1;
   overflow-y: auto; /* Allows scrolling if content is too large */
 }
 
-header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1001;
-}
-
-footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 1001;
-  background-color: #f4f4f4;
-}
