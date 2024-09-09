@@ -17,7 +17,7 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://backend.quantuslms.ca/api/login', {
+      const response = await axios.post('https://backend.labtrac.quantuslms.ca/api/login', {
         username,
         password,
       });
