@@ -4,10 +4,8 @@
   border: none;
   cursor: pointer;
   margin: 10px;
-  position: fixed;
-  top: 75px; /* Adjust this to be below the header */
-  left: 15px;
-  z-index: 1001;  /* Ensure the icon stays above the side menu */
+  position: relative;
+  z-index: 1001;
 }
 
 .menu-header {
@@ -15,12 +13,14 @@
   align-items: center;
   padding-left: 15px;
   height: 50px;
+  position: relative; /* Ensure the header stays within the side menu section */
 }
 
-.menu-text {
+.menu-title {
   margin-left: 10px;
   font-size: 18px;
   font-weight: bold;
+  color: #333; /* Ensure the text is visible */
 }
 
 .side-menu {
@@ -28,22 +28,21 @@
   background-color: #f4f4f4;
   padding: 20px;
   position: fixed;
-  top: 120px; /* Start below the header */
+  top: 60px; /* Adjust this based on your main page header height */
   bottom: 50px; /* End above the footer */
   left: 0;
-  height: calc(100% - 170px); /* Full height minus header and footer */
-  transition: transform 0.3s ease, width 0.3s ease; /* Added transition for width */
-  z-index: 1000;
-  overflow-y: auto; /* Allows scrolling if the content is too long */
+  height: calc(100% - 110px); /* Full height minus header and footer */
+  transition: width 0.3s ease;
+  overflow-y: auto;
 }
 
 .side-menu.collapsed {
-  width: 60px; /* Adjust the width when collapsed */
+  width: 60px;
 }
 
 .side-menu ul {
   list-style-type: none;
-  padding: 60px 0 0 0; /* Adds padding to move the menu items down */
+  padding: 20px 0 0 0;
   margin: 0;
 }
 
@@ -53,11 +52,11 @@
   margin-bottom: 10px;
 }
 
-.side-menu ul li a {
-  text-decoration: none;
-  color: #333;
+.menu-item {
   display: flex;
   align-items: center;
+  text-decoration: none;
+  color: #333;
   padding: 10px;
 }
 
@@ -67,8 +66,16 @@
   margin-right: 10px;
 }
 
+.menu-text {
+  display: inline-block;
+}
+
 .side-menu.collapsed .menu-text {
   display: none;
+}
+
+.side-menu.collapsed .menu-item {
+  justify-content: center;
 }
 
 .logout-button {
@@ -78,19 +85,4 @@
 
 .logout-button:hover {
   text-decoration: underline;
-}
-
-/* Hide text and center icons when the menu is collapsed */
-@media screen and (max-width: 768px) {
-  .side-menu.collapsed ul li a {
-    text-align: center;
-    padding: 10px 0;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  
-  .side-menu.collapsed ul li {
-    margin-bottom: 15px;
-  }
 }
