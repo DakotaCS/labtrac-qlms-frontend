@@ -10,7 +10,11 @@ interface MenuItem {
   iconName: string | null; // Icon name coming from the API
 }
 
-const SideMenu: React.FC = () => {
+interface SideMenuProps {
+  onToggle: () => void; // Function passed from Layout to notify about menu toggle
+}
+
+const SideMenu: React.FC<SideMenuProps> = ({ onToggle }) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
@@ -32,6 +36,7 @@ const SideMenu: React.FC = () => {
 
   const toggleMenu = () => {
     setCollapsed(!collapsed);
+    onToggle(); // Notify Layout of the toggle event
   };
 
   // Dynamically require icons from assets/icons directory
