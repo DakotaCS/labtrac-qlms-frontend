@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import LoginPage from './pages/loginPage/loginPage';
 import LandingPage from './pages/landingPage/landingPage';
+import LocationPage from './pages/locationPage/locationPage'; // Import LocationPage
 import Layout from './components/Layout/Layout';
 import Logout from './components/Logout';
 import { isTokenExpired, decodeJwt } from './utils/jwtUtils';
@@ -34,8 +35,8 @@ const AutoLogout: React.FC = () => {
       }
     }
   }, [navigate]);
-  // This component doesn't render anything, just handles the auto-logout logic
-  return null; 
+
+  return null; // This component doesn't render anything, just handles the auto-logout logic
 }
 
 function App() {
@@ -52,6 +53,19 @@ function App() {
             isAuthenticated ? (
               <Layout>
                 <LandingPage />
+              </Layout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* Location Route */}
+        <Route
+          path="/location"
+          element={
+            isAuthenticated ? (
+              <Layout>
+                <LocationPage />
               </Layout>
             ) : (
               <Navigate to="/login" />
