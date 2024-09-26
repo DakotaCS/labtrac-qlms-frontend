@@ -1,3 +1,5 @@
+// ./src/components/Layout/Layout.tsx
+
 import React, { useState } from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
@@ -11,19 +13,17 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
 
-  const handleMenuToggle = () => {
+  const toggleMenu = () => {
     setCollapsed(!collapsed);
   };
 
   return (
     <>
       <Header />
-      <div className={`layout ${collapsed ? 'collapsed' : ''}`}>
-        <SideMenu onToggle={handleMenuToggle} /> {/* Pass the handleMenuToggle function */}
+      <div className={collapsed ? 'layout layout-collapsed' : 'layout layout-expanded'}>
+        <SideMenu onToggle={toggleMenu} />
         <div className="layout-content">
-          <div className={`content ${collapsed ? 'collapsed' : ''}`}>
-            {children}
-          </div>
+          {children}
         </div>
       </div>
       <Footer />

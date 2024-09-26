@@ -1,113 +1,115 @@
 /* ./src/pages/locationPage.css */
 
 .location-page {
-    padding: 20px;
-  }
-  
-  .add-location-button {
-    margin-bottom: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .location-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .location-table th, .location-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .location-table th {
-    background-color: #f4f4f4;
-  }
-  
-  .meatball-menu {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  
-  .meatball-menu-options {
-    display: none;
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ddd;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .meatball-menu:hover + .meatball-menu-options {
-    display: block;
-  }
-  
-  .popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border: 1px solid #ddd;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .location-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .location-form label {
-    margin-bottom: 8px;
-    font-weight: bold;
-  }
-  
-  .location-form input {
-    margin-bottom: 16px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .form-actions {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .form-actions button {
-    padding: 8px 16px;
-    cursor: pointer;
-  }
-  
-  .error-popup {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #f44336;
-    color: white;
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    animation: fadeOut 10s forwards;
-  }
-  
-  @keyframes fadeOut {
-    0% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-      display: none;
-    }
-  }
-  
+  padding: 10px 20px; /* Reduce top padding to move everything upwards */
+}
+
+.page-title {
+  text-align: left; /* Align to the left */
+  margin-top: 60px;
+  margin-left: 20px; /* Move the title closer to the left */
+}
+
+.page-divider {
+  margin-top: 5px; /* Slightly reduce margin above the line */
+  margin-bottom: 20px;
+  border: none;
+  border-top: 2px solid #ddd;
+  margin-left: 0px; /* Align the line with the title */
+  width: calc(100% - 40px); /* Stretch the line to full width, considering padding */
+}
+
+.add-location-button {
+  margin-left: 20px; /* Space it from the left side menu */
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #f4f4f4; /* Matches the side menu background */
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.location-table {
+  width: 700px; /* Stretch the table while accounting for the side menu width */
+  margin-left: 0px; /* Move the table to the left */
+  border-collapse: collapse;
+}
+
+.location-table th, .location-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.location-table th {
+  background-color: #f4f4f4;
+}
+
+.meatball-menu {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.meatball-menu-options {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meatball-menu:hover + .meatball-menu-options {
+  display: block;
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.location-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.location-form label {
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.location-form input {
+  margin-bottom: 16px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-actions button {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.error-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #f44336;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+}

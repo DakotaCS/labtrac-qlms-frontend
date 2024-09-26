@@ -43,9 +43,7 @@ const LocationPage: React.FC = () => {
   const handleAddLocation = async (name: string, description: string) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post(
-        '/api/system/locations',
-        { name, description },
+      await axios.post('/api/system/locations',{ name, description },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -100,7 +98,8 @@ const LocationPage: React.FC = () => {
   return (
     <Layout>
       <div className="location-page">
-        <h1>Locations</h1>
+        <h1 className="page-title">Inventory Item Locations</h1>
+        <hr className="page-divider" />
         <button className="add-location-button" onClick={() => setShowAddPopup(true)}>
           Add Location
         </button>
