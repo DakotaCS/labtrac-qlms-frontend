@@ -43,7 +43,7 @@ const LocationPage: React.FC = () => {
   const handleAddLocation = async (name: string, description: string) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('/api/system/locations',{ name, description },
+      await axios.post('https://backend.labtrac.quantuslms.ca/api/system/location',{ name, description },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ const LocationPage: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
-        `/api/system/locations/${id}`,
+        `https://backend.labtrac.quantuslms.ca/api/system/location/${id}`,
         { name, description },
         {
           headers: {
@@ -79,7 +79,7 @@ const LocationPage: React.FC = () => {
   const handleDeleteLocation = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`/api/system/locations/${id}`, {
+      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/location/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
