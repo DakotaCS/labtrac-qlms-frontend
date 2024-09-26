@@ -2,8 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import LoginPage from './pages/loginPage/loginPage';
 import LandingPage from './pages/landingPage/landingPage';
-import LocationPage from './pages/locationPage/locationPage'; // Import LocationPage
-import Layout from './components/Layout/Layout';
+import LocationPage from './pages/locationPage/locationPage';
 import Logout from './components/Logout';
 import { isTokenExpired, decodeJwt } from './utils/jwtUtils';
 
@@ -51,9 +50,7 @@ function App() {
           path="/landing"
           element={
             isAuthenticated ? (
-              <Layout>
                 <LandingPage />
-              </Layout>
             ) : (
               <Navigate to="/login" />
             )
@@ -64,9 +61,7 @@ function App() {
           path="/location"
           element={
             isAuthenticated ? (
-              <Layout>
                 <LocationPage />
-              </Layout>
             ) : (
               <Navigate to="/login" />
             )

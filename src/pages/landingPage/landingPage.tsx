@@ -2,12 +2,15 @@
 
 import React from 'react';
 import './landingPage.css';
+import Layout from '../../components/Layout/Layout';
 
 const LandingPage: React.FC = () => {
   return (
-    <div className="landing-page">
-      <h1>Welcome to LabTrac LMS</h1>
-    </div>
+      <Layout>
+        <div className="landing-page">
+          <h1>Welcome to LabTrac LMS</h1>
+      </div>
+    </Layout>
   );
 };
 
