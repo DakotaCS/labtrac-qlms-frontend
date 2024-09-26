@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
+import ErrorPopup from '../../components/ErrorPopup/ErrorPopup'; // Import the ErrorPopup component
 import './locationPage.css';
 
 interface Location {
@@ -30,20 +31,22 @@ const LocationPage: React.FC = () => {
         },
       });
       setLocations(response.data);
-    } catch (err) {
+    } catch (err: any) {
       handleError(err);
     }
   };
 
   const handleError = (err: any) => {
-    setError(`Error: ${err.response?.status} - ${err.response?.data?.message}`);
-    setTimeout(() => setError(null), 10000); // Show error popup for 10 seconds
+    const errorMessage = `Error: ${err.response?.status} - ${err.response?.data?.message || err.message}`;
+    setError(errorMessage);
   };
 
   const handleAddLocation = async (name: string, description: string) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post('https://backend.labtrac.quantuslms.ca/api/system/location',{ name, description },
+      await axios.post(
+        'https://backend.labtrac.quantuslms.ca/api/system/location',
+        { name, description },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,7 +55,7 @@ const LocationPage: React.FC = () => {
       );
       fetchLocations(); // Refresh the list
       setShowAddPopup(false);
-    } catch (err) {
+    } catch (err: any) {
       handleError(err);
     }
   };
@@ -71,7 +74,7 @@ const LocationPage: React.FC = () => {
       );
       fetchLocations(); // Refresh the list
       setShowUpdatePopup(false);
-    } catch (err) {
+    } catch (err: any) {
       handleError(err);
     }
   };
@@ -85,7 +88,7 @@ const LocationPage: React.FC = () => {
         },
       });
       fetchLocations(); // Refresh the list
-    } catch (err) {
+    } catch (err: any) {
       handleError(err);
     }
   };
@@ -100,6 +103,10 @@ const LocationPage: React.FC = () => {
       <div className="location-page">
         <h1 className="page-title">Inventory Item Locations</h1>
         <hr className="page-divider" />
+
+        {/* Include the ErrorPopup component */}
+        {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
+
         <button className="add-location-button" onClick={() => setShowAddPopup(true)}>
           Add Location
         </button>
@@ -115,7 +122,7 @@ const LocationPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {locations.map(location => (
+            {locations.map((location) => (
               <tr key={location.id}>
                 <td>{location.id}</td>
                 <td>{location.name}</td>
@@ -156,8 +163,6 @@ const LocationPage: React.FC = () => {
             />
           </div>
         )}
-
-        {error && <div className="error-popup">{error}</div>}
       </div>
     </Layout>
   );
@@ -182,12 +187,7 @@ const LocationForm: React.FC<LocationFormProps> = ({
   return (
     <div className="location-form">
       <label>Name</label>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-      />
+      <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
       <label>Description</label>
       <input
         type="text"
