@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
-import ErrorPopup from '../../components/ErrorPopup/ErrorPopup'; // Import the ErrorPopup component
+import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import './locationPage.css';
 
 interface Location {
@@ -17,6 +17,7 @@ const LocationPage: React.FC = () => {
   const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [menuCollapsed] = useState(false); // State to track if the menu is collapsed
 
   useEffect(() => {
     fetchLocations();
@@ -100,11 +101,10 @@ const LocationPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="location-page">
+      <div className={`location-page ${menuCollapsed ? 'collapsed' : ''}`}>
         <h1 className="page-title">Inventory Item Locations</h1>
         <hr className="page-divider" />
 
-        {/* Include the ErrorPopup component */}
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
         <button className="add-location-button" onClick={() => setShowAddPopup(true)}>

@@ -1,29 +1,29 @@
 /* ./src/pages/locationPage.css */
-
 .location-page {
-  padding: 10px 20px; /* Reduce top padding to move everything upwards */
+  padding: 10px 20px;
+  transition: margin-left 0.3s ease;
 }
 
 .page-title {
-  text-align: left; /* Align to the left */
+  text-align: left;
   margin-top: 60px;
-  margin-left: 20px; /* Move the title closer to the left */
+  margin-left: 20px; 
 }
 
 .page-divider {
-  margin-top: 5px; /* Slightly reduce margin above the line */
+  margin-top: 5px;
   margin-bottom: 20px;
   border: none;
   border-top: 2px solid #ddd;
-  margin-left: 0px; /* Align the line with the title */
-  width: calc(100% - 40px); /* Stretch the line to full width, considering padding */
+  margin-left: 20px;
+  width: calc(100% - 40px); 
 }
 
 .add-location-button {
-  margin-left: 20px; /* Space it from the left side menu */
+  margin-left: 20px; 
   margin-top: 10px;
   padding: 10px 20px;
-  background-color: #f4f4f4; /* Matches the side menu background */
+  background-color: #f4f4f4;
   color: #333;
   border: none;
   border-radius: 4px;
@@ -32,9 +32,15 @@
 }
 
 .location-table {
-  width: 700px; /* Stretch the table while accounting for the side menu width */
-  margin-left: 0px; /* Move the table to the left */
+  width: calc(100% - 40px); 
+  margin-left: 20px;
+  margin-right: 10px;
   border-collapse: collapse;
+  transition: margin-left 0.3s ease;
+}
+
+.location-page.collapsed .location-table {
+  width: calc(100% - 60px);
 }
 
 .location-table th, .location-table td {
@@ -102,14 +108,4 @@
 .form-actions button {
   padding: 8px 16px;
   cursor: pointer;
-}
-
-.error-popup {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: #f44336;
-  color: white;
-  padding: 10px;
-  border-radius: 4px;
 }
