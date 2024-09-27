@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
@@ -8,7 +8,7 @@ interface Location {
   id: number;
   name: string;
   description: string;
-  createdAt: string;
+  createTime: string;
 }
 
 const LocationPage: React.FC = () => {
@@ -17,10 +17,25 @@ const LocationPage: React.FC = () => {
   const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [menuCollapsed] = useState(false); // State to track if the menu is collapsed
+  const [menuCollapsed] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
+
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchLocations();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setActiveMenu(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const fetchLocations = async () => {
@@ -54,7 +69,7 @@ const LocationPage: React.FC = () => {
           },
         }
       );
-      fetchLocations(); // Refresh the list
+      fetchLocations();
       setShowAddPopup(false);
     } catch (err: any) {
       handleError(err);
@@ -73,7 +88,7 @@ const LocationPage: React.FC = () => {
           },
         }
       );
-      fetchLocations(); // Refresh the list
+      fetchLocations();
       setShowUpdatePopup(false);
     } catch (err: any) {
       handleError(err);
@@ -88,7 +103,7 @@ const LocationPage: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      fetchLocations(); // Refresh the list
+      fetchLocations();
     } catch (err: any) {
       handleError(err);
     }
@@ -97,6 +112,10 @@ const LocationPage: React.FC = () => {
   const openUpdatePopup = (location: Location) => {
     setSelectedLocation(location);
     setShowUpdatePopup(true);
+  };
+
+  const toggleMenu = (id: number) => {
+    setActiveMenu(activeMenu === id ? null : id);
   };
 
   return (
@@ -127,13 +146,15 @@ const LocationPage: React.FC = () => {
                 <td>{location.id}</td>
                 <td>{location.name}</td>
                 <td>{location.description}</td>
-                <td>{location.createdAt}</td>
-                <td>
-                  <button className="meatball-menu">⋮</button>
-                  <div className="meatball-menu-options">
-                    <button onClick={() => openUpdatePopup(location)}>Update</button>
-                    <button onClick={() => handleDeleteLocation(location.id)}>Remove</button>
-                  </div>
+                <td>{location.createTime}</td>
+                <td className="meatball-menu-container">
+                  <button className="meatball-menu" onClick={() => toggleMenu(location.id)}>⋮</button>
+                  {activeMenu === location.id && (
+                    <div className="meatball-menu-options" ref={menuRef}>
+                      <button className="menu-option" onClick={() => openUpdatePopup(location)}>Update</button>
+                      <button className="menu-option" onClick={() => handleDeleteLocation(location.id)}>Remove</button>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))}

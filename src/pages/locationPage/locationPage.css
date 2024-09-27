@@ -7,7 +7,7 @@
 .page-title {
   text-align: left;
   margin-top: 60px;
-  margin-left: 20px; 
+  margin-left: 20px;
 }
 
 .page-divider {
@@ -16,11 +16,11 @@
   border: none;
   border-top: 2px solid #ddd;
   margin-left: 20px;
-  width: calc(100% - 40px); 
+  width: calc(100% - 40px);
 }
 
 .add-location-button {
-  margin-left: 20px; 
+  margin-left: 20px;
   margin-top: 10px;
   padding: 10px 20px;
   background-color: #f4f4f4;
@@ -32,7 +32,7 @@
 }
 
 .location-table {
-  width: calc(100% - 40px); 
+  width: calc(100% - 40px);
   margin-left: 20px;
   margin-right: 10px;
   border-collapse: collapse;
@@ -53,6 +53,10 @@
   background-color: #f4f4f4;
 }
 
+.meatball-menu-container {
+  position: relative;
+}
+
 .meatball-menu {
   background: none;
   border: none;
@@ -61,15 +65,28 @@
 }
 
 .meatball-menu-options {
-  display: none;
   position: absolute;
+  top: 100%;
+  left: 0;
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 100px;
 }
 
-.meatball-menu:hover + .meatball-menu-options {
+.menu-option {
   display: block;
+  width: 100%;
+  background-color: #f4f4f4;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.menu-option:hover {
+  background-color: #ddd;
 }
 
 .popup {
@@ -81,31 +98,56 @@
   padding: 20px;
   border: 1px solid #ddd;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 400px; /* Add some width for better spacing */
 }
 
+/* Move the header closer to the top edge */
+.popup h2 {
+  margin-top: 10px;
+  margin-bottom: 20px; /* Add some space below the header */
+  text-align: center;
+}
+
+/* Vertical alignment of Name and Description fields */
 .location-form {
   display: flex;
   flex-direction: column;
 }
 
 .location-form label {
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   font-weight: bold;
 }
 
+/* Add space between the labels and input fields */
 .location-form input {
-  margin-bottom: 16px;
+  margin-bottom: 15px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
+/* Style for the buttons */
 .form-actions {
   display: flex;
   justify-content: space-between;
+  margin-top: 20px;
 }
 
 .form-actions button {
-  padding: 8px 16px;
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  color: #333;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
+}
+
+.form-actions button:hover {
+  background-color: #ddd;
+}
+
+/* Add some space between the buttons */
+.form-actions button + button {
+  margin-left: 10px;
 }
