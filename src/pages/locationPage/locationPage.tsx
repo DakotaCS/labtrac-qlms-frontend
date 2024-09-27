@@ -117,7 +117,7 @@ const LocationPage: React.FC = () => {
               <th>ID</th>
               <th>Name</th>
               <th>Description</th>
-              <th>Created At</th>
+              <th>Date Created</th>
               <th>Actions</th>
             </tr>
           </thead>
