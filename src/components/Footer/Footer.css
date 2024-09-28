@@ -6,6 +6,25 @@
   bottom: 0;
   width: 100%;
   z-index: 1001;
+  display: flex;
+  justify-content: space-between; /* Add spacing between Logout and copyright */
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.logout-link {
+  color: white; /* Same color as footer text */
+  text-decoration: none;
+  padding-left: 40px;
+}
+
+.logout-link:hover {
+  text-decoration: underline; /* Optional: Add hover effect */
 }
 
 .footer-text {
