@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'r
 import LoginPage from './pages/loginPage/loginPage';
 import LandingPage from './pages/landingPage/landingPage';
 import LocationPage from './pages/locationPage/locationPage';
+import CategoryPage from './pages/categoryPage/categoryPage';
 import Logout from './components/Logout';
 import { isTokenExpired, decodeJwt } from './utils/jwtUtils';
 
@@ -62,6 +63,17 @@ function App() {
           element={
             isAuthenticated ? (
                 <LocationPage />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+                {/* Category Route */}
+                <Route
+          path="/category"
+          element={
+            isAuthenticated ? (
+                <CategoryPage />
             ) : (
               <Navigate to="/login" />
             )
