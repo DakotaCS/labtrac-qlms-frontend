@@ -5,7 +5,7 @@ import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import './categoryPage.css';
 
 interface Category {
-  id: string;
+  id: number;
   categoryId: string; // Use the string categoryID field
   name: string;
   description: string;
