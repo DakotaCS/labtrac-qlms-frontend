@@ -7,20 +7,23 @@ interface MenuItem {
   id: number;
   name: string;
   url: string;
-  iconName: string | null; // Icon name coming from the API
+  iconName: string | null;
+  orderIndex: number;
+  subOrderIndex: number | null;
 }
 
 interface SideMenuProps {
-  onToggle: () => void; // Function passed from Layout to notify about menu toggle
+  onToggle: () => void;
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ onToggle }) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [collapsed, setCollapsed] = useState<boolean>(false);
+  const [expandedParents, setExpandedParents] = useState<number[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId'); // Retrieve user ID from localStorage
+    const userId = localStorage.getItem('userId');
 
     if (token && userId) {
       axios
@@ -29,17 +32,38 @@ const SideMenu: React.FC<SideMenuProps> = ({ onToggle }) => {
             Authorization: `Bearer ${token}`,
           },
         })
-        .then(response => setMenuItems(response.data))
-        .catch(error => console.error('Error fetching menu items:', error));
+        .then((response) => {
+          const sortedItems = response.data.sort((a: MenuItem, b: MenuItem) => {
+            if (a.orderIndex !== b.orderIndex) {
+              return a.orderIndex - b.orderIndex;
+            } else {
+              return (a.subOrderIndex || 0) - (b.subOrderIndex || 0);
+            }
+          });
+          setMenuItems(sortedItems);
+        })
+        .catch((error) => console.error('Error fetching menu items:', error));
     }
   }, []);
 
   const toggleMenu = () => {
     setCollapsed(!collapsed);
-    onToggle(); // Notify Layout of the toggle event
+    onToggle();
+    if (!collapsed) {
+      setExpandedParents([]); // Collapse all sub-menus when menu is collapsed
+    }
   };
 
-  // Dynamically require icons from assets/icons directory
+  const toggleSubMenu = (parentId: number) => {
+    if (collapsed) return; // Prevent submenu toggle when collapsed
+
+    setExpandedParents((prevExpanded) =>
+      prevExpanded.includes(parentId)
+        ? prevExpanded.filter((id) => id !== parentId)
+        : [...prevExpanded, parentId]
+    );
+  };
+
   const getIconPath = (iconName: string | null) => {
     try {
       return require(`../../assets/icons/${iconName}.png`);
@@ -51,24 +75,56 @@ const SideMenu: React.FC<SideMenuProps> = ({ onToggle }) => {
 
   return (
     <div className={`side-menu ${collapsed ? 'collapsed' : ''}`}>
-      {/* Hamburger icon and Menu title */}
       <div className="menu-header">
         <button className="hamburger-icon" onClick={toggleMenu}>
           ☰
         </button>
         {!collapsed && <span className="menu-title">Menu</span>}
       </div>
-      
-      {/* Menu items */}
+
       <ul>
-        {menuItems.map(item => (
-          <li key={item.id}>
-            <Link to={item.url} className="menu-item">
-              <img src={getIconPath(item.iconName)} alt={item.name} className="menu-icon" />
-              {!collapsed && <span className="menu-text">{item.name}</span>}
-            </Link>
-          </li>
-        ))}
+        {menuItems.map((item) => {
+          const isParent = menuItems.some(
+            (subItem) => subItem.orderIndex === item.orderIndex && subItem.subOrderIndex !== null
+          );
+
+          if (item.subOrderIndex === null) {
+            return (
+              <li key={item.id} className="menu-item-container">
+                {isParent ? (
+                  <div className="menu-item parent-menu-item" onClick={() => toggleSubMenu(item.id)}>
+                    <img src={getIconPath(item.iconName)} alt={item.name} className="menu-icon" />
+                    {!collapsed && <span className="menu-text">{item.name}</span>}
+                  </div>
+                ) : (
+                  <Link to={item.url} className="menu-item">
+                    <img src={getIconPath(item.iconName)} alt={item.name} className="menu-icon" />
+                    {!collapsed && <span className="menu-text">{item.name}</span>}
+                  </Link>
+                )}
+
+                <ul className={`submenu ${expandedParents.includes(item.id) ? 'expanded' : ''}`}>
+                  {expandedParents.includes(item.id) &&
+                    menuItems
+                      .filter((subItem) => subItem.orderIndex === item.orderIndex && subItem.subOrderIndex !== null)
+                      .map((subItem) => (
+                        <li key={subItem.id} className="submenu-item">
+                          <Link to={subItem.url} className="menu-item submenu-text">
+                            {!collapsed && (
+                              <>
+                                <img src={getIconPath(subItem.iconName)} alt={subItem.name} className="menu-icon" />
+                                <span>{subItem.name}</span>
+                              </>
+                            )}
+                          </Link>
+                        </li>
+                      ))}
+                </ul>
+              </li>
+            );
+          }
+          return null;
+        })}
       </ul>
     </div>
   );

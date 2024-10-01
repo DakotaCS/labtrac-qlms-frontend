@@ -1,16 +1,22 @@
+/* Remove bullet points */
+ul {
+  list-style-type: none;
+  padding-left: 5px;
+}
+
 /* Side menu container */
 .side-menu {
   width: 150px;
   background-color: #f4f4f4;
   padding: 20px 0;
   position: fixed;
-  top: 70px; /* Adjusted to start below the main header */
-  bottom: 50px; /* End above the footer */
+  top: 70px;
+  bottom: 50px;
   left: 0;
-  height: calc(100% - 120px); /* Full height minus header and footer */
+  height: calc(100% - 120px);
   transition: width 0.3s ease;
   z-index: 1000;
-  overflow-y: auto; /* Allows scrolling for menu items */
+  overflow-y: auto;
 }
 
 /* Collapsed state */
@@ -25,8 +31,8 @@
   justify-content: flex-start;
   padding-left: 0px;
   height: 60px;
-  background-color: #f4f4f4; /* Match the side menu background */
-  border-bottom: 1px solid #ccc; /* Line between the hamburger menu and menu items */
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #ccc;
 }
 
 .hamburger-icon {
@@ -34,53 +40,108 @@
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: 2px;
   z-index: 1001;
 }
 
 .menu-title {
-  margin-left: 20px;
+  margin-left: 10px;
   font-size: 18px;
   font-weight: normal;
   color: #333;
-  margin-top: 5px; /* Move the "Menu" text down slightly */
+  margin-top: 5px;
 }
 
-/* Menu items */
-.side-menu ul {
-  list-style-type: none;
-  padding: 10px 0 0 0;
-  margin: 0;
-}
-
-.side-menu ul li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.menu-item {
+/* Parent menu items */
+.parent-menu-item {
   display: flex;
   align-items: center;
   text-decoration: none;
   color: #333;
-  padding: 10px;
+  cursor: pointer;
+  padding-left: 0px;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+.menu-item-container {
+  margin-bottom: 10px;
 }
 
 .menu-icon {
   width: 24px;
   height: 24px;
   margin-right: 10px;
-}
-
-.menu-text {
   display: inline-block;
+  vertical-align: middle;
 }
 
+/* Collapsed state: hide menu text */
 .side-menu.collapsed .menu-text {
   display: none;
 }
 
-.side-menu.collapsed .menu-item {
-  justify-content: center;
+/* Submenu transitions */
+.submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  left: 0;
+  top: 0;
+}
+
+/* Expanded submenu */
+.submenu.expanded {
+  max-height: 100px;
+  opacity: 1;
+  position: relative;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+/* Submenu items */
+.submenu-item {
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
+  margin-bottom: 8px;
+  margin-top: 8px;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+/* Smaller submenu icons */
+.submenu-item .menu-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.submenu-text {
+  display: inline-block;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* Collapsed state: hide submenu text and submenu icons */
+.side-menu.collapsed .submenu-item .menu-icon,
+.side-menu.collapsed .submenu-item .submenu-text {
+  display: none;
+}
+
+/* Hover effect */
+.menu-item:hover {
+  background-color: #e0e0e0;
+}
+
+/* Regular menu items */
+.menu-item {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  padding-left: 0px;
+  white-space: nowrap;
+  flex-wrap: nowrap;
 }
