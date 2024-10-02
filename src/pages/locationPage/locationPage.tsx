@@ -6,7 +6,7 @@ import './locationPage.css';
 
 interface Location {
   id: number;
-  locationID: string; // Changed from id: number to locationID: string
+  locationID: string;
   name: string;
   description: string;
   createTime: string;
@@ -19,7 +19,7 @@ const LocationPage: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -77,11 +77,11 @@ const LocationPage: React.FC = () => {
     }
   };
 
-  const handleUpdateLocation = async (locationID: string, name: string, description: string) => {
+  const handleUpdateLocation = async (id: number, name: string, description: string) => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/system/location/${locationID}`,
+        `https://backend.labtrac.quantuslms.ca/api/system/location/${id}`,
         { name, description },
         {
           headers: {
@@ -96,10 +96,10 @@ const LocationPage: React.FC = () => {
     }
   };
 
-  const handleDeleteLocation = async (locationID: string) => {
+  const handleDeleteLocation = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/location/${locationID}`, {
+      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/location/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -115,8 +115,8 @@ const LocationPage: React.FC = () => {
     setShowUpdatePopup(true);
   };
 
-  const toggleMenu = (locationID: string) => {
-    setActiveMenu(activeMenu === locationID ? null : locationID);
+  const toggleMenu = (id: number) => {
+    setActiveMenu(activeMenu === id ? null : id);
   };
 
   return (
@@ -134,7 +134,7 @@ const LocationPage: React.FC = () => {
         <table className="location-table">
           <thead>
             <tr>
-              <th>Location ID</th> {/* Updated the column name */}
+              <th>Location ID</th>
               <th>Name</th>
               <th>Description</th>
               <th>Date Created</th>
@@ -144,16 +144,16 @@ const LocationPage: React.FC = () => {
           <tbody>
             {locations.map((location) => (
               <tr key={location.id}>
-                <td>{location.locationID}</td> {/* Updated to reflect locationID */}
+                <td>{location.locationID}</td>
                 <td>{location.name}</td>
                 <td>{location.description}</td>
                 <td>{location.createTime}</td>
                 <td className="meatball-menu-container">
-                  <button className="meatball-menu" onClick={() => toggleMenu(location.locationID)}>⋮</button>
-                  {activeMenu === location.locationID && (
+                  <button className="meatball-menu" onClick={() => toggleMenu(location.id)}>⋮</button>
+                  {activeMenu === location.id && (
                     <div className="meatball-menu-options" ref={menuRef}>
                       <button className="menu-option" onClick={() => openUpdatePopup(location)}>Update</button>
-                      <button className="menu-option" onClick={() => handleDeleteLocation(location.locationID)}>Remove</button>
+                      <button className="menu-option" onClick={() => handleDeleteLocation(location.id)}>Remove</button>
                     </div>
                   )}
                 </td>
@@ -179,7 +179,7 @@ const LocationPage: React.FC = () => {
               initialName={selectedLocation.name}
               initialDescription={selectedLocation.description}
               onSubmit={(name, description) =>
-                handleUpdateLocation(selectedLocation.locationID, name, description)
+                handleUpdateLocation(selectedLocation.id, name, description)
               }
               onCancel={() => setShowUpdatePopup(false)}
             />

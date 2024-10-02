@@ -5,8 +5,8 @@ import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import './categoryPage.css';
 
 interface Category {
-  id: number;
-  categoryId: string; // Use the string categoryID field
+  id: number; // Use this for internal operations
+  categoryId: string; // Display this in the table
   name: string;
   description: string;
   createTime: string;
@@ -19,7 +19,7 @@ const CategoryPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [activeMenu, setActiveMenu] = useState<number | null>(null); // Use id for internal operations
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -77,11 +77,12 @@ const CategoryPage: React.FC = () => {
     }
   };
 
-  const handleUpdateCategory = async (categoryID: string, name: string, description: string) => {
+  const handleUpdateCategory = async (id: number, name: string, description: string) => {
+    // Use id for internal operations
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/system/category/${categoryID}`,
+        `https://backend.labtrac.quantuslms.ca/api/system/category/${id}`,
         { name, description },
         {
           headers: {
@@ -96,10 +97,11 @@ const CategoryPage: React.FC = () => {
     }
   };
 
-  const handleDeleteCategory = async (categoryID: string) => {
+  const handleDeleteCategory = async (id: number) => {
+    // Use id for internal operations
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/category/${categoryID}`, {
+      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/category/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -115,8 +117,8 @@ const CategoryPage: React.FC = () => {
     setShowUpdatePopup(true);
   };
 
-  const toggleMenu = (categoryID: string) => {
-    setActiveMenu(activeMenu === categoryID ? null : categoryID);
+  const toggleMenu = (id: number) => {
+    setActiveMenu(activeMenu === id ? null : id);
   };
 
   return (
@@ -149,11 +151,11 @@ const CategoryPage: React.FC = () => {
                 <td>{category.description}</td>
                 <td>{category.createTime}</td>
                 <td className="meatball-menu-container">
-                  <button className="meatball-menu" onClick={() => toggleMenu(category.categoryId)}>⋮</button>
-                  {activeMenu === category.categoryId && (
+                  <button className="meatball-menu" onClick={() => toggleMenu(category.id)}>⋮</button>
+                  {activeMenu === category.id && (
                     <div className="meatball-menu-options" ref={menuRef}>
                       <button className="menu-option" onClick={() => openUpdatePopup(category)}>Update</button>
-                      <button className="menu-option" onClick={() => handleDeleteCategory(category.categoryId)}>Remove</button>
+                      <button className="menu-option" onClick={() => handleDeleteCategory(category.id)}>Remove</button>
                     </div>
                   )}
                 </td>
@@ -179,7 +181,7 @@ const CategoryPage: React.FC = () => {
               initialName={selectedCategory.name}
               initialDescription={selectedCategory.description}
               onSubmit={(name, description) =>
-                handleUpdateCategory(selectedCategory.categoryId, name, description)
+                handleUpdateCategory(selectedCategory.id, name, description)
               }
               onCancel={() => setShowUpdatePopup(false)}
             />
