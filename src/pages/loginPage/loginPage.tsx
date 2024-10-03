@@ -31,8 +31,8 @@ const LoginPage: React.FC = () => {
         },
       });
 
-      const { userId } = userDetailsResponse.data;
-      localStorage.setItem('userId', userId); // Store user ID in localStorage
+      const { id } = userDetailsResponse.data;
+      localStorage.setItem('userId',  id); // Store user ID in localStorage
 
       // 3. Redirect to the landing page
       navigate('/landing');
