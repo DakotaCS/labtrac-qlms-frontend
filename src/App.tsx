@@ -4,6 +4,7 @@ import LoginPage from './pages/loginPage/loginPage';
 import LandingPage from './pages/landingPage/landingPage';
 import LocationPage from './pages/locationPage/locationPage';
 import CategoryPage from './pages/categoryPage/categoryPage';
+import UserManagementPage from './pages/userManagementPage/userManagementPage';
 import Logout from './components/Logout';
 import { isTokenExpired, decodeJwt } from './utils/jwtUtils';
 
@@ -68,12 +69,23 @@ function App() {
             )
           }
         />
-                {/* Category Route */}
-                <Route
+        {/* Category Route */}
+        <Route
           path="/category"
           element={
             isAuthenticated ? (
                 <CategoryPage />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        {/* Category Route */}
+        <Route
+          path="/user"
+          element={
+            isAuthenticated ? (
+                <UserManagementPage />
             ) : (
               <Navigate to="/login" />
             )
