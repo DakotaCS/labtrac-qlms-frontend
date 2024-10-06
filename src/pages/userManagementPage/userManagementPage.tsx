@@ -103,6 +103,21 @@ const UserManagementPage: React.FC = () => {
     }
   };
 
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/user/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchUsers();
+      setActiveMenu(null); // Close the menu
+    } catch (err: any) {
+      handleError(err);
+    }
+  };
+
   const openDialog = (type: string, user: User) => {
     setSelectedUser(user);
     if (type === 'status') {
@@ -183,7 +198,7 @@ const UserManagementPage: React.FC = () => {
                       <button className="menu-option" onClick={() => openDialog('password', user)}>Update Password</button>
                       <button className="menu-option" onClick={() => openDialog('role', user)}>Update Role</button>
                       <button className="menu-option" onClick={() => openDialog('status', user)}>Update Status</button>
-                      <button className="menu-option" onClick={() => handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${user.id}`, {})}>Delete</button>
+                      <button className="menu-option" onClick={() => handleDeleteUser(user.id)}>Delete</button>
                     </div>
                   )}
                 </td>
