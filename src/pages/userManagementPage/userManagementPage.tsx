@@ -14,13 +14,18 @@ interface User {
 
 const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [showAddPopup, setShowAddPopup] = useState<boolean>(false);
-  const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState<string | null>(null); // For different popup dialogs
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [newValue, setNewValue] = useState<string>(''); // For input values in dialogs
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+
+  // State for adding a new user
+  const [newUsername, setNewUsername] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [newRole, setNewRole] = useState<string>('ADMIN'); // Default to Admin
 
   useEffect(() => {
     fetchUsers();
@@ -57,12 +62,16 @@ const UserManagementPage: React.FC = () => {
     setError(errorMessage);
   };
 
-  const handleAddUser = async (userName: string, password: string, role: string) => {
+  const handleAddUser = async () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
         'https://backend.labtrac.quantuslms.ca/api/system/user',
-        { userName, password, role: role.toUpperCase() },
+        {
+          userName: newUsername,
+          password: newPassword,
+          role: newRole.toUpperCase(),
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -70,110 +79,66 @@ const UserManagementPage: React.FC = () => {
         }
       );
       fetchUsers();
-      setShowAddPopup(false);
+      setShowDialog(null); // Close the dialog
+      setNewUsername('');
+      setNewPassword('');
+      setNewRole('ADMIN'); // Reset to default
     } catch (err: any) {
       handleError(err);
     }
   };
 
-  const handleUpdateUserName = async (userId: number, userName: string) => {
+  const handleUpdateUser = async (url: string, body: object) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/system/${userId}/username`,
-        { userName },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      fetchUsers();
-      setShowUpdatePopup(false);
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const handleUpdatePassword = async (userId: number, password: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/system/${userId}/password`,
-        { password },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      fetchUsers();
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const handleUpdateRole = async (userId: number, role: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/system/${userId}/menu-role`,
-        { role: role.toUpperCase() },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      fetchUsers();
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const handleUpdateStatus = async (userId: number, status: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/system/${userId}/status`,
-        { userStatus: status.toLowerCase() },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      fetchUsers();
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const handleDeleteUser = async (userId: number) => {
-    try {
-      const token = localStorage.getItem('token');
-      const currentUserId = parseInt(localStorage.getItem('userId') || '0', 10);
-      if (userId === currentUserId) {
-        throw new Error("You cannot delete your own account");
-      }
-      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/${userId}`, {
+      await axios.patch(url, body, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       fetchUsers();
+      setShowDialog(null); // Close the dialog
     } catch (err: any) {
       handleError(err);
     }
   };
 
-  const openUpdatePopup = (user: User) => {
+  const openDialog = (type: string, user: User) => {
     setSelectedUser(user);
-    setShowUpdatePopup(true);
+    setNewValue(''); // Reset input
+    setShowDialog(type); // Set the type of dialog
   };
 
   const toggleMenu = (userId: number) => {
     setActiveMenu(activeMenu === userId ? null : userId);
+  };
+
+  // Convert role from uppercase to camel-case
+  const formatRole = (role: string) => {
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+  };
+
+  const handleSubmit = () => {
+    if (!selectedUser) return;
+
+    switch (showDialog) {
+      case 'username':
+        handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/username`, { userName: newValue });
+        break;
+      case 'password':
+        handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/password`, { password: newValue });
+        break;
+      case 'role':
+        handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/user-role`, { role: newValue.toUpperCase() });
+        break;
+      case 'status':
+        // Map newValue to the correct backend value
+        const userStatus = newValue === 'Enabled' ? 'enable' : 'disable';
+        handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/status`, { userStatus });
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -184,7 +149,7 @@ const UserManagementPage: React.FC = () => {
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
-        <button className="add-user-button" onClick={() => setShowAddPopup(true)}>
+        <button className="add-user-button" onClick={() => setShowDialog('add-user')}>
           Add User
         </button>
 
@@ -194,7 +159,7 @@ const UserManagementPage: React.FC = () => {
               <th>ID</th>
               <th>Username</th>
               <th>Date Created</th>
-              <th>Is Disabled</th>
+              <th>Status</th>
               <th>Role</th>
               <th>Actions</th>
             </tr>
@@ -205,17 +170,17 @@ const UserManagementPage: React.FC = () => {
                 <td>{user.id}</td>
                 <td>{user.userName}</td>
                 <td>{user.createTime}</td>
-                <td>{user.isDisabled ? 'Yes' : 'No'}</td>
-                <td>{user.userRole}</td>
+                <td>{user.isDisabled ? 'Disabled' : 'Enabled'}</td>
+                <td>{formatRole(user.userRole)}</td>
                 <td className="meatball-menu-container">
                   <button className="meatball-menu" onClick={() => toggleMenu(user.id)}>⋮</button>
                   {activeMenu === user.id && (
                     <div className="meatball-menu-options" ref={menuRef}>
-                      <button className="menu-option" onClick={() => openUpdatePopup(user)}>Change Username</button>
-                      <button className="menu-option" onClick={() => handleUpdatePassword(user.id, 'NewPassword')}>Change Password</button>
-                      <button className="menu-option" onClick={() => handleUpdateRole(user.id, 'TECH')}>Change Role</button>
-                      <button className="menu-option" onClick={() => handleUpdateStatus(user.id, 'enable')}>Change Status</button>
-                      <button className="menu-option" onClick={() => handleDeleteUser(user.id)}>Delete</button>
+                      <button className="menu-option" onClick={() => openDialog('username', user)}>Update Username</button>
+                      <button className="menu-option" onClick={() => openDialog('password', user)}>Update Password</button>
+                      <button className="menu-option" onClick={() => openDialog('role', user)}>Update Role</button>
+                      <button className="menu-option" onClick={() => openDialog('status', user)}>Update Status</button>
+                      <button className="menu-option" onClick={() => handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${user.id}`, {})}>Delete</button>
                     </div>
                   )}
                 </td>
@@ -224,61 +189,101 @@ const UserManagementPage: React.FC = () => {
           </tbody>
         </table>
 
-        {showAddPopup && (
+        {showDialog === 'add-user' && (
           <div className="popup">
             <h2>Add User</h2>
-            <UserForm onSubmit={(userName, password, role) => handleAddUser(userName, password, role)} onCancel={() => setShowAddPopup(false)} />
+            <div className="user-form"> {/* Wrap the form in a container to match the category form */}
+              <label>Username</label>
+              <input
+                type="text"
+                value={newUsername}
+                onChange={(e) => setNewUsername(e.target.value)}
+                placeholder="Enter username"
+                required
+              />
+              <label>Password</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter password"
+                required
+              />
+              <label>Role</label>
+              <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
+                <option value="ADMIN">Admin</option>
+                <option value="TECH">Tech</option>
+                <option value="MANAGER">Manager</option>
+              </select>
+              <div className="form-actions">
+                <button onClick={handleAddUser}>Submit</button>
+                <button onClick={() => setShowDialog(null)}>Cancel</button>
+              </div>
+            </div>
           </div>
         )}
 
-        {showUpdatePopup && selectedUser && (
+        {showDialog && showDialog !== 'add-user' && (
           <div className="popup">
-            <h2>Update User</h2>
-            <UserForm
-              initialUserName={selectedUser.userName}
-              initialRole={selectedUser.userRole}
-              onSubmit={(userName, password, role) => {
-                handleUpdateUserName(selectedUser.id, userName);
-                handleUpdateRole(selectedUser.id, role);
-              }}
-              onCancel={() => setShowUpdatePopup(false)}
-            />
+            <h2>
+              {showDialog === 'username' && 'Update Username'}
+              {showDialog === 'password' && 'Update Password'}
+              {showDialog === 'role' && 'Update Role'}
+              {showDialog === 'status' && 'Update Status'}
+            </h2>
+            <div className="user-form"> {/* Added a container around form elements */}
+              {showDialog === 'username' && (
+                <>
+                  <label>Username</label>
+                  <input
+                    type="text"
+                    value={newValue}
+                    onChange={(e) => setNewValue(e.target.value)}
+                    placeholder={selectedUser?.userName}
+                    required
+                  />
+                </>
+              )}
+              {showDialog === 'password' && (
+                <>
+                  <p>The new password must not be less than 8 characters.</p>
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    value={newValue}
+                    onChange={(e) => setNewValue(e.target.value)}
+                    required
+                  />
+                </>
+              )}
+              {showDialog === 'role' && (
+                <>
+                  <label>Role</label>
+                  <select value={newValue} onChange={(e) => setNewValue(e.target.value)}>
+                    <option value="ADMIN">Admin</option>
+                    <option value="TECH">Tech</option>
+                    <option value="MANAGER">Manager</option>
+                  </select>
+                </>
+              )}
+              {showDialog === 'status' && (
+                <>
+                  <label>Status</label>
+                  <select value={newValue} onChange={(e) => setNewValue(e.target.value)}>
+                    <option value="Enabled">Enabled</option>
+                    <option value="Disabled">Disabled</option>
+                  </select>
+                </>
+              )}
+              <div className="form-actions">
+                <button onClick={handleSubmit}>Submit</button>
+                <button onClick={() => setShowDialog(null)}>Cancel</button>
+              </div>
+            </div>
           </div>
         )}
       </div>
     </Layout>
-  );
-};
-
-interface UserFormProps {
-  initialUserName?: string;
-  initialRole?: string;
-  onSubmit: (userName: string, password: string, role: string) => void;
-  onCancel: () => void;
-}
-
-const UserForm: React.FC<UserFormProps> = ({ initialUserName = '', initialRole = '', onSubmit, onCancel }) => {
-  const [userName, setUserName] = useState(initialUserName);
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState(initialRole);
-
-  return (
-    <div className="user-form">
-      <label>Username</label>
-      <input type="text" value={userName} onChange={(e) => setUserName(e.target.value)} required />
-      <label>Password</label>
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <label>Role</label>
-      <select value={role} onChange={(e) => setRole(e.target.value)}>
-        <option value="ADMIN">Admin</option>
-        <option value="TECH">Tech</option>
-        <option value="MANAGER">Manager</option>
-      </select>
-      <div className="form-actions">
-        <button onClick={() => onSubmit(userName, password, role)}>Submit</button>
-        <button onClick={onCancel}>Cancel</button>
-      </div>
-    </div>
   );
 };
 
