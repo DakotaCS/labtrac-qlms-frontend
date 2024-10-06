@@ -105,7 +105,11 @@ const UserManagementPage: React.FC = () => {
 
   const openDialog = (type: string, user: User) => {
     setSelectedUser(user);
-    setNewValue(''); // Reset input
+    if (type === 'status') {
+      setNewValue(user.isDisabled ? 'disable' : 'enable');
+    } else {
+      setNewValue(''); // Reset input for other dialogs
+    }
     setShowDialog(type); // Set the type of dialog
   };
 
@@ -132,9 +136,8 @@ const UserManagementPage: React.FC = () => {
         handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/user-role`, { role: newValue.toUpperCase() });
         break;
       case 'status':
-        // Map newValue to the correct backend value
-        const userStatus = newValue === 'Enabled' ? 'enable' : 'disable';
-        handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/status`, { userStatus });
+        // Send the selected status directly to the backend (either 'enable' or 'disable')
+        handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/status`, { userStatus: newValue });
         break;
       default:
         break;
@@ -189,10 +192,11 @@ const UserManagementPage: React.FC = () => {
           </tbody>
         </table>
 
+        {/* Add User Popup */}
         {showDialog === 'add-user' && (
           <div className="popup">
             <h2>Add User</h2>
-            <div className="user-form"> {/* Wrap the form in a container to match the category form */}
+            <div className="user-form">
               <label>Username</label>
               <input
                 type="text"
@@ -223,6 +227,7 @@ const UserManagementPage: React.FC = () => {
           </div>
         )}
 
+        {/* Update User Popups */}
         {showDialog && showDialog !== 'add-user' && (
           <div className="popup">
             <h2>
@@ -231,7 +236,7 @@ const UserManagementPage: React.FC = () => {
               {showDialog === 'role' && 'Update Role'}
               {showDialog === 'status' && 'Update Status'}
             </h2>
-            <div className="user-form"> {/* Added a container around form elements */}
+            <div className="user-form">
               {showDialog === 'username' && (
                 <>
                   <label>Username</label>
@@ -270,8 +275,8 @@ const UserManagementPage: React.FC = () => {
                 <>
                   <label>Status</label>
                   <select value={newValue} onChange={(e) => setNewValue(e.target.value)}>
-                    <option value="Enabled">Enabled</option>
-                    <option value="Disabled">Disabled</option>
+                    <option value="enable">Enable</option>
+                    <option value="disable">Disable</option>
                   </select>
                 </>
               )}
