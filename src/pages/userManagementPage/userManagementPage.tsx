@@ -1,7 +1,9 @@
+// ./src/pages/UserManagementPage.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
+import Popup from '../../components/Popup/Popup'; // Import the Popup component
 import './userManagementPage.css';
 
 interface User {
@@ -14,18 +16,17 @@ interface User {
 
 const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [showDialog, setShowDialog] = useState<string | null>(null); // For different popup dialogs
+  const [showDialog, setShowDialog] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [newValue, setNewValue] = useState<string>(''); // For input values in dialogs
+  const [newValue, setNewValue] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState<number | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  // State for adding a new user
   const [newUsername, setNewUsername] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
-  const [newRole, setNewRole] = useState<string>('ADMIN'); // Default to Admin
+  const [newRole, setNewRole] = useState<string>('ADMIN');
 
   useEffect(() => {
     fetchUsers();
@@ -79,10 +80,10 @@ const UserManagementPage: React.FC = () => {
         }
       );
       fetchUsers();
-      setShowDialog(null); // Close the dialog
+      setShowDialog(null);
       setNewUsername('');
       setNewPassword('');
-      setNewRole('ADMIN'); // Reset to default
+      setNewRole('ADMIN');
     } catch (err: any) {
       handleError(err);
     }
@@ -97,7 +98,7 @@ const UserManagementPage: React.FC = () => {
         },
       });
       fetchUsers();
-      setShowDialog(null); // Close the dialog
+      setShowDialog(null);
     } catch (err: any) {
       handleError(err);
     }
@@ -112,7 +113,7 @@ const UserManagementPage: React.FC = () => {
         },
       });
       fetchUsers();
-      setActiveMenu(null); // Close the menu
+      setActiveMenu(null);
     } catch (err: any) {
       handleError(err);
     }
@@ -121,18 +122,17 @@ const UserManagementPage: React.FC = () => {
   const openDialog = (type: string, user: User) => {
     setSelectedUser(user);
     if (type === 'status') {
-      setNewValue(user.isDisabled ? 'disable' : 'enable');
+      setNewValue(user.isDisabled ? 'enable' : 'disable');
     } else {
-      setNewValue(''); // Reset input for other dialogs
+      setNewValue('');
     }
-    setShowDialog(type); // Set the type of dialog
+    setShowDialog(type);
   };
 
   const toggleMenu = (userId: number) => {
     setActiveMenu(activeMenu === userId ? null : userId);
   };
 
-  // Convert role from uppercase to camel-case
   const formatRole = (role: string) => {
     return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
   };
@@ -151,7 +151,6 @@ const UserManagementPage: React.FC = () => {
         handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/user-role`, { role: newValue.toUpperCase() });
         break;
       case 'status':
-        // Send the selected status directly to the backend (either 'enable' or 'disable')
         handleUpdateUser(`https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/status`, { userStatus: newValue });
         break;
       default:
@@ -209,8 +208,7 @@ const UserManagementPage: React.FC = () => {
 
         {/* Add User Popup */}
         {showDialog === 'add-user' && (
-          <div className="popup">
-            <h2>Add User</h2>
+          <Popup title="Add User" onClose={() => setShowDialog(null)}>
             <div className="user-form">
               <label>Username</label>
               <input
@@ -239,18 +237,23 @@ const UserManagementPage: React.FC = () => {
                 <button onClick={() => setShowDialog(null)}>Cancel</button>
               </div>
             </div>
-          </div>
+          </Popup>
         )}
 
         {/* Update User Popups */}
         {showDialog && showDialog !== 'add-user' && (
-          <div className="popup">
-            <h2>
-              {showDialog === 'username' && 'Update Username'}
-              {showDialog === 'password' && 'Update Password'}
-              {showDialog === 'role' && 'Update Role'}
-              {showDialog === 'status' && 'Update Status'}
-            </h2>
+          <Popup
+            title={
+              showDialog === 'username'
+                ? 'Update Username'
+                : showDialog === 'password'
+                ? 'Update Password'
+                : showDialog === 'role'
+                ? 'Update Role'
+                : 'Update Status'
+            }
+            onClose={() => setShowDialog(null)}
+          >
             <div className="user-form">
               {showDialog === 'username' && (
                 <>
@@ -300,7 +303,7 @@ const UserManagementPage: React.FC = () => {
                 <button onClick={() => setShowDialog(null)}>Cancel</button>
               </div>
             </div>
-          </div>
+          </Popup>
         )}
       </div>
     </Layout>

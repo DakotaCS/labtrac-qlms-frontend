@@ -1,12 +1,14 @@
+// ./src/pages/CategoryPage.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
+import Popup from '../../components/Popup/Popup'; // Import the Popup component
 import './categoryPage.css';
 
 interface Category {
-  id: number; // Use this for internal operations
-  categoryId: string; // Display this in the table
+  id: number;
+  categoryId: string;
   name: string;
   description: string;
   createTime: string;
@@ -19,7 +21,7 @@ const CategoryPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<number | null>(null); // Use id for internal operations
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -78,7 +80,6 @@ const CategoryPage: React.FC = () => {
   };
 
   const handleUpdateCategory = async (id: number, name: string, description: string) => {
-    // Use id for internal operations
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
@@ -98,7 +99,6 @@ const CategoryPage: React.FC = () => {
   };
 
   const handleDeleteCategory = async (id: number) => {
-    // Use id for internal operations
     try {
       const token = localStorage.getItem('token');
       await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/category/${id}`, {
@@ -165,18 +165,16 @@ const CategoryPage: React.FC = () => {
         </table>
 
         {showAddPopup && (
-          <div className="popup">
-            <h2>Add Category</h2>
+          <Popup title="Add Category" onClose={() => setShowAddPopup(false)}>
             <CategoryForm
               onSubmit={(name, description) => handleAddCategory(name, description)}
               onCancel={() => setShowAddPopup(false)}
             />
-          </div>
+          </Popup>
         )}
 
         {showUpdatePopup && selectedCategory && (
-          <div className="popup">
-            <h2>Update Category</h2>
+          <Popup title="Update Category" onClose={() => setShowUpdatePopup(false)}>
             <CategoryForm
               initialName={selectedCategory.name}
               initialDescription={selectedCategory.description}
@@ -185,7 +183,7 @@ const CategoryPage: React.FC = () => {
               }
               onCancel={() => setShowUpdatePopup(false)}
             />
-          </div>
+          </Popup>
         )}
       </div>
     </Layout>

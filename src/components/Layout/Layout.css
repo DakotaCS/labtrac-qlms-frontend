@@ -13,6 +13,7 @@
   padding: 20px;
   transition: margin-left 0.3s ease; /* Smooth transition for margin */
   margin-left: 150px; /* Default margin for expanded side menu */
+  position: relative; /* Added position relative */
 }
 
 /* When the side menu is collapsed, reduce the margin to reflect the smaller width */

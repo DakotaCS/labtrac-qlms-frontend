@@ -1,7 +1,9 @@
+// ./src/pages/LocationPage.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
+import Popup from '../../components/Popup/Popup'; // Import the Popup component
 import './locationPage.css';
 
 interface Location {
@@ -163,18 +165,16 @@ const LocationPage: React.FC = () => {
         </table>
 
         {showAddPopup && (
-          <div className="popup">
-            <h2>Add Location</h2>
+          <Popup title="Add Location" onClose={() => setShowAddPopup(false)}>
             <LocationForm
               onSubmit={(name, description) => handleAddLocation(name, description)}
               onCancel={() => setShowAddPopup(false)}
             />
-          </div>
+          </Popup>
         )}
 
         {showUpdatePopup && selectedLocation && (
-          <div className="popup">
-            <h2>Update Location</h2>
+          <Popup title="Update Location" onClose={() => setShowUpdatePopup(false)}>
             <LocationForm
               initialName={selectedLocation.name}
               initialDescription={selectedLocation.description}
@@ -183,7 +183,7 @@ const LocationPage: React.FC = () => {
               }
               onCancel={() => setShowUpdatePopup(false)}
             />
-          </div>
+          </Popup>
         )}
       </div>
     </Layout>
