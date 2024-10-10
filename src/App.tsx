@@ -10,7 +10,7 @@ import { isTokenExpired, decodeJwt } from './utils/jwtUtils';
 
 // **Import the new components**
 import SolidChemicalInventoryPage from './pages/solidInventoryItemPage/solidInventoryItemPage';
-import InventoryItemDetailsPage from './pages/inventoryItemDetailsPage/inventoryItemDetailsPage';
+import InventoryItemDetailsPage from './pages/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
 
 // Component to handle auto-logout functionality
 const AutoLogout: React.FC = () => {

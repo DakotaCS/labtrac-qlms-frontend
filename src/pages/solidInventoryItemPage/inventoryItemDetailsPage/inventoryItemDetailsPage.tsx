@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import Layout from '../../components/Layout/Layout';
-import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
-import Popup from '../../components/Popup/Popup';
+import Layout from '../../../components/Layout/Layout';
+import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
+import Popup from '../../../components/Popup/Popup';
 import { useParams, useNavigate } from 'react-router-dom';
 import './inventoryItemDetailsPage.css';
 
