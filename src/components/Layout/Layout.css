@@ -1,19 +1,20 @@
-/* ./src/components/Layout.css */
+/* ./src/components/Layout/Layout.css */
 
 /* Main layout container */
 .layout {
   display: flex;
   flex-direction: row;
-  min-height: calc(100vh - 50px); /* Adjust for footer height */
+  min-height: calc(100vh - 50px - 50px); /* Adjusted for header and footer heights */
 }
 
 /* Layout content area that takes up the remaining space next to the side menu */
 .layout-content {
   flex-grow: 1;
   padding: 20px;
+  padding-top: 50px; /* Added padding-top to account for the fixed header */
   transition: margin-left 0.3s ease; /* Smooth transition for margin */
   margin-left: 150px; /* Default margin for expanded side menu */
-  position: relative; /* Added position relative */
+  position: relative;
 }
 
 /* When the side menu is collapsed, reduce the margin to reflect the smaller width */

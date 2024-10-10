@@ -8,6 +8,10 @@ import UserManagementPage from './pages/userManagementPage/userManagementPage';
 import Logout from './components/Logout';
 import { isTokenExpired, decodeJwt } from './utils/jwtUtils';
 
+// **Import the new components**
+import SolidChemicalInventoryPage from './pages/solidInventoryItemPage/solidInventoryItemPage';
+import InventoryItemDetailsPage from './pages/inventoryItemDetailsPage/inventoryItemDetailsPage';
+
 // Component to handle auto-logout functionality
 const AutoLogout: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +21,7 @@ const AutoLogout: React.FC = () => {
 
     if (token) {
       const decodedToken = decodeJwt(token);
-      
+
       if (decodedToken && !isTokenExpired(token)) {
         const currentTime = Date.now() / 1000;
         const timeUntilExpiration = (decodedToken.exp - currentTime) * 1000;
@@ -38,7 +42,7 @@ const AutoLogout: React.FC = () => {
   }, [navigate]);
 
   return null; // This component doesn't render anything, just handles the auto-logout logic
-}
+};
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token'); // Check if the user is authenticated
@@ -48,49 +52,54 @@ function App() {
       <AutoLogout /> {/* Add the AutoLogout component inside the Router */}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+
         <Route
           path="/landing"
           element={
             isAuthenticated ? (
-                <LandingPage />
+              <LandingPage />
             ) : (
               <Navigate to="/login" />
             )
           }
         />
+
         {/* Location Route */}
         <Route
           path="/location"
           element={
             isAuthenticated ? (
-                <LocationPage />
+              <LocationPage />
             ) : (
               <Navigate to="/login" />
             )
           }
         />
+
         {/* Category Route */}
         <Route
           path="/category"
           element={
             isAuthenticated ? (
-                <CategoryPage />
+              <CategoryPage />
             ) : (
               <Navigate to="/login" />
             )
           }
         />
-        {/* Category Route */}
+
+        {/* User Management Route */}
         <Route
           path="/user"
           element={
             isAuthenticated ? (
-                <UserManagementPage />
+              <UserManagementPage />
             ) : (
               <Navigate to="/login" />
             )
           }
         />
+
         {/* Logout Route */}
         <Route
           path="/logout"
@@ -102,10 +111,35 @@ function App() {
             )
           }
         />
+
+        {/* **Add the Solid Chemical Inventory Route** */}
+        <Route
+          path="/inventory/solid"
+          element={
+            isAuthenticated ? (
+              <SolidChemicalInventoryPage />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        {/* **Add the Inventory Item Details Route** */}
+        <Route
+          path="/inventory/solid/:id"
+          element={
+            isAuthenticated ? (
+              <InventoryItemDetailsPage />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
         {/* Default route */}
         <Route
           path="/"
-          element={<Navigate to={isAuthenticated ? "/landing" : "/login"} />}
+          element={<Navigate to={isAuthenticated ? '/landing' : '/login'} />}
         />
       </Routes>
     </Router>
