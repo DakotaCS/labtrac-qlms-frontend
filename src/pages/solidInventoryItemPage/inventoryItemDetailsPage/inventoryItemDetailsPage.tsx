@@ -185,42 +185,19 @@ const InventoryItemDetailsPage: React.FC = () => {
 
         {itemDetails && (
           <div className="item-details">
-            <p>
-              <strong>Inventory Item ID:</strong> {itemDetails.inventoryItemId}
-            </p>
-            <p>
-              <strong>Name:</strong> {itemDetails.name}
-            </p>
-            <p>
-              <strong>Import Date:</strong> {itemDetails.importDate}
-            </p>
-            <p>
-              <strong>Status:</strong> {itemDetails.status}
-            </p>
-            <p>
-              <strong>Location ID:</strong> {itemDetails.location.id}
-            </p>
-            <p>
-              <strong>Location Name:</strong> {itemDetails.location.name}
-            </p>
-            <p>
-              <strong>Category ID:</strong> {itemDetails.category.id}
-            </p>
-            <p>
-              <strong>Category Name:</strong> {itemDetails.category.name}
-            </p>
-            <p>
-              <strong>Expiration Date:</strong> {itemDetails.expirationDate}
-            </p>
-            <p>
-              <strong>CAS Number:</strong> {itemDetails.casNumber}
-            </p>
-            <p>
-              <strong>Current Quantity:</strong> {itemDetails.currentQuantityAmount}
-            </p>
-            <p>
-              <strong>Original Quantity:</strong> {itemDetails.originalQuantityAmount}
-            </p>
+            <p><strong>Inventory Item ID:</strong> {itemDetails.inventoryItemId}</p>
+            <p><strong>Name:</strong> {itemDetails.name}</p>
+            <p><strong>Import Date:</strong> {itemDetails.importDate}</p>
+            <p><strong>Status:</strong> {itemDetails.status}</p>
+            <p><strong>Location ID:</strong> {itemDetails.location.id}</p>
+            <p><strong>Location Name:</strong> {itemDetails.location.name}</p>
+            <p><strong>Category ID:</strong> {itemDetails.category.id}</p>
+            <p><strong>Category Name:</strong> {itemDetails.category.name}</p>
+            <p><strong>Expiration Date:</strong> {itemDetails.expirationDate}</p>
+            <p><strong>CAS Number:</strong> {itemDetails.casNumber}</p>
+            <p><strong>Current Quantity:</strong> {itemDetails.currentQuantityAmount}</p>
+            <p><strong>Original Quantity:</strong> {itemDetails.originalQuantityAmount}</p>
+            <p><strong>Quantity Unit:</strong> {itemDetails.quantityUnit}</p>
           </div>
         )}
 
