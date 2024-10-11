@@ -1,9 +1,11 @@
 // ./src/pages/LocationPage.tsx
-import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
-import Popup from '../../components/Popup/Popup'; // Import the Popup component
+import Popup from '../../components/Popup/Popup';
+import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
 import './locationPage.css';
 
 interface Location {
@@ -21,34 +23,22 @@ const LocationPage: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<number | null>(null);
-
-  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchLocations();
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setActiveMenu(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   const fetchLocations = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('https://backend.labtrac.quantuslms.ca/api/system/location', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        'https://backend.labtrac.quantuslms.ca/api/system/location',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setLocations(response.data);
     } catch (err: any) {
       handleError(err);
@@ -56,7 +46,9 @@ const LocationPage: React.FC = () => {
   };
 
   const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${err.response?.data?.message || err.message}`;
+    const errorMessage = `Error: ${err.response?.status} - ${
+      err.response?.data?.message || err.message
+    }`;
     setError(errorMessage);
   };
 
@@ -79,7 +71,11 @@ const LocationPage: React.FC = () => {
     }
   };
 
-  const handleUpdateLocation = async (id: number, name: string, description: string) => {
+  const handleUpdateLocation = async (
+    id: number,
+    name: string,
+    description: string
+  ) => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
@@ -101,11 +97,14 @@ const LocationPage: React.FC = () => {
   const handleDeleteLocation = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/location/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `https://backend.labtrac.quantuslms.ca/api/system/location/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       fetchLocations();
     } catch (err: any) {
       handleError(err);
@@ -117,10 +116,6 @@ const LocationPage: React.FC = () => {
     setShowUpdatePopup(true);
   };
 
-  const toggleMenu = (id: number) => {
-    setActiveMenu(activeMenu === id ? null : id);
-  };
-
   return (
     <Layout>
       <div className={`location-page ${menuCollapsed ? 'collapsed' : ''}`}>
@@ -129,7 +124,10 @@ const LocationPage: React.FC = () => {
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
-        <button className="add-location-button" onClick={() => setShowAddPopup(true)}>
+        <button
+          className="add-location-button"
+          onClick={() => setShowAddPopup(true)}
+        >
           Add Location
         </button>
 
@@ -150,14 +148,19 @@ const LocationPage: React.FC = () => {
                 <td>{location.name}</td>
                 <td>{location.description}</td>
                 <td>{location.createTime}</td>
-                <td className="meatball-menu-container">
-                  <button className="meatball-menu" onClick={() => toggleMenu(location.id)}>⋮</button>
-                  {activeMenu === location.id && (
-                    <div className="meatball-menu-options" ref={menuRef}>
-                      <button className="menu-option" onClick={() => openUpdatePopup(location)}>Update</button>
-                      <button className="menu-option" onClick={() => handleDeleteLocation(location.id)}>Remove</button>
-                    </div>
-                  )}
+                <td>
+                  <MeatballMenu
+                    options={[
+                      {
+                        label: 'Update',
+                        onClick: () => openUpdatePopup(location),
+                      },
+                      {
+                        label: 'Remove',
+                        onClick: () => handleDeleteLocation(location.id),
+                      },
+                    ]}
+                  />
                 </td>
               </tr>
             ))}
@@ -167,14 +170,19 @@ const LocationPage: React.FC = () => {
         {showAddPopup && (
           <Popup title="Add Location" onClose={() => setShowAddPopup(false)}>
             <LocationForm
-              onSubmit={(name, description) => handleAddLocation(name, description)}
+              onSubmit={(name, description) =>
+                handleAddLocation(name, description)
+              }
               onCancel={() => setShowAddPopup(false)}
             />
           </Popup>
         )}
 
         {showUpdatePopup && selectedLocation && (
-          <Popup title="Update Location" onClose={() => setShowUpdatePopup(false)}>
+          <Popup
+            title="Update Location"
+            onClose={() => setShowUpdatePopup(false)}
+          >
             <LocationForm
               initialName={selectedLocation.name}
               initialDescription={selectedLocation.description}
@@ -209,7 +217,12 @@ const LocationForm: React.FC<LocationFormProps> = ({
   return (
     <div className="location-form">
       <label>Name</label>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
       <label>Description</label>
       <input
         type="text"

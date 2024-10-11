@@ -1,9 +1,11 @@
 // ./src/pages/SolidChemicalInventoryPage.tsx
-import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../components/Popup/Popup';
+import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
 import './solidInventoryItemPage.css';
 
 interface Location {
@@ -50,9 +52,6 @@ const SolidInventoryItemPage: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<SolidInventoryItem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<number | null>(null);
-
-  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchInventoryItems();
@@ -61,26 +60,17 @@ const SolidInventoryItemPage: React.FC = () => {
     fetchUnits();
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setActiveMenu(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   const fetchInventoryItems = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('https://backend.labtrac.quantuslms.ca/api/inventory/solid', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        'https://backend.labtrac.quantuslms.ca/api/inventory/solid',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setInventoryItems(response.data);
     } catch (err: any) {
       handleError(err);
@@ -90,11 +80,14 @@ const SolidInventoryItemPage: React.FC = () => {
   const fetchLocations = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('https://backend.labtrac.quantuslms.ca/api/system/location', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        'https://backend.labtrac.quantuslms.ca/api/system/location',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setLocations(response.data);
     } catch (err: any) {
       handleError(err);
@@ -104,11 +97,14 @@ const SolidInventoryItemPage: React.FC = () => {
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('https://backend.labtrac.quantuslms.ca/api/system/category', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        'https://backend.labtrac.quantuslms.ca/api/system/category',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setCategories(response.data);
     } catch (err: any) {
       handleError(err);
@@ -118,11 +114,14 @@ const SolidInventoryItemPage: React.FC = () => {
   const fetchUnits = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('https://backend.labtrac.quantuslms.ca/api/system/unit/solid', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        'https://backend.labtrac.quantuslms.ca/api/system/unit/solid',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setUnits(response.data);
     } catch (err: any) {
       handleError(err);
@@ -130,7 +129,9 @@ const SolidInventoryItemPage: React.FC = () => {
   };
 
   const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${err.response?.data?.message || err.message}`;
+    const errorMessage = `Error: ${err.response?.status} - ${
+      err.response?.data?.message || err.message
+    }`;
     setError(errorMessage);
   };
 
@@ -171,11 +172,15 @@ const SolidInventoryItemPage: React.FC = () => {
   const handleUpdateDetails = async (id: number, data: any) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`https://backend.labtrac.quantuslms.ca/api/inventory/solid/${id}`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.patch(
+        `https://backend.labtrac.quantuslms.ca/api/inventory/solid/${id}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       fetchInventoryItems();
       setShowUpdateDetailsPopup(false);
     } catch (err: any) {
@@ -186,11 +191,14 @@ const SolidInventoryItemPage: React.FC = () => {
   const handleDeleteItem = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/inventory/solid/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `https://backend.labtrac.quantuslms.ca/api/inventory/solid/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       fetchInventoryItems();
     } catch (err: any) {
       handleError(err);
@@ -209,10 +217,6 @@ const SolidInventoryItemPage: React.FC = () => {
 
   const viewDetailedInfo = (id: number) => {
     window.location.href = `/inventory/solid/${id}`;
-  };
-
-  const toggleMenu = (id: number) => {
-    setActiveMenu(activeMenu === id ? null : id);
   };
 
   return (
@@ -253,26 +257,27 @@ const SolidInventoryItemPage: React.FC = () => {
                 <td>{item.status}</td>
                 <td>{item.currentQuantityAmount}</td>
                 <td>{item.quantityUnit}</td>
-                <td className="meatball-menu-container">
-                  <button className="meatball-menu" onClick={() => toggleMenu(item.id)}>
-                    ⋮
-                  </button>
-                  {activeMenu === item.id && (
-                    <div className="meatball-menu-options" ref={menuRef}>
-                      <button className="menu-option" onClick={() => openUpdateQuantityPopup(item)}>
-                        Update Quantity
-                      </button>
-                      <button className="menu-option" onClick={() => openUpdateDetailsPopup(item)}>
-                        Update Details
-                      </button>
-                      <button className="menu-option" onClick={() => viewDetailedInfo(item.id)}>
-                        View Details
-                      </button>
-                      <button className="menu-option" onClick={() => handleDeleteItem(item.id)}>
-                        Delete Item
-                      </button>
-                    </div>
-                  )}
+                <td>
+                  <MeatballMenu
+                    options={[
+                      {
+                        label: 'Update Quantity',
+                        onClick: () => openUpdateQuantityPopup(item),
+                      },
+                      {
+                        label: 'Update Details',
+                        onClick: () => openUpdateDetailsPopup(item),
+                      },
+                      {
+                        label: 'View Details',
+                        onClick: () => viewDetailedInfo(item.id),
+                      },
+                      {
+                        label: 'Delete Item',
+                        onClick: () => handleDeleteItem(item.id),
+                      },
+                    ]}
+                  />
                 </td>
               </tr>
             ))}
@@ -292,16 +297,24 @@ const SolidInventoryItemPage: React.FC = () => {
         )}
 
         {showUpdateQuantityPopup && selectedItem && (
-          <Popup title="Update Quantity" onClose={() => setShowUpdateQuantityPopup(false)}>
+          <Popup
+            title="Update Quantity"
+            onClose={() => setShowUpdateQuantityPopup(false)}
+          >
             <UpdateQuantityForm
-              onSubmit={(quantityUsed) => handleUpdateQuantity(selectedItem.id, quantityUsed)}
+              onSubmit={(quantityUsed) =>
+                handleUpdateQuantity(selectedItem.id, quantityUsed)
+              }
               onCancel={() => setShowUpdateQuantityPopup(false)}
             />
           </Popup>
         )}
 
         {showUpdateDetailsPopup && selectedItem && (
-          <Popup title="Update Details" onClose={() => setShowUpdateDetailsPopup(false)}>
+          <Popup
+            title="Update Details"
+            onClose={() => setShowUpdateDetailsPopup(false)}
+          >
             <UpdateDetailsForm
               item={selectedItem}
               locations={locations}
@@ -325,9 +338,17 @@ interface InventoryFormProps {
   onCancel: () => void;
 }
 
-const InventoryForm: React.FC<InventoryFormProps> = ({ locations, categories, units, onSubmit, onCancel }) => {
+const InventoryForm: React.FC<InventoryFormProps> = ({
+  locations,
+  categories,
+  units,
+  onSubmit,
+  onCancel,
+}) => {
   const [name, setName] = useState('');
-  const [importDate, setImportDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [importDate, setImportDate] = useState<string>(
+    new Date().toISOString().split('T')[0]
+  );
   const [locationId, setLocationId] = useState<number>(locations[0]?.id || 0);
   const [categoryId, setCategoryId] = useState<number>(categories[0]?.id || 0);
   const [expirationDate, setExpirationDate] = useState<string>(() => {
@@ -360,10 +381,18 @@ const InventoryForm: React.FC<InventoryFormProps> = ({ locations, categories, un
       <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
 
       <label>Import Date</label>
-      <input type="date" value={importDate} onChange={(e) => setImportDate(e.target.value)} required />
+      <input
+        type="date"
+        value={importDate}
+        onChange={(e) => setImportDate(e.target.value)}
+        required
+      />
 
       <label>Storage Location</label>
-      <select value={locationId} onChange={(e) => setLocationId(Number(e.target.value))}>
+      <select
+        value={locationId}
+        onChange={(e) => setLocationId(Number(e.target.value))}
+      >
         {locations.map((loc) => (
           <option key={loc.id} value={loc.id}>
             {loc.name}
@@ -372,7 +401,10 @@ const InventoryForm: React.FC<InventoryFormProps> = ({ locations, categories, un
       </select>
 
       <label>Chemical Category</label>
-      <select value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))}>
+      <select
+        value={categoryId}
+        onChange={(e) => setCategoryId(Number(e.target.value))}
+      >
         {categories.map((cat) => (
           <option key={cat.id} value={cat.id}>
             {cat.name}
@@ -381,10 +413,19 @@ const InventoryForm: React.FC<InventoryFormProps> = ({ locations, categories, un
       </select>
 
       <label>Expiry Date</label>
-      <input type="date" value={expirationDate} onChange={(e) => setExpirationDate(e.target.value)} required />
+      <input
+        type="date"
+        value={expirationDate}
+        onChange={(e) => setExpirationDate(e.target.value)}
+        required
+      />
 
       <label>CAS Number</label>
-      <input type="text" value={casNumber} onChange={(e) => setCasNumber(e.target.value)} />
+      <input
+        type="text"
+        value={casNumber}
+        onChange={(e) => setCasNumber(e.target.value)}
+      />
 
       <label>Quantity</label>
       <input
@@ -395,7 +436,10 @@ const InventoryForm: React.FC<InventoryFormProps> = ({ locations, categories, un
       />
 
       <label>Units</label>
-      <select value={quantityUnit} onChange={(e) => setQuantityUnit(e.target.value)}>
+      <select
+        value={quantityUnit}
+        onChange={(e) => setQuantityUnit(e.target.value)}
+      >
         {units.map((unit) => (
           <option key={unit.quantityUnitCode} value={unit.quantityUnit}>
             {unit.quantityUnit}
@@ -417,7 +461,10 @@ interface UpdateQuantityFormProps {
   onCancel: () => void;
 }
 
-const UpdateQuantityForm: React.FC<UpdateQuantityFormProps> = ({ onSubmit, onCancel }) => {
+const UpdateQuantityForm: React.FC<UpdateQuantityFormProps> = ({
+  onSubmit,
+  onCancel,
+}) => {
   const [quantityUsed, setQuantityUsed] = useState<number>(0);
 
   return (
@@ -474,10 +521,17 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
       <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
 
       <label>CAS Number</label>
-      <input type="text" value={casNumber} onChange={(e) => setCasNumber(e.target.value)} />
+      <input
+        type="text"
+        value={casNumber}
+        onChange={(e) => setCasNumber(e.target.value)}
+      />
 
       <label>Storage Location</label>
-      <select value={locationId} onChange={(e) => setLocationId(Number(e.target.value))}>
+      <select
+        value={locationId}
+        onChange={(e) => setLocationId(Number(e.target.value))}
+      >
         {locations.map((loc) => (
           <option key={loc.id} value={loc.id}>
             {loc.name}
@@ -486,7 +540,10 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
       </select>
 
       <label>Chemical Category</label>
-      <select value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))}>
+      <select
+        value={categoryId}
+        onChange={(e) => setCategoryId(Number(e.target.value))}
+      >
         {categories.map((cat) => (
           <option key={cat.id} value={cat.id}>
             {cat.name}

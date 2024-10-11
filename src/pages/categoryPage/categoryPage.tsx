@@ -1,9 +1,11 @@
 // ./src/pages/CategoryPage.tsx
-import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
-import Popup from '../../components/Popup/Popup'; // Import the Popup component
+import Popup from '../../components/Popup/Popup';
+import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
 import './categoryPage.css';
 
 interface Category {
@@ -21,34 +23,22 @@ const CategoryPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<number | null>(null);
-
-  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setActiveMenu(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   const fetchCategories = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('https://backend.labtrac.quantuslms.ca/api/system/category', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        'https://backend.labtrac.quantuslms.ca/api/system/category',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setCategories(response.data);
     } catch (err: any) {
       handleError(err);
@@ -56,7 +46,9 @@ const CategoryPage: React.FC = () => {
   };
 
   const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${err.response?.data?.message || err.message}`;
+    const errorMessage = `Error: ${err.response?.status} - ${
+      err.response?.data?.message || err.message
+    }`;
     setError(errorMessage);
   };
 
@@ -79,7 +71,11 @@ const CategoryPage: React.FC = () => {
     }
   };
 
-  const handleUpdateCategory = async (id: number, name: string, description: string) => {
+  const handleUpdateCategory = async (
+    id: number,
+    name: string,
+    description: string
+  ) => {
     try {
       const token = localStorage.getItem('token');
       await axios.patch(
@@ -101,11 +97,14 @@ const CategoryPage: React.FC = () => {
   const handleDeleteCategory = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`https://backend.labtrac.quantuslms.ca/api/system/category/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `https://backend.labtrac.quantuslms.ca/api/system/category/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       fetchCategories();
     } catch (err: any) {
       handleError(err);
@@ -117,10 +116,6 @@ const CategoryPage: React.FC = () => {
     setShowUpdatePopup(true);
   };
 
-  const toggleMenu = (id: number) => {
-    setActiveMenu(activeMenu === id ? null : id);
-  };
-
   return (
     <Layout>
       <div className={`category-page ${menuCollapsed ? 'collapsed' : ''}`}>
@@ -129,7 +124,10 @@ const CategoryPage: React.FC = () => {
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
-        <button className="add-category-button" onClick={() => setShowAddPopup(true)}>
+        <button
+          className="add-category-button"
+          onClick={() => setShowAddPopup(true)}
+        >
           Add Category
         </button>
 
@@ -150,14 +148,19 @@ const CategoryPage: React.FC = () => {
                 <td>{category.name}</td>
                 <td>{category.description}</td>
                 <td>{category.createTime}</td>
-                <td className="meatball-menu-container">
-                  <button className="meatball-menu" onClick={() => toggleMenu(category.id)}>⋮</button>
-                  {activeMenu === category.id && (
-                    <div className="meatball-menu-options" ref={menuRef}>
-                      <button className="menu-option" onClick={() => openUpdatePopup(category)}>Update</button>
-                      <button className="menu-option" onClick={() => handleDeleteCategory(category.id)}>Remove</button>
-                    </div>
-                  )}
+                <td>
+                  <MeatballMenu
+                    options={[
+                      {
+                        label: 'Update',
+                        onClick: () => openUpdatePopup(category),
+                      },
+                      {
+                        label: 'Remove',
+                        onClick: () => handleDeleteCategory(category.id),
+                      },
+                    ]}
+                  />
                 </td>
               </tr>
             ))}
@@ -167,14 +170,19 @@ const CategoryPage: React.FC = () => {
         {showAddPopup && (
           <Popup title="Add Category" onClose={() => setShowAddPopup(false)}>
             <CategoryForm
-              onSubmit={(name, description) => handleAddCategory(name, description)}
+              onSubmit={(name, description) =>
+                handleAddCategory(name, description)
+              }
               onCancel={() => setShowAddPopup(false)}
             />
           </Popup>
         )}
 
         {showUpdatePopup && selectedCategory && (
-          <Popup title="Update Category" onClose={() => setShowUpdatePopup(false)}>
+          <Popup
+            title="Update Category"
+            onClose={() => setShowUpdatePopup(false)}
+          >
             <CategoryForm
               initialName={selectedCategory.name}
               initialDescription={selectedCategory.description}
@@ -209,7 +217,12 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   return (
     <div className="category-form">
       <label>Name</label>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+      />
       <label>Description</label>
       <input
         type="text"

@@ -1,10 +1,11 @@
 // ./src/pages/InventoryItemDetailsPage.tsx
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../../components/Popup/Popup';
+import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
 import { useParams, useNavigate } from 'react-router-dom';
 import './inventoryItemDetailsPage.css';
 
@@ -55,27 +56,10 @@ const InventoryItemDetailsPage: React.FC = () => {
   const [showUpdateNotePopup, setShowUpdateNotePopup] = useState<boolean>(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
-  // Introduce activeMenu state
-  const [activeMenu, setActiveMenu] = useState<number | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     fetchItemDetails();
     fetchNotes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Handle clicks outside the menu to close it
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setActiveMenu(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
   }, []);
 
   const fetchItemDetails = async () => {
@@ -155,7 +139,6 @@ const InventoryItemDetailsPage: React.FC = () => {
       );
       fetchNotes();
       setShowUpdateNotePopup(false);
-      setActiveMenu(null);
     } catch (err: any) {
       handleError(err);
     }
@@ -173,7 +156,6 @@ const InventoryItemDetailsPage: React.FC = () => {
         }
       );
       fetchNotes();
-      setActiveMenu(null);
     } catch (err: any) {
       handleError(err);
     }
@@ -182,12 +164,6 @@ const InventoryItemDetailsPage: React.FC = () => {
   const openUpdateNotePopup = (note: Note) => {
     setSelectedNote(note);
     setShowUpdateNotePopup(true);
-    setActiveMenu(null);
-  };
-
-  // Toggle menu function
-  const toggleMenu = (id: number) => {
-    setActiveMenu(activeMenu === id ? null : id);
   };
 
   const navigate = useNavigate();
@@ -263,26 +239,19 @@ const InventoryItemDetailsPage: React.FC = () => {
             {notes.map((note) => (
               <tr key={note.id}>
                 <td>{note.content}</td>
-                <td className="meatball-menu-container">
-                  <button className="meatball-menu" onClick={() => toggleMenu(note.id)}>
-                    ⋮
-                  </button>
-                  {activeMenu === note.id && (
-                    <div className="meatball-menu-options" ref={menuRef}>
-                      <button
-                        className="menu-option"
-                        onClick={() => openUpdateNotePopup(note)}
-                      >
-                        Update Note
-                      </button>
-                      <button
-                        className="menu-option"
-                        onClick={() => handleDeleteNote(note.id)}
-                      >
-                        Delete Note
-                      </button>
-                    </div>
-                  )}
+                <td>
+                  <MeatballMenu
+                    options={[
+                      {
+                        label: 'Update Note',
+                        onClick: () => openUpdateNotePopup(note),
+                      },
+                      {
+                        label: 'Delete Note',
+                        onClick: () => handleDeleteNote(note.id),
+                      },
+                    ]}
+                  />
                 </td>
               </tr>
             ))}
