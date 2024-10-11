@@ -175,14 +175,16 @@ const InventoryItemDetailsPage: React.FC = () => {
   return (
     <Layout>
       <div className="inventory-item-details-page">
-        <button className="back-button" onClick={goBack}>
-          ← Back
-        </button>
-        <h1 className="page-title">Inventory Item Details</h1>
+        <div className="header-row">
+          <button className="back-button" onClick={goBack}>
+            ←
+          </button>
+          <h1 className="page-title">Inventory Item Details</h1>
+        </div>
         <hr className="page-divider" />
-
+  
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
-
+  
         {itemDetails && (
           <div className="item-details">
             <p><strong>Inventory Item ID:</strong> {itemDetails.inventoryItemId}</p>
@@ -200,11 +202,11 @@ const InventoryItemDetailsPage: React.FC = () => {
             <p><strong>Quantity Unit:</strong> {itemDetails.quantityUnit}</p>
           </div>
         )}
-
+  
         <button className="add-note-button" onClick={() => setShowAddNotePopup(true)}>
           Add Note
         </button>
-
+  
         <table className="notes-table">
           <thead>
             <tr>
@@ -234,7 +236,7 @@ const InventoryItemDetailsPage: React.FC = () => {
             ))}
           </tbody>
         </table>
-
+  
         {showAddNotePopup && (
           <Popup title="Add Note" onClose={() => setShowAddNotePopup(false)}>
             <NoteForm
@@ -243,7 +245,7 @@ const InventoryItemDetailsPage: React.FC = () => {
             />
           </Popup>
         )}
-
+  
         {showUpdateNotePopup && selectedNote && (
           <Popup title="Update Note" onClose={() => setShowUpdateNotePopup(false)}>
             <NoteForm
@@ -253,10 +255,6 @@ const InventoryItemDetailsPage: React.FC = () => {
             />
           </Popup>
         )}
-
-        <button className="back-button" onClick={goBack}>
-          Back
-        </button>
       </div>
     </Layout>
   );
