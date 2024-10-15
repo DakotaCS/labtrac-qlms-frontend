@@ -34,10 +34,27 @@
   
   .item-details {
     margin-left: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 10px 20px; /* Space between items */
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
   }
   
   .item-details p {
     margin: 5px 0;
+    padding: 5px;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  .item-details p strong {
+    display: inline-block;
+    width: 140px; /* Ensure labels have a consistent width */
+    font-weight: bold;
   }
   
   .add-note-button {
