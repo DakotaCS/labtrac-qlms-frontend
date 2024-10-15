@@ -7,6 +7,7 @@ import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../components/Popup/Popup';
 import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
 import './solidInventoryItemPage.css';
+import CustomDropdown from '../../components/CustomDropdown/CustomDropdown';
 
 interface Location {
   id: number;
@@ -389,28 +390,20 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
       />
 
       <label>Storage Location</label>
-      <select
+      <CustomDropdown
+        options={locations.map((loc) => ({ value: loc.id, label: loc.name }))}
         value={locationId}
-        onChange={(e) => setLocationId(Number(e.target.value))}
-      >
-        {locations.map((loc) => (
-          <option key={loc.id} value={loc.id}>
-            {loc.name}
-          </option>
-        ))}
-      </select>
+        onChange={(value) => setLocationId(value)}
+        placeholder="Select Location"
+      />
 
       <label>Chemical Category</label>
-      <select
+      <CustomDropdown
+        options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
         value={categoryId}
-        onChange={(e) => setCategoryId(Number(e.target.value))}
-      >
-        {categories.map((cat) => (
-          <option key={cat.id} value={cat.id}>
-            {cat.name}
-          </option>
-        ))}
-      </select>
+        onChange={(value) => setCategoryId(value)}
+        placeholder="Select Category"
+      />
 
       <label>Expiry Date</label>
       <input
@@ -436,16 +429,15 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
       />
 
       <label>Units</label>
-      <select
+      <CustomDropdown
+        options={units.map((unit) => ({
+          value: unit.quantityUnit,
+          label: unit.quantityUnit,
+        }))}
         value={quantityUnit}
-        onChange={(e) => setQuantityUnit(e.target.value)}
-      >
-        {units.map((unit) => (
-          <option key={unit.quantityUnitCode} value={unit.quantityUnit}>
-            {unit.quantityUnit}
-          </option>
-        ))}
-      </select>
+        onChange={(value) => setQuantityUnit(value)}
+        placeholder="Select Unit"
+      />
 
       <div className="form-actions">
         <button onClick={handleSubmit}>Submit</button>
@@ -528,28 +520,20 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
       />
 
       <label>Storage Location</label>
-      <select
+      <CustomDropdown
+        options={locations.map((loc) => ({ value: loc.id, label: loc.name }))}
         value={locationId}
-        onChange={(e) => setLocationId(Number(e.target.value))}
-      >
-        {locations.map((loc) => (
-          <option key={loc.id} value={loc.id}>
-            {loc.name}
-          </option>
-        ))}
-      </select>
+        onChange={(value) => setLocationId(value)}
+        placeholder="Select Location"
+      />
 
       <label>Chemical Category</label>
-      <select
+      <CustomDropdown
+        options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
         value={categoryId}
-        onChange={(e) => setCategoryId(Number(e.target.value))}
-      >
-        {categories.map((cat) => (
-          <option key={cat.id} value={cat.id}>
-            {cat.name}
-          </option>
-        ))}
-      </select>
+        onChange={(value) => setCategoryId(value)}
+        placeholder="Select Category"
+      />
 
       <div className="form-actions">
         <button onClick={handleSubmit}>Submit</button>
