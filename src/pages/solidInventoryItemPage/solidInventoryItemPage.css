@@ -21,9 +21,21 @@
   
   .button-container {
     display: flex;
+    align-items: center;
     margin-left: 20px;
     margin-top: 10px;
     margin-bottom: 20px;
+  }
+  
+  .button-group {
+    display: flex;
+    align-items: center;
+  }
+  
+  .add-inventory-button,
+  .bulk-print-button,
+  .search-bar-container {
+    margin-right: 10px;
   }
   
   .add-inventory-button,
@@ -36,8 +48,25 @@
     cursor: pointer;
   }
   
-  .add-inventory-button {
-    margin-right: 10px;
+  /* Adjusted styles for the search bar */
+  .search-bar-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-input {
+    width: 400px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+  }
+  
+  .search-filter-dropdown {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    background-color: #fff;
   }
   
   .inventory-table {

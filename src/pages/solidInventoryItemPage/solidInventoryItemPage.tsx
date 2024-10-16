@@ -8,6 +8,7 @@ import Popup from '../../components/Popup/Popup';
 import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
 import './solidInventoryItemPage.css';
 import CustomDropdown from '../../components/CustomDropdown/CustomDropdown';
+import SearchBarWithFilter from '../../components/SearchBarWithFilter/SearchBarWithFilter';
 
 interface Location {
   id: number;
@@ -54,6 +55,29 @@ const SolidInventoryItemPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
 
+  const columns = [
+    'Inventory Item',
+    'Name',
+    'Location Name',
+    'Category Name',
+    'Status',
+    'Current Quantity',
+    'Unit',
+  ];
+
+  const columnMap: { [key: string]: string } = {
+    'Inventory Item': 'Inventory Item',
+    'Name': 'Name',
+    'Location Name': 'Location Name',
+    'Category Name': 'Category Name',
+    'Status': 'Status',
+    'Current Quantity': 'Current Quantity',
+    'Unit': 'Unit',
+  };
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchColumn, setSearchColumn] = useState('Inventory Item');
+
   useEffect(() => {
     fetchInventoryItems();
     fetchLocations();
@@ -61,18 +85,38 @@ const SolidInventoryItemPage: React.FC = () => {
     fetchUnits();
   }, []);
 
-  const fetchInventoryItems = async () => {
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchInventoryItems(searchColumn, searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, searchColumn]);
+
+  const fetchInventoryItems = async (
+    searchColumn = 'inventoryItemId',
+    searchValue = '',
+    page = 0,
+    size = 10
+  ) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(
-        'https://backend.labtrac.quantuslms.ca/api/inventory/solid',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+  
+      const url = new URL(
+        'https://backend.labtrac.quantuslms.ca/api/inventory/solid/pageable'
       );
-      setInventoryItems(response.data);
+  
+      url.searchParams.append('searchColumn', columnMap[searchColumn]);
+      url.searchParams.append('searchValue', searchValue);
+      url.searchParams.append('page', page.toString());
+      url.searchParams.append('size', size.toString());
+  
+      const response = await axios.get(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setInventoryItems(response.data.content);
     } catch (err: any) {
       handleError(err);
     }
@@ -229,11 +273,18 @@ const SolidInventoryItemPage: React.FC = () => {
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
         <div className="button-container">
-          <button className="add-inventory-button" onClick={() => setShowAddPopup(true)}>
-            Add Inventory
-          </button>
-          <button className="bulk-print-button">Bulk Print</button>
-        </div>
+  <div className="button-group">
+    <button className="add-inventory-button" onClick={() => setShowAddPopup(true)}>
+      Add Inventory
+    </button>
+    <button className="bulk-print-button">Bulk Print</button>
+    <SearchBarWithFilter
+      columns={columns}
+      onSearch={(term) => setSearchTerm(term)}
+      onFilterChange={(filter) => setSearchColumn(filter)}
+    />
+  </div>
+</div>
 
         <table className="inventory-table">
           <thead>
