@@ -1,0 +1,21 @@
+.search-bar-container {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* Aligns the search bar to the right */
+  }
+  
+  .search-input {
+    width: 400px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+  }
+  
+  .search-filter-dropdown {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-left: none; /* Removes double border between input and dropdown */
+    border-radius: 0 4px 4px 0;
+    background-color: #fff;
+  }
+  
