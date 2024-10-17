@@ -1,16 +1,15 @@
-// ./src/pages/LocationPage.tsx
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../components/Popup/Popup';
 import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
+import SearchBarWithFilter from '../../components/SearchBarWithFilter/SearchBarWithFilter';
 import './locationPage.css';
 
 interface Location {
   id: number;
-  locationID: string;
+  locationId: string; // Adjusted to match the API data
   name: string;
   description: string;
   createTime: string;
@@ -18,15 +17,44 @@ interface Location {
 
 const LocationPage: React.FC = () => {
   const [locations, setLocations] = useState<Location[]>([]);
+  const [filteredLocations, setFilteredLocations] = useState<Location[]>([]);
   const [showAddPopup, setShowAddPopup] = useState<boolean>(false);
   const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
 
+  const columns = ['Location ID', 'Name', 'Description', 'Date Created'];
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchColumn, setSearchColumn] = useState(columns[0]); // Default to 'Location ID'
+
   useEffect(() => {
     fetchLocations();
   }, []);
+
+  useEffect(() => {
+    const lowercasedFilter = searchTerm.toLowerCase();
+    const filteredData = locations.filter((item) => {
+      const field = searchColumnToField(searchColumn);
+      const value = item[field];
+      if (value) {
+        return value.toString().toLowerCase().includes(lowercasedFilter);
+      }
+      return false;
+    });
+    setFilteredLocations(filteredData);
+  }, [locations, searchTerm, searchColumn]);
+
+  const searchColumnToField = (column: string): keyof Location => {
+    const columnMap: { [key: string]: keyof Location } = {
+      'Location ID': 'locationId', // Adjusted to match the interface
+      'Name': 'name',
+      'Description': 'description',
+      'Date Created': 'createTime',
+    };
+    return columnMap[column];
+  };
 
   const fetchLocations = async () => {
     try {
@@ -39,7 +67,9 @@ const LocationPage: React.FC = () => {
           },
         }
       );
+      console.log('API Response Data:', response.data); // Log the data
       setLocations(response.data);
+      setFilteredLocations(response.data); // Initialize filteredLocations
     } catch (err: any) {
       handleError(err);
     }
@@ -124,12 +154,21 @@ const LocationPage: React.FC = () => {
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
-        <button
-          className="add-location-button"
-          onClick={() => setShowAddPopup(true)}
-        >
-          Add Location
-        </button>
+        <div className="button-container">
+          <div className="button-group">
+            <button
+              className="add-location-button"
+              onClick={() => setShowAddPopup(true)}
+            >
+              Add Location
+            </button>
+            <SearchBarWithFilter
+              columns={columns}
+              onSearch={(term) => setSearchTerm(term)}
+              onFilterChange={(filter) => setSearchColumn(filter)}
+            />
+          </div>
+        </div>
 
         <table className="location-table">
           <thead>
@@ -142,9 +181,9 @@ const LocationPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {locations.map((location) => (
+            {filteredLocations.map((location) => (
               <tr key={location.id}>
-                <td>{location.locationID}</td>
+                <td>{location.locationId}</td> {/* Adjusted property name */}
                 <td>{location.name}</td>
                 <td>{location.description}</td>
                 <td>{location.createTime}</td>
