@@ -6,6 +6,7 @@ import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../components/Popup/Popup';
 import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
+import SearchBarWithFilter from '../../components/SearchBarWithFilter/SearchBarWithFilter';
 import './categoryPage.css';
 
 interface Category {
@@ -18,15 +19,44 @@ interface Category {
 
 const CategoryPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [showAddPopup, setShowAddPopup] = useState<boolean>(false);
   const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
 
+  const columns = ['Category ID', 'Name', 'Description', 'Date Created'];
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchColumn, setSearchColumn] = useState(columns[0]); // Now defaults to 'Category ID'
+
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    const lowercasedFilter = searchTerm.toLowerCase();
+    const filteredData = categories.filter((item) => {
+      const field = searchColumnToField(searchColumn);
+      const value = item[field];
+      if (value) {
+        return value.toString().toLowerCase().includes(lowercasedFilter);
+      }
+      return false;
+    });
+    setFilteredCategories(filteredData);
+  }, [categories, searchTerm, searchColumn]);
+
+  const searchColumnToField = (column: string): keyof Category => {
+    const columnMap: { [key: string]: keyof Category } = {
+      'Category ID': 'categoryId',
+      'Name': 'name',
+      'Description': 'description',
+      'Date Created': 'createTime',
+    };
+    return columnMap[column];
+  };
 
   const fetchCategories = async () => {
     try {
@@ -40,6 +70,7 @@ const CategoryPage: React.FC = () => {
         }
       );
       setCategories(response.data);
+      setFilteredCategories(response.data); // Initialize filteredCategories
     } catch (err: any) {
       handleError(err);
     }
@@ -124,12 +155,21 @@ const CategoryPage: React.FC = () => {
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
-        <button
-          className="add-category-button"
-          onClick={() => setShowAddPopup(true)}
-        >
-          Add Category
-        </button>
+        <div className="button-container">
+          <div className="button-group">
+            <button
+              className="add-category-button"
+              onClick={() => setShowAddPopup(true)}
+            >
+              Add Category
+            </button>
+            <SearchBarWithFilter
+              columns={columns}
+              onSearch={(term) => setSearchTerm(term)}
+              onFilterChange={(filter) => setSearchColumn(filter)}
+            />
+          </div>
+        </div>
 
         <table className="category-table">
           <thead>
@@ -142,7 +182,7 @@ const CategoryPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {categories.map((category) => (
+            {filteredCategories.map((category) => (
               <tr key={category.id}>
                 <td>{category.categoryId}</td>
                 <td>{category.name}</td>
