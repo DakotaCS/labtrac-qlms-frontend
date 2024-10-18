@@ -1,7 +1,7 @@
 // ./src/pages/UserManagementPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../config/axiosConfig'; // Import the configured Axios instance
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../components/Popup/Popup';
@@ -34,15 +34,7 @@ const UserManagementPage: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        'https://backend.labtrac.quantuslms.ca/api/system/user',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get('/system/user');
       setUsers(response.data);
     } catch (err: any) {
       handleError(err);
@@ -58,20 +50,11 @@ const UserManagementPage: React.FC = () => {
 
   const handleAddUser = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'https://backend.labtrac.quantuslms.ca/api/system/user',
-        {
-          userName: newUsername,
-          password: newPassword,
-          role: newRole.toUpperCase(),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.post('/system/user', {
+        userName: newUsername,
+        password: newPassword,
+        role: newRole.toUpperCase(),
+      });
       fetchUsers();
       setShowDialog(null);
       setNewUsername('');
@@ -84,12 +67,7 @@ const UserManagementPage: React.FC = () => {
 
   const handleUpdateUser = async (url: string, body: object) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(url, body, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await apiClient.patch(url, body);
       fetchUsers();
       setShowDialog(null);
     } catch (err: any) {
@@ -99,15 +77,7 @@ const UserManagementPage: React.FC = () => {
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(
-        `https://backend.labtrac.quantuslms.ca/api/system/user/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.delete(`/system/user/${userId}`);
       fetchUsers();
     } catch (err: any) {
       handleError(err);
@@ -133,28 +103,24 @@ const UserManagementPage: React.FC = () => {
 
     switch (showDialog) {
       case 'username':
-        handleUpdateUser(
-          `https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/username`,
-          { userName: newValue }
-        );
+        handleUpdateUser(`/system/user/${selectedUser.id}/username`, {
+          userName: newValue,
+        });
         break;
       case 'password':
-        handleUpdateUser(
-          `https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/password`,
-          { password: newValue }
-        );
+        handleUpdateUser(`/system/user/${selectedUser.id}/password`, {
+          password: newValue,
+        });
         break;
       case 'role':
-        handleUpdateUser(
-          `https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/user-role`,
-          { role: newValue.toUpperCase() }
-        );
+        handleUpdateUser(`/system/user/${selectedUser.id}/user-role`, {
+          role: newValue.toUpperCase(),
+        });
         break;
       case 'status':
-        handleUpdateUser(
-          `https://backend.labtrac.quantuslms.ca/api/system/user/${selectedUser.id}/status`,
-          { userStatus: newValue }
-        );
+        handleUpdateUser(`/system/user/${selectedUser.id}/status`, {
+          userStatus: newValue,
+        });
         break;
       default:
         break;
@@ -247,10 +213,7 @@ const UserManagementPage: React.FC = () => {
                 required
               />
               <label>Role</label>
-              <select
-                value={newRole}
-                onChange={(e) => setNewRole(e.target.value)}
-              >
+              <select value={newRole} onChange={(e) => setNewRole(e.target.value)}>
                 <option value="ADMIN">Admin</option>
                 <option value="TECH">Tech</option>
                 <option value="MANAGER">Manager</option>

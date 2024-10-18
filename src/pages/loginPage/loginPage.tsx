@@ -5,6 +5,7 @@ import './loginPage.css';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import logo from '../../assets/logo.png';
+import apiClient from '../../config/axiosConfig';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -15,8 +16,8 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // 1. Call login API
-      const loginResponse = await axios.post('https://backend.labtrac.quantuslms.ca/api/login', {
+      // Use apiClient instead of axios
+      const loginResponse = await apiClient.post('/login', {
         username,
         password,
       });
@@ -24,17 +25,12 @@ const LoginPage: React.FC = () => {
       const { jwt } = loginResponse.data;
       localStorage.setItem('token', jwt); // Store JWT token
 
-      // 2. Call the additional endpoint to retrieve user ID
-      const userDetailsResponse = await axios.get('https://backend.labtrac.quantuslms.ca/api/system/user/current-user', {
-        headers: {
-          Authorization: `Bearer ${jwt}`, // Send the token in the Authorization header
-        },
-      });
+      // Retrieve user ID without sending the token manually
+      const userDetailsResponse = await apiClient.get('/system/user/current-user');
 
       const { id } = userDetailsResponse.data;
-      localStorage.setItem('userId',  id); // Store user ID in localStorage
+      localStorage.setItem('userId', id); // Store user ID in localStorage
 
-      // 3. Redirect to the landing page
       navigate('/landing');
     } catch (err) {
       setError('Invalid username or password');

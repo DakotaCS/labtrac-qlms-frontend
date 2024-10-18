@@ -1,5 +1,7 @@
+// ./src/pages/locationPage/locationPage.tsx
+
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../config/axiosConfig'; // Import the configured Axios instance
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../components/Popup/Popup';
@@ -9,7 +11,7 @@ import './locationPage.css';
 
 interface Location {
   id: number;
-  locationId: string; // Adjusted to match the API data
+  locationId: string;
   name: string;
   description: string;
   createTime: string;
@@ -48,9 +50,9 @@ const LocationPage: React.FC = () => {
 
   const searchColumnToField = (column: string): keyof Location => {
     const columnMap: { [key: string]: keyof Location } = {
-      'Location ID': 'locationId', // Adjusted to match the interface
-      'Name': 'name',
-      'Description': 'description',
+      'Location ID': 'locationId',
+      Name: 'name',
+      Description: 'description',
       'Date Created': 'createTime',
     };
     return columnMap[column];
@@ -58,18 +60,10 @@ const LocationPage: React.FC = () => {
 
   const fetchLocations = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        'https://backend.labtrac.quantuslms.ca/api/system/location',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log('API Response Data:', response.data); // Log the data
+      const response = await apiClient.get('/system/location');
+      console.log('API Response Data:', response.data);
       setLocations(response.data);
-      setFilteredLocations(response.data); // Initialize filteredLocations
+      setFilteredLocations(response.data);
     } catch (err: any) {
       handleError(err);
     }
@@ -84,16 +78,7 @@ const LocationPage: React.FC = () => {
 
   const handleAddLocation = async (name: string, description: string) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'https://backend.labtrac.quantuslms.ca/api/system/location',
-        { name, description },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.post('/system/location', { name, description });
       fetchLocations();
       setShowAddPopup(false);
     } catch (err: any) {
@@ -107,16 +92,7 @@ const LocationPage: React.FC = () => {
     description: string
   ) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/system/location/${id}`,
-        { name, description },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.patch(`/system/location/${id}`, { name, description });
       fetchLocations();
       setShowUpdatePopup(false);
     } catch (err: any) {
@@ -126,15 +102,7 @@ const LocationPage: React.FC = () => {
 
   const handleDeleteLocation = async (id: number) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(
-        `https://backend.labtrac.quantuslms.ca/api/system/location/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.delete(`/system/location/${id}`);
       fetchLocations();
     } catch (err: any) {
       handleError(err);
@@ -183,7 +151,7 @@ const LocationPage: React.FC = () => {
           <tbody>
             {filteredLocations.map((location) => (
               <tr key={location.id}>
-                <td>{location.locationId}</td> {/* Adjusted property name */}
+                <td>{location.locationId}</td>
                 <td>{location.name}</td>
                 <td>{location.description}</td>
                 <td>{location.createTime}</td>

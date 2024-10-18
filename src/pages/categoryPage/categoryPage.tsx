@@ -1,7 +1,7 @@
 // ./src/pages/CategoryPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../config/axiosConfig'; // Import the configured Axios instance
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../components/Popup/Popup';
@@ -29,7 +29,7 @@ const CategoryPage: React.FC = () => {
   const columns = ['Category ID', 'Name', 'Description', 'Date Created'];
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchColumn, setSearchColumn] = useState(columns[0]); // Now defaults to 'Category ID'
+  const [searchColumn, setSearchColumn] = useState(columns[0]); // Defaults to 'Category ID'
 
   useEffect(() => {
     fetchCategories();
@@ -51,8 +51,8 @@ const CategoryPage: React.FC = () => {
   const searchColumnToField = (column: string): keyof Category => {
     const columnMap: { [key: string]: keyof Category } = {
       'Category ID': 'categoryId',
-      'Name': 'name',
-      'Description': 'description',
+      Name: 'name',
+      Description: 'description',
       'Date Created': 'createTime',
     };
     return columnMap[column];
@@ -60,15 +60,7 @@ const CategoryPage: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        'https://backend.labtrac.quantuslms.ca/api/system/category',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get('/system/category');
       setCategories(response.data);
       setFilteredCategories(response.data); // Initialize filteredCategories
     } catch (err: any) {
@@ -85,16 +77,7 @@ const CategoryPage: React.FC = () => {
 
   const handleAddCategory = async (name: string, description: string) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'https://backend.labtrac.quantuslms.ca/api/system/category',
-        { name, description },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.post('/system/category', { name, description });
       fetchCategories();
       setShowAddPopup(false);
     } catch (err: any) {
@@ -108,16 +91,7 @@ const CategoryPage: React.FC = () => {
     description: string
   ) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/system/category/${id}`,
-        { name, description },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.patch(`/system/category/${id}`, { name, description });
       fetchCategories();
       setShowUpdatePopup(false);
     } catch (err: any) {
@@ -127,15 +101,7 @@ const CategoryPage: React.FC = () => {
 
   const handleDeleteCategory = async (id: number) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(
-        `https://backend.labtrac.quantuslms.ca/api/system/category/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.delete(`/system/category/${id}`);
       fetchCategories();
     } catch (err: any) {
       handleError(err);

@@ -1,7 +1,7 @@
-// ./src/pages/SolidChemicalInventoryPage.tsx
+// ./src/pages/solidInventoryItemPage/solidInventoryItemPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../config/axiosConfig';
 import Layout from '../../components/Layout/Layout';
 import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../components/Popup/Popup';
@@ -43,7 +43,7 @@ interface SolidInventoryItem {
   casNumber: string;
 }
 
-const SolidInventoryItemPage: React.FC = () => {
+const SolidChemicalInventoryPage: React.FC = () => {
   const [inventoryItems, setInventoryItems] = useState<SolidInventoryItem[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -66,13 +66,13 @@ const SolidInventoryItemPage: React.FC = () => {
   ];
 
   const columnMap: { [key: string]: string } = {
-    'Inventory Item': 'Inventory Item',
-    'Name': 'Name',
-    'Location Name': 'Location Name',
-    'Category Name': 'Category Name',
-    'Status': 'Status',
-    'Current Quantity': 'Current Quantity',
-    'Unit': 'Unit',
+    'Inventory Item': 'inventoryItemId',
+    Name: 'name',
+    'Location Name': 'locationName',
+    'Category Name': 'categoryName',
+    Status: 'status',
+    'Current Quantity': 'currentQuantityAmount',
+    Unit: 'quantityUnit',
   };
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -100,22 +100,13 @@ const SolidInventoryItemPage: React.FC = () => {
     size = 10
   ) => {
     try {
-      const token = localStorage.getItem('token');
-  
-      const url = new URL(
-        'https://backend.labtrac.quantuslms.ca/api/inventory/solid/pageable'
-      );
-  
+      const url = new URL('/inventory/solid/pageable', apiClient.defaults.baseURL);
       url.searchParams.append('searchColumn', columnMap[searchColumn]);
       url.searchParams.append('searchValue', searchValue);
       url.searchParams.append('page', page.toString());
       url.searchParams.append('size', size.toString());
-  
-      const response = await axios.get(url.toString(), {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+
+      const response = await apiClient.get(url.pathname + url.search);
       setInventoryItems(response.data.content);
     } catch (err: any) {
       handleError(err);
@@ -124,15 +115,7 @@ const SolidInventoryItemPage: React.FC = () => {
 
   const fetchLocations = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        'https://backend.labtrac.quantuslms.ca/api/system/location',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get('/system/location');
       setLocations(response.data);
     } catch (err: any) {
       handleError(err);
@@ -141,15 +124,7 @@ const SolidInventoryItemPage: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        'https://backend.labtrac.quantuslms.ca/api/system/category',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get('/system/category');
       setCategories(response.data);
     } catch (err: any) {
       handleError(err);
@@ -158,15 +133,7 @@ const SolidInventoryItemPage: React.FC = () => {
 
   const fetchUnits = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        'https://backend.labtrac.quantuslms.ca/api/system/unit/solid',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get('/system/unit/solid');
       setUnits(response.data);
     } catch (err: any) {
       handleError(err);
@@ -182,12 +149,7 @@ const SolidInventoryItemPage: React.FC = () => {
 
   const handleAddInventoryItem = async (data: any) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('https://backend.labtrac.quantuslms.ca/api/inventory/solid', data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await apiClient.post('/inventory/solid', data);
       fetchInventoryItems();
       setShowAddPopup(false);
     } catch (err: any) {
@@ -197,16 +159,7 @@ const SolidInventoryItemPage: React.FC = () => {
 
   const handleUpdateQuantity = async (id: number, quantityUsed: number) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/inventory/solid/${id}/quantity`,
-        { quantityUsed },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.patch(`/inventory/solid/${id}/quantity`, { quantityUsed });
       fetchInventoryItems();
       setShowUpdateQuantityPopup(false);
     } catch (err: any) {
@@ -216,16 +169,7 @@ const SolidInventoryItemPage: React.FC = () => {
 
   const handleUpdateDetails = async (id: number, data: any) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/inventory/solid/${id}`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.patch(`/inventory/solid/${id}`, data);
       fetchInventoryItems();
       setShowUpdateDetailsPopup(false);
     } catch (err: any) {
@@ -235,15 +179,7 @@ const SolidInventoryItemPage: React.FC = () => {
 
   const handleDeleteItem = async (id: number) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(
-        `https://backend.labtrac.quantuslms.ca/api/inventory/solid/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.delete(`/inventory/solid/${id}`);
       fetchInventoryItems();
     } catch (err: any) {
       handleError(err);
@@ -273,18 +209,21 @@ const SolidInventoryItemPage: React.FC = () => {
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
         <div className="button-container">
-  <div className="button-group">
-    <button className="add-inventory-button" onClick={() => setShowAddPopup(true)}>
-      Add Inventory
-    </button>
-    <button className="bulk-print-button">Bulk Print</button>
-    <SearchBarWithFilter
-      columns={columns}
-      onSearch={(term) => setSearchTerm(term)}
-      onFilterChange={(filter) => setSearchColumn(filter)}
-    />
-  </div>
-</div>
+          <div className="button-group">
+            <button
+              className="add-inventory-button"
+              onClick={() => setShowAddPopup(true)}
+            >
+              Add Inventory
+            </button>
+            <button className="bulk-print-button">Bulk Print</button>
+            <SearchBarWithFilter
+              columns={columns}
+              onSearch={(term) => setSearchTerm(term)}
+              onFilterChange={(filter) => setSearchColumn(filter)}
+            />
+          </div>
+        </div>
 
         <table className="inventory-table">
           <thead>
@@ -594,4 +533,4 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
   );
 };
 
-export default SolidInventoryItemPage;
+export default SolidChemicalInventoryPage;

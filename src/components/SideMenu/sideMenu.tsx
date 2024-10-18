@@ -1,5 +1,7 @@
+// ./src/components/SideMenu/SideMenu.tsx
+
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../config/axiosConfig'; // Import the configured Axios instance
 import { Link } from 'react-router-dom';
 import './sideMenu.css';
 
@@ -22,16 +24,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ onToggle }) => {
   const [expandedParents, setExpandedParents] = useState<number[]>([]);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
 
-    if (token && userId) {
-      axios
-        .get(`https://backend.labtrac.quantuslms.ca/api/system/user/${userId}/menu-items`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+    if (userId) {
+      apiClient
+        .get(`/system/user/${userId}/menu-items`)
         .then((response) => {
           const sortedItems = response.data.sort((a: MenuItem, b: MenuItem) => {
             if (a.orderIndex !== b.orderIndex) {
@@ -85,34 +82,58 @@ const SideMenu: React.FC<SideMenuProps> = ({ onToggle }) => {
       <ul>
         {menuItems.map((item) => {
           const isParent = menuItems.some(
-            (subItem) => subItem.orderIndex === item.orderIndex && subItem.subOrderIndex !== null
+            (subItem) =>
+              subItem.orderIndex === item.orderIndex && subItem.subOrderIndex !== null
           );
 
           if (item.subOrderIndex === null) {
             return (
               <li key={item.id} className="menu-item-container">
                 {isParent ? (
-                  <div className="menu-item parent-menu-item" onClick={() => toggleSubMenu(item.id)}>
-                    <img src={getIconPath(item.iconName)} alt={item.name} className="menu-icon" />
+                  <div
+                    className="menu-item parent-menu-item"
+                    onClick={() => toggleSubMenu(item.id)}
+                  >
+                    <img
+                      src={getIconPath(item.iconName)}
+                      alt={item.name}
+                      className="menu-icon"
+                    />
                     {!collapsed && <span className="menu-text">{item.name}</span>}
                   </div>
                 ) : (
                   <Link to={item.url} className="menu-item">
-                    <img src={getIconPath(item.iconName)} alt={item.name} className="menu-icon" />
+                    <img
+                      src={getIconPath(item.iconName)}
+                      alt={item.name}
+                      className="menu-icon"
+                    />
                     {!collapsed && <span className="menu-text">{item.name}</span>}
                   </Link>
                 )}
 
-                <ul className={`submenu ${expandedParents.includes(item.id) ? 'expanded' : ''}`}>
+                <ul
+                  className={`submenu ${
+                    expandedParents.includes(item.id) ? 'expanded' : ''
+                  }`}
+                >
                   {expandedParents.includes(item.id) &&
                     menuItems
-                      .filter((subItem) => subItem.orderIndex === item.orderIndex && subItem.subOrderIndex !== null)
+                      .filter(
+                        (subItem) =>
+                          subItem.orderIndex === item.orderIndex &&
+                          subItem.subOrderIndex !== null
+                      )
                       .map((subItem) => (
                         <li key={subItem.id} className="submenu-item">
                           <Link to={subItem.url} className="menu-item submenu-text">
                             {!collapsed && (
                               <>
-                                <img src={getIconPath(subItem.iconName)} alt={subItem.name} className="menu-icon" />
+                                <img
+                                  src={getIconPath(subItem.iconName)}
+                                  alt={subItem.name}
+                                  className="menu-icon"
+                                />
                                 <span>{subItem.name}</span>
                               </>
                             )}

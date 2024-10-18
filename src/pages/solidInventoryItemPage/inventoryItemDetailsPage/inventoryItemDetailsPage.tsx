@@ -1,7 +1,7 @@
-// ./src/pages/InventoryItemDetailsPage.tsx
+// ./src/pages/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../../config/axiosConfig'; // Import the configured Axios instance
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../../components/Popup/Popup';
@@ -49,7 +49,9 @@ interface Note {
 
 const InventoryItemDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [itemDetails, setItemDetails] = useState<SolidInventoryItemDetails | null>(null);
+  const [itemDetails, setItemDetails] = useState<SolidInventoryItemDetails | null>(
+    null
+  );
   const [notes, setNotes] = useState<Note[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showAddNotePopup, setShowAddNotePopup] = useState<boolean>(false);
@@ -64,15 +66,7 @@ const InventoryItemDetailsPage: React.FC = () => {
 
   const fetchItemDetails = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `https://backend.labtrac.quantuslms.ca/api/inventory/solid/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get(`/inventory/solid/${id}`);
       setItemDetails(response.data);
     } catch (err: any) {
       handleError(err);
@@ -81,15 +75,7 @@ const InventoryItemDetailsPage: React.FC = () => {
 
   const fetchNotes = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `https://backend.labtrac.quantuslms.ca/api/inventory/note/item/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await apiClient.get(`/inventory/note/item/${id}`);
       setNotes(response.data);
     } catch (err: any) {
       handleError(err);
@@ -105,19 +91,10 @@ const InventoryItemDetailsPage: React.FC = () => {
 
   const handleAddNote = async (content: string) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'https://backend.labtrac.quantuslms.ca/api/inventory/note',
-        {
-          content,
-          inventoryItemId: Number(id),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.post('/inventory/note', {
+        content,
+        inventoryItemId: Number(id),
+      });
       fetchNotes();
       setShowAddNotePopup(false);
     } catch (err: any) {
@@ -127,16 +104,7 @@ const InventoryItemDetailsPage: React.FC = () => {
 
   const handleUpdateNote = async (noteId: number, content: string) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `https://backend.labtrac.quantuslms.ca/api/inventory/note/${noteId}`,
-        { content },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.patch(`/inventory/note/${noteId}`, { content });
       fetchNotes();
       setShowUpdateNotePopup(false);
     } catch (err: any) {
@@ -146,15 +114,7 @@ const InventoryItemDetailsPage: React.FC = () => {
 
   const handleDeleteNote = async (noteId: number) => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(
-        `https://backend.labtrac.quantuslms.ca/api/inventory/note/${noteId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await apiClient.delete(`/inventory/note/${noteId}`);
       fetchNotes();
     } catch (err: any) {
       handleError(err);
@@ -182,31 +142,60 @@ const InventoryItemDetailsPage: React.FC = () => {
           <h1 className="page-title">Inventory Item Details</h1>
         </div>
         <hr className="page-divider" />
-  
+
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
-  
+
         {itemDetails && (
           <div className="item-details">
-            <p><strong>Inventory Item ID:</strong> {itemDetails.inventoryItemId}</p>
-            <p><strong>Name:</strong> {itemDetails.name}</p>
-            <p><strong>Import Date:</strong> {itemDetails.importDate}</p>
-            <p><strong>Status:</strong> {itemDetails.status}</p>
-            <p><strong>Location ID:</strong> {itemDetails.location.locationId}</p>
-            <p><strong>Location Name:</strong> {itemDetails.location.name}</p>
-            <p><strong>Category ID:</strong> {itemDetails.category.categoryId}</p>
-            <p><strong>Category Name:</strong> {itemDetails.category.name}</p>
-            <p><strong>Expiration Date:</strong> {itemDetails.expirationDate}</p>
-            <p><strong>CAS Number:</strong> {itemDetails.casNumber}</p>
-            <p><strong>Current Quantity:</strong> {itemDetails.currentQuantityAmount}</p>
-            <p><strong>Original Quantity:</strong> {itemDetails.originalQuantityAmount}</p>
-            <p><strong>Quantity Unit:</strong> {itemDetails.quantityUnit}</p>
+            <p>
+              <strong>Inventory Item ID:</strong> {itemDetails.inventoryItemId}
+            </p>
+            <p>
+              <strong>Name:</strong> {itemDetails.name}
+            </p>
+            <p>
+              <strong>Import Date:</strong> {itemDetails.importDate}
+            </p>
+            <p>
+              <strong>Status:</strong> {itemDetails.status}
+            </p>
+            <p>
+              <strong>Location ID:</strong> {itemDetails.location.locationId}
+            </p>
+            <p>
+              <strong>Location Name:</strong> {itemDetails.location.name}
+            </p>
+            <p>
+              <strong>Category ID:</strong> {itemDetails.category.categoryId}
+            </p>
+            <p>
+              <strong>Category Name:</strong> {itemDetails.category.name}
+            </p>
+            <p>
+              <strong>Expiration Date:</strong> {itemDetails.expirationDate}
+            </p>
+            <p>
+              <strong>CAS Number:</strong> {itemDetails.casNumber}
+            </p>
+            <p>
+              <strong>Current Quantity:</strong> {itemDetails.currentQuantityAmount}
+            </p>
+            <p>
+              <strong>Original Quantity:</strong> {itemDetails.originalQuantityAmount}
+            </p>
+            <p>
+              <strong>Quantity Unit:</strong> {itemDetails.quantityUnit}
+            </p>
           </div>
         )}
-  
-        <button className="add-note-button" onClick={() => setShowAddNotePopup(true)}>
+
+        <button
+          className="add-note-button"
+          onClick={() => setShowAddNotePopup(true)}
+        >
           Add Note
         </button>
-  
+
         <table className="notes-table">
           <thead>
             <tr>
@@ -236,7 +225,7 @@ const InventoryItemDetailsPage: React.FC = () => {
             ))}
           </tbody>
         </table>
-  
+
         {showAddNotePopup && (
           <Popup title="Add Note" onClose={() => setShowAddNotePopup(false)}>
             <NoteForm
@@ -245,9 +234,12 @@ const InventoryItemDetailsPage: React.FC = () => {
             />
           </Popup>
         )}
-  
+
         {showUpdateNotePopup && selectedNote && (
-          <Popup title="Update Note" onClose={() => setShowUpdateNotePopup(false)}>
+          <Popup
+            title="Update Note"
+            onClose={() => setShowUpdateNotePopup(false)}
+          >
             <NoteForm
               initialContent={selectedNote.content}
               onSubmit={(content) => handleUpdateNote(selectedNote.id, content)}
@@ -267,7 +259,11 @@ interface NoteFormProps {
   onCancel: () => void;
 }
 
-const NoteForm: React.FC<NoteFormProps> = ({ initialContent = '', onSubmit, onCancel }) => {
+const NoteForm: React.FC<NoteFormProps> = ({
+  initialContent = '',
+  onSubmit,
+  onCancel,
+}) => {
   const [content, setContent] = useState(initialContent);
 
   return (
