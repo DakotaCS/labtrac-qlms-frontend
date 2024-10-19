@@ -10,6 +10,12 @@ import './solidInventoryItemPage.css';
 import CustomDropdown from '../../components/CustomDropdown/CustomDropdown';
 import SearchBarWithFilter from '../../components/SearchBarWithFilter/SearchBarWithFilter';
 
+declare global {
+  interface Window {
+    BrowserPrint: any;
+  }
+}
+
 interface Location {
   id: number;
   locationId: string | null;
@@ -200,6 +206,52 @@ const SolidChemicalInventoryPage: React.FC = () => {
     window.location.href = `/inventory/solid/${id}`;
   };
 
+  const handlePrintLabel = async (item: SolidInventoryItem) => {
+    try {
+  
+      // Prepare the request data
+      const requestData = {
+        itemId: item.id,
+        inventoryItemId: item.inventoryItemId,
+        name: item.name,
+        location: item.location.name,
+      };
+  
+      // Make the POST request to get the ZPL code
+      const response = await apiClient.post('/system/print/item',requestData);
+      
+      const zplString = response.data.zplString;
+  
+      // Use the Zebra Browser Print SDK to send the zplString to the printer
+      if (window.BrowserPrint && window.BrowserPrint.getDefaultDevice) {
+        window.BrowserPrint.getDefaultDevice(
+          'printer',
+          (printer: any) => {
+            if (printer) {
+              printer.send(
+                zplString,
+                undefined,
+                (errorMessage: any) => {
+                  alert('Error printing: ' + errorMessage);
+                }
+              );
+            } else {
+              alert('No printer found');
+            }
+          },
+          (error: any) => {
+            alert('Error getting default printer: ' + error);
+          }
+        );
+      } else {
+        alert('BrowserPrint SDK is not available.');
+      }
+    } catch (error) {
+      console.error('Error printing label:', error);
+      alert('Error printing label');
+    }
+  };
+
   return (
     <Layout>
       <div className={`solid-inventory-page ${menuCollapsed ? 'collapsed' : ''}`}>
@@ -266,6 +318,10 @@ const SolidChemicalInventoryPage: React.FC = () => {
                       {
                         label: 'Delete Item',
                         onClick: () => handleDeleteItem(item.id),
+                      },
+                      {
+                        label: 'Print Label',
+                        onClick: () => handlePrintLabel(item), // Added this line
                       },
                     ]}
                   />
