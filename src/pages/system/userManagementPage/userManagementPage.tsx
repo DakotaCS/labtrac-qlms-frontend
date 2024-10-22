@@ -1,11 +1,11 @@
 // ./src/pages/UserManagementPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import apiClient from '../../config/axiosConfig'; // Import the configured Axios instance
-import Layout from '../../components/Layout/Layout';
-import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
-import Popup from '../../components/Popup/Popup';
-import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
+import apiClient from '../../../config/axiosConfig'; // Import the configured Axios instance
+import Layout from '../../../components/Layout/Layout';
+import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
+import Popup from '../../../components/Popup/Popup';
+import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
 import './userManagementPage.css';
 
 interface User {

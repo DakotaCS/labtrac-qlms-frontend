@@ -3,9 +3,9 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './pages/loginPage/loginPage';
 import LandingPage from './pages/landingPage/landingPage';
-import LocationPage from './pages/locationPage/locationPage';
-import CategoryPage from './pages/categoryPage/categoryPage';
-import UserManagementPage from './pages/userManagementPage/userManagementPage';
+import LocationPage from './pages/system/locationPage/locationPage';
+import CategoryPage from './pages/system/categoryPage/categoryPage';
+import UserManagementPage from './pages/system/userManagementPage/userManagementPage';
 import Logout from './components/Logout';
 import AutoLogout from './config/autoLogout'; // Import the AutoLogout component
 

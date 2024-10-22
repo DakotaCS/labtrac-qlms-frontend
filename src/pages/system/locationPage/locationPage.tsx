@@ -1,43 +1,43 @@
-// ./src/pages/CategoryPage.tsx
+// ./src/pages/locationPage/locationPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import apiClient from '../../config/axiosConfig'; // Import the configured Axios instance
-import Layout from '../../components/Layout/Layout';
-import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
-import Popup from '../../components/Popup/Popup';
-import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
-import SearchBarWithFilter from '../../components/SearchBarWithFilter/SearchBarWithFilter';
-import './categoryPage.css';
+import apiClient from '../../../config/axiosConfig'; // Import the configured Axios instance
+import Layout from '../../../components/Layout/Layout';
+import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
+import Popup from '../../../components/Popup/Popup';
+import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
+import SearchBarWithFilter from '../../../components/SearchBarWithFilter/SearchBarWithFilter';
+import './locationPage.css';
 
-interface Category {
+interface Location {
   id: number;
-  categoryId: string;
+  locationId: string;
   name: string;
   description: string;
   createTime: string;
 }
 
-const CategoryPage: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
+const LocationPage: React.FC = () => {
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [filteredLocations, setFilteredLocations] = useState<Location[]>([]);
   const [showAddPopup, setShowAddPopup] = useState<boolean>(false);
   const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
 
-  const columns = ['Category ID', 'Name', 'Description', 'Date Created'];
+  const columns = ['Location ID', 'Name', 'Description', 'Date Created'];
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchColumn, setSearchColumn] = useState(columns[0]); // Defaults to 'Category ID'
+  const [searchColumn, setSearchColumn] = useState(columns[0]); // Default to 'Location ID'
 
   useEffect(() => {
-    fetchCategories();
+    fetchLocations();
   }, []);
 
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
-    const filteredData = categories.filter((item) => {
+    const filteredData = locations.filter((item) => {
       const field = searchColumnToField(searchColumn);
       const value = item[field];
       if (value) {
@@ -45,12 +45,12 @@ const CategoryPage: React.FC = () => {
       }
       return false;
     });
-    setFilteredCategories(filteredData);
-  }, [categories, searchTerm, searchColumn]);
+    setFilteredLocations(filteredData);
+  }, [locations, searchTerm, searchColumn]);
 
-  const searchColumnToField = (column: string): keyof Category => {
-    const columnMap: { [key: string]: keyof Category } = {
-      'Category ID': 'categoryId',
+  const searchColumnToField = (column: string): keyof Location => {
+    const columnMap: { [key: string]: keyof Location } = {
+      'Location ID': 'locationId',
       Name: 'name',
       Description: 'description',
       'Date Created': 'createTime',
@@ -58,11 +58,12 @@ const CategoryPage: React.FC = () => {
     return columnMap[column];
   };
 
-  const fetchCategories = async () => {
+  const fetchLocations = async () => {
     try {
-      const response = await apiClient.get('/system/category');
-      setCategories(response.data);
-      setFilteredCategories(response.data); // Initialize filteredCategories
+      const response = await apiClient.get('/system/location');
+      console.log('API Response Data:', response.data);
+      setLocations(response.data);
+      setFilteredLocations(response.data);
     } catch (err: any) {
       handleError(err);
     }
@@ -75,48 +76,48 @@ const CategoryPage: React.FC = () => {
     setError(errorMessage);
   };
 
-  const handleAddCategory = async (name: string, description: string) => {
+  const handleAddLocation = async (name: string, description: string) => {
     try {
-      await apiClient.post('/system/category', { name, description });
-      fetchCategories();
+      await apiClient.post('/system/location', { name, description });
+      fetchLocations();
       setShowAddPopup(false);
     } catch (err: any) {
       handleError(err);
     }
   };
 
-  const handleUpdateCategory = async (
+  const handleUpdateLocation = async (
     id: number,
     name: string,
     description: string
   ) => {
     try {
-      await apiClient.patch(`/system/category/${id}`, { name, description });
-      fetchCategories();
+      await apiClient.patch(`/system/location/${id}`, { name, description });
+      fetchLocations();
       setShowUpdatePopup(false);
     } catch (err: any) {
       handleError(err);
     }
   };
 
-  const handleDeleteCategory = async (id: number) => {
+  const handleDeleteLocation = async (id: number) => {
     try {
-      await apiClient.delete(`/system/category/${id}`);
-      fetchCategories();
+      await apiClient.delete(`/system/location/${id}`);
+      fetchLocations();
     } catch (err: any) {
       handleError(err);
     }
   };
 
-  const openUpdatePopup = (category: Category) => {
-    setSelectedCategory(category);
+  const openUpdatePopup = (location: Location) => {
+    setSelectedLocation(location);
     setShowUpdatePopup(true);
   };
 
   return (
     <Layout>
-      <div className={`category-page ${menuCollapsed ? 'collapsed' : ''}`}>
-        <h1 className="page-title">Inventory Item Categories</h1>
+      <div className={`location-page ${menuCollapsed ? 'collapsed' : ''}`}>
+        <h1 className="page-title">Inventory Item Locations</h1>
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
@@ -124,10 +125,10 @@ const CategoryPage: React.FC = () => {
         <div className="button-container">
           <div className="button-group">
             <button
-              className="add-category-button"
+              className="add-location-button"
               onClick={() => setShowAddPopup(true)}
             >
-              Add Category
+              Add Location
             </button>
             <SearchBarWithFilter
               columns={columns}
@@ -137,10 +138,10 @@ const CategoryPage: React.FC = () => {
           </div>
         </div>
 
-        <table className="category-table">
+        <table className="location-table">
           <thead>
             <tr>
-              <th>Category ID</th>
+              <th>Location ID</th>
               <th>Name</th>
               <th>Description</th>
               <th>Date Created</th>
@@ -148,22 +149,22 @@ const CategoryPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredCategories.map((category) => (
-              <tr key={category.id}>
-                <td>{category.categoryId}</td>
-                <td>{category.name}</td>
-                <td>{category.description}</td>
-                <td>{category.createTime}</td>
+            {filteredLocations.map((location) => (
+              <tr key={location.id}>
+                <td>{location.locationId}</td>
+                <td>{location.name}</td>
+                <td>{location.description}</td>
+                <td>{location.createTime}</td>
                 <td>
                   <MeatballMenu
                     options={[
                       {
                         label: 'Update',
-                        onClick: () => openUpdatePopup(category),
+                        onClick: () => openUpdatePopup(location),
                       },
                       {
                         label: 'Remove',
-                        onClick: () => handleDeleteCategory(category.id),
+                        onClick: () => handleDeleteLocation(location.id),
                       },
                     ]}
                   />
@@ -174,26 +175,26 @@ const CategoryPage: React.FC = () => {
         </table>
 
         {showAddPopup && (
-          <Popup title="Add Category" onClose={() => setShowAddPopup(false)}>
-            <CategoryForm
+          <Popup title="Add Location" onClose={() => setShowAddPopup(false)}>
+            <LocationForm
               onSubmit={(name, description) =>
-                handleAddCategory(name, description)
+                handleAddLocation(name, description)
               }
               onCancel={() => setShowAddPopup(false)}
             />
           </Popup>
         )}
 
-        {showUpdatePopup && selectedCategory && (
+        {showUpdatePopup && selectedLocation && (
           <Popup
-            title="Update Category"
+            title="Update Location"
             onClose={() => setShowUpdatePopup(false)}
           >
-            <CategoryForm
-              initialName={selectedCategory.name}
-              initialDescription={selectedCategory.description}
+            <LocationForm
+              initialName={selectedLocation.name}
+              initialDescription={selectedLocation.description}
               onSubmit={(name, description) =>
-                handleUpdateCategory(selectedCategory.id, name, description)
+                handleUpdateLocation(selectedLocation.id, name, description)
               }
               onCancel={() => setShowUpdatePopup(false)}
             />
@@ -204,14 +205,14 @@ const CategoryPage: React.FC = () => {
   );
 };
 
-interface CategoryFormProps {
+interface LocationFormProps {
   initialName?: string;
   initialDescription?: string;
   onSubmit: (name: string, description: string) => void;
   onCancel: () => void;
 }
 
-const CategoryForm: React.FC<CategoryFormProps> = ({
+const LocationForm: React.FC<LocationFormProps> = ({
   initialName = '',
   initialDescription = '',
   onSubmit,
@@ -221,7 +222,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   const [description, setDescription] = useState(initialDescription);
 
   return (
-    <div className="category-form">
+    <div className="location-form">
       <label>Name</label>
       <input
         type="text"
@@ -244,4 +245,4 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
   );
 };
 
-export default CategoryPage;
+export default LocationPage;
