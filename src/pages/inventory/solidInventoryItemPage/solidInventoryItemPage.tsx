@@ -1,14 +1,14 @@
 // ./src/pages/solidInventoryItemPage/solidInventoryItemPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import apiClient from '../../config/axiosConfig';
-import Layout from '../../components/Layout/Layout';
-import ErrorPopup from '../../components/ErrorPopup/ErrorPopup';
-import Popup from '../../components/Popup/Popup';
-import MeatballMenu from '../../components/MeatballMenu/MeatballMenu';
+import apiClient from '../../../config/axiosConfig';
+import Layout from '../../../components/Layout/Layout';
+import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
+import Popup from '../../../components/Popup/Popup';
+import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
 import './solidInventoryItemPage.css';
-import CustomDropdown from '../../components/CustomDropdown/CustomDropdown';
-import SearchBarWithFilter from '../../components/SearchBarWithFilter/SearchBarWithFilter';
+import CustomDropdown from '../../../components/CustomDropdown/CustomDropdown';
+import SearchBarWithFilter from '../../../components/SearchBarWithFilter/SearchBarWithFilter';
 
 declare global {
   interface Window {

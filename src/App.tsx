@@ -10,8 +10,8 @@ import Logout from './components/Logout';
 import AutoLogout from './config/autoLogout'; // Import the AutoLogout component
 
 // Import the new components
-import SolidChemicalInventoryPage from './pages/solidInventoryItemPage/solidInventoryItemPage';
-import InventoryItemDetailsPage from './pages/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
+import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage/solidInventoryItemPage';
+import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token'); // Check if the user is authenticated
