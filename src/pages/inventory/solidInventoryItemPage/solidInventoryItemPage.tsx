@@ -72,14 +72,15 @@ const SolidChemicalInventoryPage: React.FC = () => {
   ];
 
   const columnMap: { [key: string]: string } = {
-    'Inventory Item': 'inventoryItemId',
-    Name: 'name',
-    'Location Name': 'locationName',
-    'Category Name': 'categoryName',
-    Status: 'status',
-    'Current Quantity': 'currentQuantityAmount',
-    Unit: 'quantityUnit',
+    'Inventory Item': 'Inventory Item',
+    Name: 'Name',
+    'Location Name': 'Location Name',
+    'Category Name': 'Category Name',
+    Status: 'Status',
+    'Current Quantity': 'Current Quantity',
+    Unit: 'Unit',
   };
+  
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchColumn, setSearchColumn] = useState('Inventory Item');
@@ -100,19 +101,21 @@ const SolidChemicalInventoryPage: React.FC = () => {
   }, [searchTerm, searchColumn]);
 
   const fetchInventoryItems = async (
-    searchColumn = 'inventoryItemId',
+    searchColumn = 'Inventory Item',
     searchValue = '',
     page = 0,
     size = 10
   ) => {
     try {
-      const url = new URL('/inventory/solid/pageable', apiClient.defaults.baseURL);
-      url.searchParams.append('searchColumn', columnMap[searchColumn]);
-      url.searchParams.append('searchValue', searchValue);
-      url.searchParams.append('page', page.toString());
-      url.searchParams.append('size', size.toString());
-
-      const response = await apiClient.get(url.pathname + url.search);
+      // Use searchColumn directly or map it appropriately
+      const params = {
+        searchColumn: searchColumn, // or columnMap[searchColumn]
+        searchValue: searchValue,
+        page: page,
+        size: size,
+      };
+  
+      const response = await apiClient.get('/inventory/solid/pageable', { params });
       setInventoryItems(response.data.content);
     } catch (err: any) {
       handleError(err);
