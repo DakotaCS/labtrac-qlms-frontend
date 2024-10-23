@@ -8,10 +8,9 @@ import CategoryPage from './pages/system/categoryPage/categoryPage';
 import UserManagementPage from './pages/system/userManagementPage/userManagementPage';
 import Logout from './components/Logout';
 import AutoLogout from './config/autoLogout'; // Import the AutoLogout component
-
-// Import the new components
 import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage/solidInventoryItemPage';
 import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
+import DeviceConfigurationPage from './pages/system/deviceConfigurationPage/deviceConfigurationPage';
 
 function App() {
   const isAuthenticated = !!localStorage.getItem('token'); // Check if the user is authenticated
@@ -63,6 +62,18 @@ function App() {
           element={
             isAuthenticated ? (
               <UserManagementPage />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+                {/* Device Configuration Route */}
+                <Route
+          path="/device-configuration"
+          element={
+            isAuthenticated ? (
+              <DeviceConfigurationPage />
             ) : (
               <Navigate to="/login" />
             )
