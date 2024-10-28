@@ -23,7 +23,7 @@ export function decodeJwt(token: string) {
     const decodedToken = decodeJwt(token);
     if (!decodedToken) return true;
     
-    const currentTime = Date.now() / 1000; // Get current time in seconds
+    const currentTime = Date.now() / 1000;
     return decodedToken.exp < currentTime;
   }
   

@@ -9,7 +9,8 @@ apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
 
-    // Exclude the /login endpoint from adding the Authorization header
+    // Exclude the /login endpoint from adding the authorization header.
+    // No exclusion can result in stale jwt data being evaluated and a HTTP 4XX being thrown.
     const excludedEndpoints = ['/login'];
 
     if (token && !excludedEndpoints.includes(config.url || '')) {
