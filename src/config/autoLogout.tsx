@@ -2,8 +2,8 @@
 import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isTokenExpired, decodeJwt } from '../utils/jwtUtils';
-import AutoLogoutManager from '../utils/autoLogoutManager';
-import AuthContext from '../utils/authContext';
+import AutoLogoutManager from './autoLogoutManager';
+import AuthContext from './authContext';
 
 const AutoLogout: React.FC = () => {
   const navigate = useNavigate();

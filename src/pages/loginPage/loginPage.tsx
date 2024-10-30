@@ -5,7 +5,7 @@ import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import logo from '../../assets/logo.png';
 import apiClient from '../../config/axiosConfig';
-import AuthContext from '../../utils/authContext';
+import AuthContext from '../../config/authContext';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');

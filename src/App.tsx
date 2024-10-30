@@ -11,7 +11,7 @@ import AutoLogout from './config/autoLogout';
 import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage/solidInventoryItemPage';
 import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
 import DeviceConfigurationPage from './pages/system/deviceConfigurationPage/deviceConfigurationPage';
-import AuthContext from './utils/authContext';
+import AuthContext from './config/authContext';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
