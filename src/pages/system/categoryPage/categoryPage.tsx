@@ -33,7 +33,7 @@ const CategoryPage: React.FC = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  },);
 
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();

@@ -33,7 +33,7 @@ const LocationPage: React.FC = () => {
 
   useEffect(() => {
     fetchLocations();
-  }, []);
+  },);
 
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
@@ -61,7 +61,6 @@ const LocationPage: React.FC = () => {
   const fetchLocations = async () => {
     try {
       const response = await apiClient.get('/system/location');
-      console.log('API Response Data:', response.data);
       setLocations(response.data);
       setFilteredLocations(response.data);
     } catch (err: any) {
