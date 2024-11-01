@@ -1,6 +1,6 @@
-/* ./src/pages/DeviceConfigurationPage.css */
+/* ./src/pages/PrinterConfigurationPage.css */
 
-.device-configuration-page {
+.printer-config-page {
   padding: 10px 20px;
 }
 
@@ -19,47 +19,40 @@
   width: calc(100% - 40px);
 }
 
-.section-title {
+.config-container {
   margin-left: 20px;
-  margin-top: 30px;
 }
 
-.configuration-section {
-  margin-left: 20px;
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.config-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.config-item label {
-  width: 200px;
+.config-container label {
+  display: block;
+  margin-bottom: 5px;
   font-weight: bold;
 }
 
-.config-item select {
+.config-container select {
+  margin-bottom: 15px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  width: 210px;
-  margin-right: 10px;
+  width: 200px;
 }
 
-.config-item button {
-  padding: 8px 16px;
+.config-container button {
+  padding: 10px 20px;
   background-color: #f4f4f4;
   color: #333;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin-right: 10px;
 }
 
-.config-item button:disabled {
+.config-container button:hover {
   background-color: #ddd;
-  cursor: not-allowed;
+}
+
+.default-printer-info {
+  margin-left: 20px;
+  margin-top: 20px;
+  font-weight: bold;
 }

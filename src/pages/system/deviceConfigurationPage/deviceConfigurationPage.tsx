@@ -16,6 +16,11 @@ interface Printer {
   name: string;
   uid: string;
   connection: string;
+  sendThenRead: (
+    data: string,
+    successCallback: (response: any) => void,
+    errorCallback: (error: any) => void
+  ) => void;
 }
 
 const DeviceConfigurationPage: React.FC = () => {
@@ -94,7 +99,7 @@ const DeviceConfigurationPage: React.FC = () => {
     }
 
     printer.sendThenRead(
-      '﻿! U1 getvar "device.unique_id"\n',
+      '~HQES', // Command to get printer status,
       (response: any) => {
         alert('Printer is reachable:\n' + response);
       },
