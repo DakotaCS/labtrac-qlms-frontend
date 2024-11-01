@@ -61,6 +61,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
 
+
   const columns = [
     'Inventory Item',
     'Name',
@@ -90,6 +91,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
     fetchLocations();
     fetchCategories();
     fetchUnits();
+
   }, []);
 
   useEffect(() => {
@@ -107,9 +109,8 @@ const SolidChemicalInventoryPage: React.FC = () => {
     size = 10
   ) => {
     try {
-      // Use searchColumn directly or map it appropriately
       const params = {
-        searchColumn: searchColumn, // or columnMap[searchColumn]
+        searchColumn: searchColumn, 
         searchValue: searchValue,
         page: page,
         size: size,
@@ -211,48 +212,64 @@ const SolidChemicalInventoryPage: React.FC = () => {
 
   const handlePrintLabel = async (item: SolidInventoryItem) => {
     try {
-  
-      // Prepare the request data
-      const requestData = {
+      // Step 5.1: POST to /api/system/print/item to get the ZPL string
+      const zplResponse = await apiClient.post('/system/print/item', {
         itemId: item.id,
         inventoryItemId: item.inventoryItemId,
         name: item.name,
         location: item.location.name,
-      };
-  
-      // Make the POST request to get the ZPL code
-      const response = await apiClient.post('/system/print/item',requestData);
-      
-      const zplString = response.data.zplString;
-  
-      // Use the Zebra Browser Print SDK to send the zplString to the printer
-      if (window.BrowserPrint && window.BrowserPrint.getDefaultDevice) {
-        window.BrowserPrint.getDefaultDevice(
-          'printer',
-          (printer: any) => {
-            if (printer) {
-              printer.send(
-                zplString,
-                undefined,
-                (errorMessage: any) => {
-                  alert('Error printing: ' + errorMessage);
-                }
-              );
-            } else {
-              alert('No printer found');
-            }
-          },
-          (error: any) => {
-            alert('Error getting default printer: ' + error);
-          }
-        );
-      } else {
-        alert('BrowserPrint SDK is not available.');
+      });
+      const zplString = zplResponse.data.zplString;
+
+      // Step 5.2: GET /api/system/print/default-printer to get defaultPrinterUid
+      const defaultPrinterResponse = await apiClient.get('/system/print/default-printer');
+      const defaultPrinterUid = defaultPrinterResponse.data.defaultPrinterUid;
+
+      // Step 5.3: Use Browser Print SDK to retrieve list of available printers
+      // and find the one matching defaultPrinterUid
+      const printers = await getAvailablePrinters();
+      const selectedPrinter = printers.find(
+        (printer: any) => printer.uid === defaultPrinterUid || printer.connection === defaultPrinterUid
+      );
+
+      if (!selectedPrinter) {
+        alert('Default printer not found');
+        return;
       }
+
+      // Step 5.4: Send the ZPL string to print the label to that printer
+      await sendZplToPrinter(selectedPrinter, zplString);
+      alert('Print job sent successfully');
     } catch (error) {
-      console.error('Error printing label:', error);
       alert('Error printing label');
+      console.error(error);
     }
+  };
+
+  // Function to get available printers using Browser Print SDK
+  const getAvailablePrinters = (): Promise<any[]> => {
+    return new Promise((resolve, reject) => {
+      if (!window.BrowserPrint) {
+        reject('BrowserPrint SDK not found');
+        return;
+      }
+      window.BrowserPrint.getLocalDevices(
+        (printers: any[]) => {
+          resolve(printers);
+        },
+        (error: any) => {
+          reject(error);
+        },
+        'printer'
+      );
+    });
+  };
+
+  // Function to send ZPL string to the selected printer
+  const sendZplToPrinter = (printer: any, zpl: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      printer.send(zpl, resolve, reject);
+    });
   };
 
   return (

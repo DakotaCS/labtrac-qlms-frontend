@@ -1,46 +1,65 @@
-// ./src/pages/DeviceConfigurationPage.tsx
+// ./src/pages/PrinterConfigurationPage.tsx
 
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../../config/axiosConfig';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
-import Popup from '../../../components/Popup/Popup';
 import './deviceConfigurationPage.css';
 
-interface PrinterConfig {
-  printerConfig: 'LOCAL' | 'NETWORK';
-  printerNetworkIp: string;
-  printerNetworkPort: string;
+declare global {
+  interface Window {
+    BrowserPrint: any;
+  }
+}
+
+interface Printer {
+  name: string;
+  uid: string;
+  connection: string;
 }
 
 const DeviceConfigurationPage: React.FC = () => {
-  const [printerConfig, setPrinterConfig] = useState<PrinterConfig | null>(null);
-  const [selectedConfig, setSelectedConfig] = useState<'LOCAL' | 'NETWORK'>('NETWORK');
-  const [ipAddress, setIpAddress] = useState('');
-  const [port, setPort] = useState('');
+  const [printers, setPrinters] = useState<Printer[]>([]);
+  const [selectedPrinterUid, setSelectedPrinterUid] = useState<string>('');
+  const [defaultPrinterUid, setDefaultPrinterUid] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [showIpPopup, setShowIpPopup] = useState<boolean>(false);
-  const [showPortPopup, setShowPortPopup] = useState<boolean>(false);
-  const [newIpAddress, setNewIpAddress] = useState('');
-  const [newPort, setNewPort] = useState('');
-  const [menuCollapsed] = useState(false);
 
   useEffect(() => {
-    fetchPrinterConfig();
+    fetchAvailablePrinters();
+    fetchDefaultPrinter();
   }, []);
 
-  const fetchPrinterConfig = async () => {
+  // Fetch available printers using the Browser Print SDK
+  const fetchAvailablePrinters = () => {
+    if (!window.BrowserPrint) {
+      setError('Browser Print SDK not found. Please ensure it is loaded.');
+      return;
+    }
+
+    window.BrowserPrint.getLocalDevices(
+      (devices: any[]) => {
+        const printerDevices = devices.filter((device) => device.connection === 'usb' || device.connection === 'network');
+        setPrinters(printerDevices);
+      },
+      (error: any) => {
+        setError('Error fetching printers: ' + error);
+      },
+      'printer'
+    );
+  };
+
+  // Fetch the default printer UID from the API
+  const fetchDefaultPrinter = async () => {
     try {
-      const response = await apiClient.get('/system/print/configuration');
-      setPrinterConfig(response.data);
-      setSelectedConfig(response.data.printerConfig);
-      setIpAddress(response.data.printerNetworkIp);
-      setPort(response.data.printerNetworkPort);
+      const response = await apiClient.get('/system/print/default-printer');
+      setDefaultPrinterUid(response.data.defaultPrinterUid);
+      setSelectedPrinterUid(response.data.defaultPrinterUid);
     } catch (err: any) {
       handleError(err);
     }
   };
 
+  // Handle errors
   const handleError = (err: any) => {
     const errorMessage = `Error: ${err.response?.status} - ${
       err.response?.data?.message || err.message
@@ -48,139 +67,70 @@ const DeviceConfigurationPage: React.FC = () => {
     setError(errorMessage);
   };
 
-  const handleConfigChange = async (config: 'LOCAL' | 'NETWORK') => {
+  // Handle printer selection change
+  const handlePrinterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPrinterUid(event.target.value);
+  };
+
+  // Save the selected printer as the default printer
+  const saveDefaultPrinter = async () => {
     try {
-      await apiClient.patch('/system/print/locale', {
-        printerConfiguration: config,
+      await apiClient.patch('/system/print/default-printer', {
+        defaultPrinterUid: selectedPrinterUid,
       });
-      setSelectedConfig(config);
+      alert('Default printer saved successfully');
+      setDefaultPrinterUid(selectedPrinterUid);
     } catch (err: any) {
       handleError(err);
     }
   };
 
-  const handleIpUpdate = async () => {
-    try {
-      await apiClient.patch('/system/print/ip', {
-        printerNetworkIp: newIpAddress,
-      });
-      setIpAddress(newIpAddress);
-      setShowIpPopup(false);
-    } catch (err: any) {
-      handleError(err);
+  // Test connectivity to the selected printer
+  const testPrinterConnectivity = () => {
+    const printer = printers.find((p) => p.uid === selectedPrinterUid || p.connection === selectedPrinterUid);
+    if (!printer) {
+      alert('Selected printer not found');
+      return;
     }
-  };
 
-  const handlePortUpdate = async () => {
-    try {
-      await apiClient.patch('/system/print/port', {
-        printerNetworkPort: newPort,
-      });
-      setPort(newPort);
-      setShowPortPopup(false);
-    } catch (err: any) {
-      handleError(err);
-    }
+    printer.sendThenRead(
+      '﻿! U1 getvar "device.unique_id"\n',
+      (response: any) => {
+        alert('Printer is reachable:\n' + response);
+      },
+      (error: any) => {
+        alert('Failed to communicate with printer:\n' + error);
+      }
+    );
   };
 
   return (
     <Layout>
-      <div className={`device-configuration-page ${menuCollapsed ? 'collapsed' : ''}`}>
-        <h1 className="page-title">Device Configuration</h1>
+      <div className="printer-config-page">
+        <h1 className="page-title">Printer Configuration</h1>
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
-        <h2 className="section-title">Printer Configuration</h2>
+        <div className="config-container">
+          <label>Select a Printer:</label>
+          <select value={selectedPrinterUid} onChange={handlePrinterChange}>
+            <option value="">-- Select Printer --</option>
+            {printers.map((printer) => (
+              <option key={printer.uid} value={printer.uid || printer.connection}>
+                {printer.name}
+              </option>
+            ))}
+          </select>
 
-        <div className="configuration-section">
-          <div className="config-item">
-            <label>Current Printer Configuration:</label>
-            <select
-              value={selectedConfig}
-              onChange={(e) => handleConfigChange(e.target.value as 'LOCAL' | 'NETWORK')}
-            >
-              <option value="LOCAL">Local</option>
-              <option value="NETWORK">Network</option>
-            </select>
-          </div>
-
-          <div className="config-item">
-            <label>Printer Local IP Address:</label>
-            <input
-              type="text"
-              value={ipAddress}
-              readOnly
-              disabled={selectedConfig === 'LOCAL'}
-            />
-            <button
-              onClick={() => {
-                setNewIpAddress(ipAddress);
-                setShowIpPopup(true);
-              }}
-              disabled={selectedConfig === 'LOCAL'}
-            >
-              Update
-            </button>
-          </div>
-
-          <div className="config-item">
-            <label>Printer Local Port:</label>
-            <input
-              type="text"
-              value={port}
-              readOnly
-              disabled={selectedConfig === 'LOCAL'}
-            />
-            <button
-              onClick={() => {
-                setNewPort(port);
-                setShowPortPopup(true);
-              }}
-              disabled={selectedConfig === 'LOCAL'}
-            >
-              Update
-            </button>
-          </div>
+          <button onClick={testPrinterConnectivity}>Test Connectivity</button>
+          <button onClick={saveDefaultPrinter}>Save as Default</button>
         </div>
 
-        <hr className="section-divider" />
-
-        <h2 className="section-title">Scanner Configuration</h2>
-        {/* Scanner configuration content goes here */}
-
-        {showIpPopup && (
-          <Popup title="Update IP Address" onClose={() => setShowIpPopup(false)}>
-            <div className="popup-content">
-              <label>New IP Address:</label>
-              <input
-                type="text"
-                value={newIpAddress}
-                onChange={(e) => setNewIpAddress(e.target.value)}
-              />
-              <div className="form-actions">
-                <button onClick={handleIpUpdate}>Submit</button>
-                <button onClick={() => setShowIpPopup(false)}>Cancel</button>
-              </div>
-            </div>
-          </Popup>
-        )}
-
-        {showPortPopup && (
-          <Popup title="Update Port" onClose={() => setShowPortPopup(false)}>
-            <div className="popup-content">
-              <label>New Port:</label>
-              <input
-                type="text"
-                value={newPort}
-                onChange={(e) => setNewPort(e.target.value)}
-              />
-              <div className="form-actions">
-                <button onClick={handlePortUpdate}>Submit</button>
-                <button onClick={() => setShowPortPopup(false)}>Cancel</button>
-              </div>
-            </div>
-          </Popup>
+        {defaultPrinterUid && (
+          <div className="default-printer-info">
+            <p>Current Default Printer UID: {defaultPrinterUid}</p>
+          </div>
         )}
       </div>
     </Layout>

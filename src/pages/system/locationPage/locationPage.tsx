@@ -33,7 +33,7 @@ const LocationPage: React.FC = () => {
 
   useEffect(() => {
     fetchLocations();
-  },);
+  }, []);
 
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
