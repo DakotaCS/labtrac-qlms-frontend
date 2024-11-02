@@ -1,9 +1,10 @@
 // ./src/pages/PrinterConfigurationPage.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../../config/axiosConfig';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
+import MessagePopup from '../../../components/MessagePopup/MessagePopup';
 import './deviceConfigurationPage.css';
 
 declare global {
@@ -28,83 +29,84 @@ const DeviceConfigurationPage: React.FC = () => {
   const [selectedPrinterUid, setSelectedPrinterUid] = useState<string>('');
   const [defaultPrinterUid, setDefaultPrinterUid] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [sdkVersion, setSdkVersion] = useState<string>('Unknown');
 
-  useEffect(() => {
-    fetchAvailablePrinters();
-    fetchDefaultPrinter();
-  }, []);
-
-  // Fetch available printers using the Browser Print SDK
-  const fetchAvailablePrinters = () => {
-    if (!window.BrowserPrint) {
-      setError('Browser Print SDK not found. Please ensure it is loaded.');
-      return;
-    }
-
-    window.BrowserPrint.getLocalDevices(
-      (devices: any[]) => {
-        const printerDevices = devices.filter((device) => device.connection === 'usb' || device.connection === 'network');
-        setPrinters(printerDevices);
-      },
-      (error: any) => {
-        setError('Error fetching printers: ' + error);
-      },
-      'printer'
-    );
-  };
-
-  // Fetch the default printer UID from the API
-  const fetchDefaultPrinter = async () => {
+  const fetchDefaultPrinter = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/print/default-printer');
       setDefaultPrinterUid(response.data.defaultPrinterUid);
       setSelectedPrinterUid(response.data.defaultPrinterUid);
     } catch (err: any) {
-      handleError(err);
+      setError('Printer Configuration: The default printer could not be found or is not set.');
     }
-  };
+  }, []);
 
-  // Handle errors
-  const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${
-      err.response?.data?.message || err.message
-    }`;
-    setError(errorMessage);
-  };
+  const fetchAvailablePrinters = useCallback(() => {
+    if (!window.BrowserPrint) {
+      setError('Printer Configuration: Zebra Browser Print SDK not found.');
+      return;
+    }
 
-  // Handle printer selection change
+    window.BrowserPrint.getLocalDevices(
+      (devices: any[]) => {
+        const printerDevices = devices.filter(
+          (device) => device.connection === 'usb' || device.connection === 'network'
+        );
+        setPrinters(printerDevices);
+        setMessage('Printer list refreshed');
+      },
+      (error: any) => {
+        setError('Printer Configuration: Error Retrieving Printer List');
+      },
+      'printer'
+    );
+
+    // Get the SDK version
+    if (window.BrowserPrint) {
+      setSdkVersion(window.BrowserPrint.version || 'Unknown');
+    } else {
+      setSdkVersion('Unknown');
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAvailablePrinters();
+    fetchDefaultPrinter();
+  }, [fetchDefaultPrinter, fetchAvailablePrinters]);
+
   const handlePrinterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedPrinterUid(event.target.value);
   };
 
-  // Save the selected printer as the default printer
   const saveDefaultPrinter = async () => {
     try {
       await apiClient.patch('/system/print/default-printer', {
         defaultPrinterUid: selectedPrinterUid,
       });
-      alert('Default printer saved successfully');
+      setMessage('Printer Configuration: Default Printer saved');
       setDefaultPrinterUid(selectedPrinterUid);
     } catch (err: any) {
-      handleError(err);
+      setError('Printer Configuration: The Default Printer could not be saved');
     }
   };
 
-  // Test connectivity to the selected printer
   const testPrinterConnectivity = () => {
-    const printer = printers.find((p) => p.uid === selectedPrinterUid || p.connection === selectedPrinterUid);
+    const printer = printers.find(
+      (p) => p.uid === selectedPrinterUid || p.connection === selectedPrinterUid
+    );
     if (!printer) {
-      alert('Selected printer not found');
+      setMessage('Printer Configuration: Selected Printer not found');
       return;
     }
 
     printer.sendThenRead(
-      '~HQES', // Command to get printer status,
+      '~HQES', // ZPL Printer Status command
       (response: any) => {
-        alert('Printer is reachable:\n' + response);
+        setMessage('Printer Configuration: Printer connection succeeded');
       },
       (error: any) => {
-        alert('Failed to communicate with printer:\n' + error);
+        setError('Failed to communicate with printer:\n' + error);
       }
     );
   };
@@ -116,27 +118,52 @@ const DeviceConfigurationPage: React.FC = () => {
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
+        {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <div className="config-container">
-          <label>Select a Printer:</label>
-          <select value={selectedPrinterUid} onChange={handlePrinterChange}>
-            <option value="">-- Select Printer --</option>
-            {printers.map((printer) => (
-              <option key={printer.uid} value={printer.uid || printer.connection}>
-                {printer.name}
-              </option>
-            ))}
-          </select>
-
-          <button onClick={testPrinterConnectivity}>Test Connectivity</button>
-          <button onClick={saveDefaultPrinter}>Save as Default</button>
-        </div>
-
-        {defaultPrinterUid && (
-          <div className="default-printer-info">
-            <p>Current Default Printer UID: {defaultPrinterUid}</p>
+          {/* Align label and select on the same line */}
+          <div className="printer-selection-row">
+            <label htmlFor="printer-select">Select a Printer:</label>
+            <select
+              id="printer-select"
+              value={selectedPrinterUid}
+              onChange={handlePrinterChange}
+            >
+              <option value="">-- Select Printer --</option>
+              {printers.map((printer) => (
+                <option key={printer.uid} value={printer.uid || printer.connection}>
+                  {printer.name}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+
+          {/* Button group */}
+          <div className="button-group">
+            <button onClick={testPrinterConnectivity}>Test Connectivity</button>
+            <button onClick={saveDefaultPrinter}>Save as Default</button>
+            <button onClick={fetchAvailablePrinters}>Refresh Printer List</button>
+          </div>
+
+          <table className="info-table">
+            <thead>
+              <tr>
+                <th>Setting</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Current Default Printer:</td>
+                <td>{defaultPrinterUid || 'None'}</td>
+              </tr>
+              <tr>
+                <td>Browser Print SDK Version:</td>
+                <td>3.1.250-min</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </Layout>
   );

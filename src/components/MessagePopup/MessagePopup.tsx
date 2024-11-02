@@ -1,14 +1,14 @@
-// ./src/components/ErrorPopup.tsx
+// ./src/components/MessagePopup.tsx
 
 import React, { useEffect, useState } from 'react';
-import './ErrorPopup.css';
+import './MessagePopup.css';
 
-interface ErrorPopupProps {
-  error: string | null;
+interface MessagePopupProps {
+  message: string | null;
   onClose: () => void;
 }
 
-const ErrorPopup: React.FC<ErrorPopupProps> = ({ error, onClose }) => {
+const MessagePopup: React.FC<MessagePopupProps> = ({ message, onClose }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -20,15 +20,15 @@ const ErrorPopup: React.FC<ErrorPopupProps> = ({ error, onClose }) => {
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  if (!visible || !error) {
+  if (!visible || !message) {
     return null;
   }
 
   return (
-    <div className="error-popup">
-      <p>{error}</p>
+    <div className="message-popup">
+      <p>{message}</p>
     </div>
   );
 };
 
-export default ErrorPopup;
+export default MessagePopup;

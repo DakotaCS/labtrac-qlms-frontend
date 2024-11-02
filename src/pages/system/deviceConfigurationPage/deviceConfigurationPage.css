@@ -1,4 +1,3 @@
-/* ./src/pages/PrinterConfigurationPage.css */
 
 .printer-config-page {
   padding: 10px 20px;
@@ -6,7 +5,7 @@
 
 .page-title {
   text-align: left;
-  margin-top: 60px;
+  margin-top: 20px;
   margin-left: 20px;
 }
 
@@ -20,39 +19,66 @@
 }
 
 .config-container {
-  margin-left: 20px;
+  margin-top: 20px;
+  padding: 0 20px;
 }
 
-.config-container label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.config-container select {
+.printer-selection-row {
+  display: flex;
+  align-items: center;
   margin-bottom: 15px;
+}
+
+.printer-selection-row label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.printer-selection-row select {
+  /* Remove flex: 1; and set width to 100% */
+  width: 100%;
+  max-width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  width: 200px;
 }
 
-.config-container button {
+.button-group {
+  margin-top: 10px;
+}
+
+.button-group button {
   padding: 10px 20px;
+  margin-right: 10px;
+  margin-top: 10px;
   background-color: #f4f4f4;
   color: #333;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-right: 10px;
 }
 
-.config-container button:hover {
+.button-group button:hover {
   background-color: #ddd;
 }
 
-.default-printer-info {
-  margin-left: 20px;
+.info-table {
+  width: 100%; /* Make table width 100% of its container */
   margin-top: 20px;
-  font-weight: bold;
+  border-collapse: collapse;
+}
+
+.info-table th,
+.info-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.info-table th {
+  background-color: #f4f4f4;
+}
+
+.info-table tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
