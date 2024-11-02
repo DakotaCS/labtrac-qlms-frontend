@@ -1,6 +1,6 @@
 // ./src/pages/solidInventoryItemPage/solidInventoryItemPage.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../../config/axiosConfig';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
@@ -61,7 +61,6 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
 
-
   const columns = [
     'Inventory Item',
     'Name',
@@ -72,27 +71,80 @@ const SolidChemicalInventoryPage: React.FC = () => {
     'Unit',
   ];
 
-  const columnMap: { [key: string]: string } = {
-    'Inventory Item': 'Inventory Item',
-    Name: 'Name',
-    'Location Name': 'Location Name',
-    'Category Name': 'Category Name',
-    Status: 'Status',
-    'Current Quantity': 'Current Quantity',
-    Unit: 'Unit',
-  };
-  
-
   const [searchTerm, setSearchTerm] = useState('');
   const [searchColumn, setSearchColumn] = useState('Inventory Item');
+
+  // Wrap handleError with useCallback
+  const handleError = useCallback((err: any) => {
+    const errorMessage = `Error: ${err.response?.status} - ${
+      err.response?.data?.message || err.message
+    }`;
+    setError(errorMessage);
+  }, []);
+
+  // Wrap fetchInventoryItems with useCallback
+  const fetchInventoryItems = useCallback(
+    async (
+      searchColumn = 'Inventory Item',
+      searchValue = '',
+      page = 0,
+      size = 10
+    ) => {
+      try {
+        const params = {
+          searchColumn: searchColumn,
+          searchValue: searchValue,
+          page: page,
+          size: size,
+        };
+
+        const response = await apiClient.get('/inventory/solid/pageable', {
+          params,
+        });
+        setInventoryItems(response.data.content);
+      } catch (err: any) {
+        handleError(err);
+      }
+    },
+    [handleError]
+  );
+
+  // Wrap fetchLocations with useCallback
+  const fetchLocations = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/system/location');
+      setLocations(response.data);
+    } catch (err: any) {
+      handleError(err);
+    }
+  }, [handleError]);
+
+  // Wrap fetchCategories with useCallback
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/system/category');
+      setCategories(response.data);
+    } catch (err: any) {
+      handleError(err);
+    }
+  }, [handleError]);
+
+  // Wrap fetchUnits with useCallback
+  const fetchUnits = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/system/unit/solid');
+      setUnits(response.data);
+    } catch (err: any) {
+      handleError(err);
+    }
+  }, [handleError]);
 
   useEffect(() => {
     fetchInventoryItems();
     fetchLocations();
     fetchCategories();
     fetchUnits();
-
-  }, []);
+  }, [fetchInventoryItems, fetchLocations, fetchCategories, fetchUnits]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -100,62 +152,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, searchColumn]);
-
-  const fetchInventoryItems = async (
-    searchColumn = 'Inventory Item',
-    searchValue = '',
-    page = 0,
-    size = 10
-  ) => {
-    try {
-      const params = {
-        searchColumn: searchColumn, 
-        searchValue: searchValue,
-        page: page,
-        size: size,
-      };
-  
-      const response = await apiClient.get('/inventory/solid/pageable', { params });
-      setInventoryItems(response.data.content);
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const fetchLocations = async () => {
-    try {
-      const response = await apiClient.get('/system/location');
-      setLocations(response.data);
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const response = await apiClient.get('/system/category');
-      setCategories(response.data);
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const fetchUnits = async () => {
-    try {
-      const response = await apiClient.get('/system/unit/solid');
-      setUnits(response.data);
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${
-      err.response?.data?.message || err.message
-    }`;
-    setError(errorMessage);
-  };
+  }, [searchTerm, searchColumn, fetchInventoryItems]);
 
   const handleAddInventoryItem = async (data: any) => {
     try {
@@ -229,7 +226,8 @@ const SolidChemicalInventoryPage: React.FC = () => {
       // and find the one matching defaultPrinterUid
       const printers = await getAvailablePrinters();
       const selectedPrinter = printers.find(
-        (printer: any) => printer.uid === defaultPrinterUid || printer.connection === defaultPrinterUid
+        (printer: any) =>
+          printer.uid === defaultPrinterUid || printer.connection === defaultPrinterUid
       );
 
       if (!selectedPrinter) {
@@ -341,7 +339,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
                       },
                       {
                         label: 'Print Label',
-                        onClick: () => handlePrintLabel(item), // Added this line
+                        onClick: () => handlePrintLabel(item),
                       },
                     ]}
                   />

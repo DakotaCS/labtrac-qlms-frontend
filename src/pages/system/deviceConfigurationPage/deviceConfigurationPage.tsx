@@ -30,7 +30,6 @@ const DeviceConfigurationPage: React.FC = () => {
   const [defaultPrinterUid, setDefaultPrinterUid] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [sdkVersion, setSdkVersion] = useState<string>('Unknown');
 
   const fetchDefaultPrinter = useCallback(async () => {
     try {
@@ -61,13 +60,6 @@ const DeviceConfigurationPage: React.FC = () => {
       },
       'printer'
     );
-
-    // Get the SDK version
-    if (window.BrowserPrint) {
-      setSdkVersion(window.BrowserPrint.version || 'Unknown');
-    } else {
-      setSdkVersion('Unknown');
-    }
   }, []);
 
   useEffect(() => {
