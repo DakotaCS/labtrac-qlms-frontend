@@ -113,7 +113,6 @@ const DeviceConfigurationPage: React.FC = () => {
         {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <div className="config-container">
-          {/* Align label and select on the same line */}
           <div className="printer-selection-row">
             <label htmlFor="printer-select">Select a Printer:</label>
             <select
@@ -130,7 +129,6 @@ const DeviceConfigurationPage: React.FC = () => {
             </select>
           </div>
 
-          {/* Button group */}
           <div className="button-group">
             <button onClick={testPrinterConnectivity}>Test Connectivity</button>
             <button onClick={saveDefaultPrinter}>Save as Default</button>

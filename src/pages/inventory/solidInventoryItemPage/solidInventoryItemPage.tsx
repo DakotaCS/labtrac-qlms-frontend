@@ -458,7 +458,6 @@ const UpdateQuantityForm: React.FC<UpdateQuantityFormProps> = ({
   );
 };
 
-// UpdateDetailsForm Component
 interface UpdateDetailsFormProps {
   item: SolidInventoryItem;
   locations: Location[];
