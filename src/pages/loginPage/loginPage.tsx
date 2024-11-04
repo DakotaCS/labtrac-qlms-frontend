@@ -22,10 +22,12 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('token', jwt);
 
       const userDetailsResponse = await apiClient.get('/system/user/current-user');
-      const { id } = userDetailsResponse.data;
+      
+      const { id, userName } = userDetailsResponse.data;
       localStorage.setItem('userId', id);
+      localStorage.setItem('userName', userName);
 
-      setIsAuthenticated(true); // Update authentication state
+      setIsAuthenticated(true);
       navigate('/landing');
     } catch (err) {
       setError('Invalid username or password');

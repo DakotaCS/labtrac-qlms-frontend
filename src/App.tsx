@@ -6,7 +6,7 @@ import LandingPage from './pages/landingPage/landingPage';
 import LocationPage from './pages/system/locationPage/locationPage';
 import CategoryPage from './pages/system/categoryPage/categoryPage';
 import UserManagementPage from './pages/system/userManagementPage/userManagementPage';
-import Logout from './components/Logout';
+import Logout from './pages/Logout';
 import AutoLogout from './config/autoLogout';
 import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage/solidInventoryItemPage';
 import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
@@ -15,9 +15,11 @@ import AuthContext from './config/authContext';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  const [username, setUsername] = useState(localStorage.getItem('username') || '');
+
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, username, setUsername }}>
     <Router>
       <AutoLogout /> {}
       <Routes>

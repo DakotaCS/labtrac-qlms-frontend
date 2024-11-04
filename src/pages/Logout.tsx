@@ -1,4 +1,5 @@
 // src/components/Logout.tsx
+
 import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AutoLogoutManager from '../config/autoLogoutManager';
@@ -19,6 +20,7 @@ const Logout: React.FC = () => {
     AutoLogoutManager.clearTimeout();
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
     setIsAuthenticated(false);
 
     navigate('/login');
