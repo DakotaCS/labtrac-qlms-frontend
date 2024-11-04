@@ -6,9 +6,12 @@ import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../../components/Popup/Popup';
 import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
-import './solidInventoryItemPage.css';
 import CustomDropdown from '../../../components/CustomDropdown/CustomDropdown';
 import SearchBarWithFilter from '../../../components/SearchBarWithFilter/SearchBarWithFilter';
+import MessagePopup from '../../../components/MessagePopup/MessagePopup';
+import { printLabel } from '../../../utils/printerUtils';
+import { SolidInventoryItem, Category, Location } from '../../../components/types';
+import './solidInventoryItemPage.css';
 
 declare global {
   interface Window {
@@ -16,37 +19,9 @@ declare global {
   }
 }
 
-interface Location {
-  id: number;
-  locationId: string | null;
-  name: string;
-  description: string;
-  createTime: string;
-}
-
-interface Category {
-  id: number;
-  categoryId: string;
-  name: string;
-  description: string;
-  createTime: string;
-}
-
 interface Unit {
   quantityUnit: string;
   quantityUnitCode: string;
-}
-
-interface SolidInventoryItem {
-  id: number;
-  inventoryItemId: string;
-  name: string;
-  location: Location;
-  category: Category;
-  status: string;
-  currentQuantityAmount: number;
-  quantityUnit: string;
-  casNumber: string;
 }
 
 const SolidChemicalInventoryPage: React.FC = () => {
@@ -60,6 +35,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<SolidInventoryItem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const columns = [
     'Inventory Item',
@@ -74,7 +50,6 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchColumn, setSearchColumn] = useState('Inventory Item');
 
-  // Wrap handleError with useCallback
   const handleError = useCallback((err: any) => {
     const errorMessage = `Error: ${err.response?.status} - ${
       err.response?.data?.message || err.message
@@ -82,7 +57,6 @@ const SolidChemicalInventoryPage: React.FC = () => {
     setError(errorMessage);
   }, []);
 
-  // Wrap fetchInventoryItems with useCallback
   const fetchInventoryItems = useCallback(
     async (
       searchColumn = 'Inventory Item',
@@ -109,7 +83,6 @@ const SolidChemicalInventoryPage: React.FC = () => {
     [handleError]
   );
 
-  // Wrap fetchLocations with useCallback
   const fetchLocations = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/location');
@@ -119,7 +92,6 @@ const SolidChemicalInventoryPage: React.FC = () => {
     }
   }, [handleError]);
 
-  // Wrap fetchCategories with useCallback
   const fetchCategories = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/category');
@@ -129,7 +101,6 @@ const SolidChemicalInventoryPage: React.FC = () => {
     }
   }, [handleError]);
 
-  // Wrap fetchUnits with useCallback
   const fetchUnits = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/unit/solid');
@@ -209,65 +180,11 @@ const SolidChemicalInventoryPage: React.FC = () => {
 
   const handlePrintLabel = async (item: SolidInventoryItem) => {
     try {
-      // Step 5.1: POST to /api/system/print/item to get the ZPL string
-      const zplResponse = await apiClient.post('/system/print/item', {
-        itemId: item.id,
-        inventoryItemId: item.inventoryItemId,
-        name: item.name,
-        location: item.location.name,
-      });
-      const zplString = zplResponse.data.zplString;
-
-      // Step 5.2: GET /api/system/print/default-printer to get defaultPrinterUid
-      const defaultPrinterResponse = await apiClient.get('/system/print/default-printer');
-      const defaultPrinterUid = defaultPrinterResponse.data.defaultPrinterUid;
-
-      // Step 5.3: Use Browser Print SDK to retrieve list of available printers
-      // and find the one matching defaultPrinterUid
-      const printers = await getAvailablePrinters();
-      const selectedPrinter = printers.find(
-        (printer: any) =>
-          printer.uid === defaultPrinterUid || printer.connection === defaultPrinterUid
-      );
-
-      if (!selectedPrinter) {
-        alert('Default printer not found');
-        return;
-      }
-
-      // Step 5.4: Send the ZPL string to print the label to that printer
-      await sendZplToPrinter(selectedPrinter, zplString);
-      alert('Print job sent successfully');
+      await printLabel(item);
+      setMessage('Label printed successfully');
     } catch (error) {
-      alert('Error printing label');
-      console.error(error);
+      setError('Failed to print label:\n' + error);
     }
-  };
-
-  // Function to get available printers using Browser Print SDK
-  const getAvailablePrinters = (): Promise<any[]> => {
-    return new Promise((resolve, reject) => {
-      if (!window.BrowserPrint) {
-        reject('BrowserPrint SDK not found');
-        return;
-      }
-      window.BrowserPrint.getLocalDevices(
-        (printers: any[]) => {
-          resolve(printers);
-        },
-        (error: any) => {
-          reject(error);
-        },
-        'printer'
-      );
-    });
-  };
-
-  // Function to send ZPL string to the selected printer
-  const sendZplToPrinter = (printer: any, zpl: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      printer.send(zpl, resolve, reject);
-    });
   };
 
   return (
@@ -277,6 +194,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
+        {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <div className="button-container">
           <div className="button-group">
