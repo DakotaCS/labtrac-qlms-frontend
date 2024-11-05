@@ -36,6 +36,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
 
   const columns = [
     'Inventory Item',
@@ -187,6 +188,42 @@ const SolidChemicalInventoryPage: React.FC = () => {
     }
   };
 
+  const toggleSelectItem = (id: number) => {
+    setSelectedItems((prevSelected) => {
+      const newSelected = new Set(prevSelected);
+      if (newSelected.has(id)) {
+        newSelected.delete(id);
+      } else {
+        newSelected.add(id);
+      }
+      return newSelected;
+    });
+  };
+
+  const handleBulkPrint = async () => {
+    if (selectedItems.size < 1 || selectedItems.size > 50) {
+      setError('Please select between 1 and 50 items to print.');
+      return;
+    }
+  
+    try {
+      const itemsToPrint = inventoryItems.filter(item => selectedItems.has(item.id));
+      for (const item of itemsToPrint) {
+        await printLabel(item);
+      }
+      setMessage('Bulk printing completed successfully.');
+    } catch (error) {
+      setError('Failed to complete bulk printing:\n' + error);
+    } finally {
+      setSelectedItems(new Set());
+    }
+  };
+
+  const clearSelections = () => {
+    setSelectedItems(new Set());
+    setMessage('All selections have been cleared.');
+  };
+
   return (
     <Layout>
       <div className={`solid-inventory-page ${menuCollapsed ? 'collapsed' : ''}`}>
@@ -198,13 +235,9 @@ const SolidChemicalInventoryPage: React.FC = () => {
 
         <div className="button-container">
           <div className="button-group">
-            <button
-              className="add-inventory-button"
-              onClick={() => setShowAddPopup(true)}
-            >
-              Add Inventory
-            </button>
-            <button className="bulk-print-button">Bulk Print</button>
+            <button className="add-inventory-button" onClick={() => setShowAddPopup(true)}>Add Inventory</button>
+            <button className="bulk-print-button" onClick={handleBulkPrint}>Bulk Print</button>
+            <button className="clear-selection-button" onClick={clearSelections}>Clear Selection</button>
             <SearchBarWithFilter
               columns={columns}
               onSearch={(term) => setSearchTerm(term)}
@@ -223,6 +256,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
               <th>Status</th>
               <th>Current Quantity</th>
               <th>Unit</th>
+              <th>Print</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -236,6 +270,13 @@ const SolidChemicalInventoryPage: React.FC = () => {
                 <td>{item.status}</td>
                 <td>{item.currentQuantityAmount}</td>
                 <td>{item.quantityUnit}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.has(item.id)}
+                    onChange={() => toggleSelectItem(item.id)}
+                  />
+                </td>
                 <td>
                   <MeatballMenu
                     options={[

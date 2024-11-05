@@ -1,7 +1,6 @@
 .search-bar-container {
     display: flex;
     align-items: center;
-    margin-left: auto; /* Aligns the search bar to the right */
   }
   
   .search-input {
@@ -12,9 +11,9 @@
   }
   
   .search-filter-dropdown {
-    padding: 8px;
+    padding: 9px;
     border: 1px solid #ddd;
-    border-left: none; /* Removes double border between input and dropdown */
+    border-left: none;
     border-radius: 0 4px 4px 0;
     background-color: #fff;
   }

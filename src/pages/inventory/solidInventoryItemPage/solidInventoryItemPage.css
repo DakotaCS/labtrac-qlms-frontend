@@ -27,48 +27,6 @@
     margin-bottom: 20px;
   }
   
-  .button-group {
-    display: flex;
-    align-items: center;
-  }
-  
-  .add-inventory-button,
-  .bulk-print-button,
-  .search-bar-container {
-    margin-right: 10px;
-  }
-  
-  .add-inventory-button,
-  .bulk-print-button {
-    padding: 10px 20px;
-    background-color: #f4f4f4;
-    color: #333;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  /* Adjusted styles for the search bar */
-  .search-bar-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .search-input {
-    width: 400px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px 0 0 4px;
-  }
-  
-  .search-filter-dropdown {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-left: none;
-    border-radius: 0 4px 4px 0;
-    background-color: #fff;
-  }
-  
   .inventory-table {
     width: calc(100% - 40px);
     margin-left: 20px;
@@ -175,4 +133,8 @@
   .form-actions button + button {
     margin-left: 10px;
   }
+
+.inventory-table input[type='checkbox'] {
+  transform: scale(1.2);
+}
   
