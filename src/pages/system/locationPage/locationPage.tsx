@@ -122,19 +122,12 @@ const LocationPage: React.FC = () => {
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
         <div className="button-container">
-          <div className="button-group">
-            <button
-              className="add-location-button"
-              onClick={() => setShowAddPopup(true)}
-            >
-              Add Location
-            </button>
+            <button className="add-location-button" onClick={() => setShowAddPopup(true)}>Add Location</button>
             <SearchBarWithFilter
               columns={columns}
               onSearch={(term) => setSearchTerm(term)}
               onFilterChange={(filter) => setSearchColumn(filter)}
             />
-          </div>
         </div>
 
         <table className="location-table">

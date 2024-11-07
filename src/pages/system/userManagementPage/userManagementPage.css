@@ -7,7 +7,7 @@
   text-align: left;
   margin-top: 20px;
   margin-left: 20px;
-  font-weight: bold; /* Bolded the title */
+  font-weight: bold;
 }
 
 .page-divider {
@@ -51,7 +51,7 @@
 
 .user-table th {
   background-color: #f4f4f4;
-  font-weight: bold; /* Bolded the table headings */
+  font-weight: bold;
 }
 
 .meatball-menu-container {
@@ -93,25 +93,23 @@
 .user-form {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Add space between form elements */
+  gap: 15px;
 }
 
 .user-form label {
   margin-bottom: 5px;
-  font-weight: bold; /* Bolded the labels */
+  font-weight: bold;
 }
 
-/* Add space between the labels and input fields */
 .user-form input,
 .user-form select {
   margin-bottom: 15px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  width: 100%; /* Ensure input fields take full width of the popup */
+  width: 100%;
 }
 
-/* Style for the buttons */
 .form-actions {
   display: flex;
   justify-content: space-between;
@@ -131,7 +129,6 @@
   background-color: #ddd;
 }
 
-/* Add some space between the buttons */
 .form-actions button + button {
   margin-left: 10px;
 }

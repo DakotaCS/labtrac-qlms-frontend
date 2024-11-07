@@ -27,11 +27,6 @@
     margin-bottom: 20px;
   }
   
-  .button-group {
-    display: flex;
-    align-items: center;
-  }
-  
   .add-category-button,
   .search-bar-container {
     margin-right: 10px;

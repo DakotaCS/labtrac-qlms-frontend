@@ -226,7 +226,7 @@ const UserManagementPage: React.FC = () => {
           </Popup>
         )}
 
-        {/* Update User Popups */}
+        {/* Update User Popup */}
         {showDialog && showDialog !== 'add-user' && (
           <Popup
             title={
