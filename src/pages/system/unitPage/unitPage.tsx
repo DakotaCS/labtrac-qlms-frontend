@@ -9,6 +9,7 @@ import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
 import './unitPage.css';
 
 interface Unit {
+  id: number;
   quantityUnit: string;
   quantityUnitCode: string;
 }
@@ -76,11 +77,12 @@ const UnitPage: React.FC = () => {
   };
 
   const handleUpdateSolidUnit = async (
+    id: number,
     quantityUnit: string,
     quantityUnitCode: string
   ) => {
     try {
-      await apiClient.patch(`/system/unit/solid/${quantityUnitCode}`, { quantityUnit, quantityUnitCode });
+      await apiClient.patch(`/system/unit/solid/${id}`, { quantityUnit, quantityUnitCode });
       fetchSolidUnits();
       setShowUpdateSolidPopup(false);
     } catch (err: any) {
@@ -89,11 +91,12 @@ const UnitPage: React.FC = () => {
   };
 
   const handleUpdateLiquidUnit = async (
+    id: number,
     quantityUnit: string,
     quantityUnitCode: string
   ) => {
     try {
-      await apiClient.patch(`/system/unit/liquid/${quantityUnitCode}`, { quantityUnit, quantityUnitCode });
+      await apiClient.patch(`/system/unit/liquid/${id}`, { quantityUnit, quantityUnitCode });
       fetchLiquidUnits();
       setShowUpdateLiquidPopup(false);
     } catch (err: any) {
@@ -101,18 +104,18 @@ const UnitPage: React.FC = () => {
     }
   };
 
-  const handleDeleteSolidUnit = async (quantityUnitCode: string) => {
+  const handleDeleteSolidUnit = async (id: number) => {
     try {
-      await apiClient.delete(`/system/unit/solid/${quantityUnitCode}`);
+      await apiClient.delete(`/system/unit/solid/${id}`);
       fetchSolidUnits();
     } catch (err: any) {
       handleError(err);
     }
   };
 
-  const handleDeleteLiquidUnit = async (quantityUnitCode: string) => {
+  const handleDeleteLiquidUnit = async (id: number) => {
     try {
-      await apiClient.delete(`/system/unit/liquid/${quantityUnitCode}`);
+      await apiClient.delete(`/system/unit/liquid/${id}`);
       fetchLiquidUnits();
     } catch (err: any) {
       handleError(err);
@@ -140,9 +143,7 @@ const UnitPage: React.FC = () => {
         <div className="unit-tables-container">
           <div className="unit-table-wrapper">
             <h2>Solid Units</h2>
-            <button className="add-unit-button" onClick={() => setShowAddSolidPopup(true)}>
-              Add Solid Unit
-            </button>
+            <button className="add-unit-button" onClick={() => setShowAddSolidPopup(true)}>Add Solid Unit</button>
             <table className="unit-table">
               <thead>
                 <tr>
@@ -153,7 +154,7 @@ const UnitPage: React.FC = () => {
               </thead>
               <tbody>
                 {solidUnits.map((unit) => (
-                  <tr key={unit.quantityUnitCode}>
+                  <tr key={unit.id}>
                     <td>{unit.quantityUnit}</td>
                     <td>{unit.quantityUnitCode}</td>
                     <td>
@@ -165,7 +166,7 @@ const UnitPage: React.FC = () => {
                           },
                           {
                             label: 'Remove',
-                            onClick: () => handleDeleteSolidUnit(unit.quantityUnitCode),
+                            onClick: () => handleDeleteSolidUnit(unit.id),
                           },
                         ]}
                       />
@@ -178,9 +179,7 @@ const UnitPage: React.FC = () => {
 
           <div className="unit-table-wrapper">
             <h2>Liquid Units</h2>
-            <button className="add-unit-button" onClick={() => setShowAddLiquidPopup(true)}>
-              Add Liquid Unit
-            </button>
+            <button className="add-unit-button" onClick={() => setShowAddLiquidPopup(true)}>Add Liquid Unit</button>
             <table className="unit-table">
               <thead>
                 <tr>
@@ -191,7 +190,7 @@ const UnitPage: React.FC = () => {
               </thead>
               <tbody>
                 {liquidUnits.map((unit) => (
-                  <tr key={unit.quantityUnitCode}>
+                  <tr key={unit.id}>
                     <td>{unit.quantityUnit}</td>
                     <td>{unit.quantityUnitCode}</td>
                     <td>
@@ -203,7 +202,7 @@ const UnitPage: React.FC = () => {
                           },
                           {
                             label: 'Remove',
-                            onClick: () => handleDeleteLiquidUnit(unit.quantityUnitCode),
+                            onClick: () => handleDeleteLiquidUnit(unit.id),
                           },
                         ]}
                       />
@@ -215,7 +214,6 @@ const UnitPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Popups for Add and Update */}
         {showAddSolidPopup && (
           <Popup title="Add Solid Unit" onClose={() => setShowAddSolidPopup(false)}>
             <UnitForm
@@ -244,7 +242,7 @@ const UnitPage: React.FC = () => {
               initialQuantityUnit={selectedSolidUnit.quantityUnit}
               initialQuantityUnitCode={selectedSolidUnit.quantityUnitCode}
               onSubmit={(quantityUnit, quantityUnitCode) =>
-                handleUpdateSolidUnit(quantityUnit, quantityUnitCode)
+                handleUpdateSolidUnit(selectedSolidUnit.id, quantityUnit, quantityUnitCode)
               }
               onCancel={() => setShowUpdateSolidPopup(false)}
             />
@@ -257,7 +255,7 @@ const UnitPage: React.FC = () => {
               initialQuantityUnit={selectedLiquidUnit.quantityUnit}
               initialQuantityUnitCode={selectedLiquidUnit.quantityUnitCode}
               onSubmit={(quantityUnit, quantityUnitCode) =>
-                handleUpdateLiquidUnit(quantityUnit, quantityUnitCode)
+                handleUpdateLiquidUnit(selectedLiquidUnit.id, quantityUnit, quantityUnitCode)
               }
               onCancel={() => setShowUpdateLiquidPopup(false)}
             />
