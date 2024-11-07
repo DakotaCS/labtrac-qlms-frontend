@@ -234,16 +234,16 @@ const SolidChemicalInventoryPage: React.FC = () => {
         {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <div className="button-container">
-          <div className="button-group">
             <button className="add-inventory-button" onClick={() => setShowAddPopup(true)}>Add Inventory</button>
             <button className="bulk-print-button" onClick={handleBulkPrint}>Bulk Print</button>
             <button className="clear-selection-button" onClick={clearSelections}>Clear Selection</button>
+            
             <SearchBarWithFilter
               columns={columns}
               onSearch={(term) => setSearchTerm(term)}
               onFilterChange={(filter) => setSearchColumn(filter)}
             />
-          </div>
+          
         </div>
 
         <table className="inventory-table">

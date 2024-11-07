@@ -46,7 +46,6 @@
     cursor: pointer;
   }
   
-  /* Ensure the search bar container doesn't have unintended margins */
   .search-bar-container {
     display: flex;
     align-items: center;
@@ -110,7 +109,6 @@
     background-color: #ddd;
   }
     
-  /* Vertical alignment of Name and Description fields */
   .category-form {
     display: flex;
     flex-direction: column;
@@ -128,7 +126,6 @@
     border-radius: 4px;
   }
   
-  /* Style for the buttons */
   .form-actions {
     display: flex;
     justify-content: space-between;
@@ -148,7 +145,6 @@
     background-color: #ddd;
   }
   
-  /* Add some space between the buttons */
   .form-actions button + button {
     margin-left: 10px;
   }

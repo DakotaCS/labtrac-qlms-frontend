@@ -1,6 +1,5 @@
 /* ./src/components/Layout/Layout.css */
 
-/* Main layout container */
 .layout {
   position: absolute;
   top: 50px;    /* Height of the header */
@@ -11,13 +10,12 @@
   flex-direction: row;
 }
 
-/* Layout content area */
 .layout-content {
   flex-grow: 1;
   padding: 20px;
   margin-left: 150px; /* Default margin for expanded side menu */
   transition: margin-left 0.3s ease;
-  overflow-y: auto;   /* Enable vertical scrolling if content overflows */
+  overflow-y: auto;  
 }
 
 /* Adjust margin when the side menu is collapsed */
