@@ -7,7 +7,7 @@ import AuthContext from './authContext';
 
 const AutoLogout: React.FC = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated, setUsername } = useContext(AuthContext);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -24,7 +24,9 @@ const AutoLogout: React.FC = () => {
         const timeoutId = setTimeout(() => {
           localStorage.removeItem('token');
           localStorage.removeItem('userId');
+          localStorage.removeItem('userName');
           setIsAuthenticated(false);
+          setUsername('');
           navigate('/login');
         }, timeUntilExpiration);
 
@@ -32,7 +34,9 @@ const AutoLogout: React.FC = () => {
       } else {
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
-        setIsAuthenticated(false); 
+        localStorage.removeItem('userName'); 
+        setIsAuthenticated(false);
+        setUsername('');
         navigate('/login');
       }
     }
@@ -40,7 +44,7 @@ const AutoLogout: React.FC = () => {
     return () => {
       AutoLogoutManager.clearTimeout();
     };
-  }, [navigate, setIsAuthenticated]);
+  }, [navigate, setIsAuthenticated, setUsername]);
 
   return null;
 };
