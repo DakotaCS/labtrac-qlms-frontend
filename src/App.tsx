@@ -11,6 +11,7 @@ import AutoLogout from './config/autoLogout';
 import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage/solidInventoryItemPage';
 import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
 import DeviceConfigurationPage from './pages/system/deviceConfigurationPage/deviceConfigurationPage';
+import UnitPage from './pages/system/unitPage/unitPage';
 import AuthContext from './config/authContext';
 
 function App() {
@@ -38,6 +39,9 @@ function App() {
 
         {/* Device Configuration Route */}
         <Route path="/device-configuration" element={isAuthenticated ? <DeviceConfigurationPage /> : <Navigate to="/login" />}/>
+
+        {/* Unit Route */}
+        <Route path="/unit" element={isAuthenticated ? <UnitPage /> : <Navigate to="/login" />}/>
 
         {/* Logout Route */}
         <Route path="/logout" element={isAuthenticated ? <Logout /> : <Navigate to="/login" />}/>

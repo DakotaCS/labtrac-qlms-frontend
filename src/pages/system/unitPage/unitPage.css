@@ -1,0 +1,106 @@
+/* ./src/pages/unitPage.css */
+
+.unit-page {
+  padding: 10px 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.page-title {
+  text-align: left;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.page-divider {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: none;
+  border-top: 2px solid #ddd;
+  margin-left: 20px;
+  width: calc(100% - 40px);
+}
+
+.unit-tables-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px;
+}
+
+.unit-table-wrapper {
+  width: 48%;
+}
+
+.unit-table-wrapper h2 {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.add-unit-button {
+  margin-bottom: 15px;
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-unit-button:hover {
+  background-color: #ddd;
+}
+
+.unit-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.unit-table th,
+.unit-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.unit-table th {
+  background-color: #f4f4f4;
+}
+
+.unit-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.unit-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.unit-form input {
+  margin-bottom: 15px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions button:hover {
+  background-color: #ddd;
+}
+
+.form-actions button + button {
+  margin-left: 10px;
+}
