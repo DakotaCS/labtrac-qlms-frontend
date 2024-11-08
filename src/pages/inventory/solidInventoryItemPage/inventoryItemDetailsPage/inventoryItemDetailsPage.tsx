@@ -1,51 +1,14 @@
 // ./src/pages/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage.tsx
 
 import React, { useState, useEffect } from 'react';
-import apiClient from '../../../../config/axiosConfig'; // Import the configured Axios instance
+import apiClient from '../../../../config/axiosConfig';
 import Layout from '../../../../components/Layout/Layout';
 import ErrorPopup from '../../../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../../../components/Popup/Popup';
 import MeatballMenu from '../../../../components/MeatballMenu/MeatballMenu';
 import { useParams, useNavigate } from 'react-router-dom';
 import './inventoryItemDetailsPage.css';
-
-interface Location {
-  id: number;
-  locationId: string | null;
-  name: string;
-  description: string;
-  createTime: string;
-}
-
-interface Category {
-  id: number;
-  categoryId: string;
-  name: string;
-  description: string;
-  createTime: string;
-}
-
-interface SolidInventoryItemDetails {
-  id: number;
-  inventoryItemId: string;
-  name: string;
-  type: string | null;
-  importDate: string;
-  location: Location;
-  category: Category;
-  status: string;
-  casNumber: string;
-  expirationDate: string;
-  originalQuantityAmount: number;
-  currentQuantityAmount: number;
-  quantityUnit: string;
-}
-
-interface Note {
-  id: number;
-  inventoryItemId: number;
-  content: string;
-}
+import { SolidInventoryItemDetails, Note } from "../../../../components/types";
 
 const InventoryItemDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,7 +24,6 @@ const InventoryItemDetailsPage: React.FC = () => {
   useEffect(() => {
     fetchItemDetails();
     fetchNotes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchItemDetails = async () => {
@@ -136,65 +98,36 @@ const InventoryItemDetailsPage: React.FC = () => {
     <Layout>
       <div className="inventory-item-details-page">
         <div className="header-row">
-          <button className="back-button" onClick={goBack}>
-            ←
-          </button>
+          <button className="back-button" onClick={goBack}>←</button>
           <h1 className="page-title">Inventory Item Details</h1>
         </div>
+
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
 
         {itemDetails && (
           <div className="item-details">
-            <p>
-              <strong>Inventory Item ID:</strong> {itemDetails.inventoryItemId}
-            </p>
-            <p>
-              <strong>Name:</strong> {itemDetails.name}
-            </p>
-            <p>
-              <strong>Import Date:</strong> {itemDetails.importDate}
-            </p>
-            <p>
-              <strong>Status:</strong> {itemDetails.status}
-            </p>
-            <p>
-              <strong>Location ID:</strong> {itemDetails.location.locationId}
-            </p>
-            <p>
-              <strong>Location Name:</strong> {itemDetails.location.name}
-            </p>
-            <p>
-              <strong>Category ID:</strong> {itemDetails.category.categoryId}
-            </p>
-            <p>
-              <strong>Category Name:</strong> {itemDetails.category.name}
-            </p>
-            <p>
-              <strong>Expiration Date:</strong> {itemDetails.expirationDate}
-            </p>
-            <p>
-              <strong>CAS Number:</strong> {itemDetails.casNumber}
-            </p>
-            <p>
-              <strong>Current Quantity:</strong> {itemDetails.currentQuantityAmount}
-            </p>
-            <p>
-              <strong>Original Quantity:</strong> {itemDetails.originalQuantityAmount}
-            </p>
-            <p>
-              <strong>Quantity Unit:</strong> {itemDetails.quantityUnit}
-            </p>
+            <p><strong>Inventory Item ID:</strong> {itemDetails.inventoryItemId}</p>
+            <p><strong>Name:</strong> {itemDetails.name}</p>
+            <p><strong>Import Date:</strong> {itemDetails.importDate}</p>
+            <p><strong>Status:</strong> {itemDetails.status}</p>
+            <p><strong>Location ID:</strong> {itemDetails.location.locationId}</p>
+            <p><strong>Location Name:</strong> {itemDetails.location.name}</p>
+            <p><strong>Category ID:</strong> {itemDetails.category.categoryId}</p>
+            <p><strong>Category Name:</strong> {itemDetails.category.name}</p>
+            <p><strong>Expiration Date:</strong> {itemDetails.expirationDate}</p>
+            <p><strong>CAS Number:</strong> {itemDetails.casNumber}</p>
+            <p><strong>Current Quantity:</strong> {itemDetails.currentQuantityAmount}</p>
+            <p><strong>Original Quantity:</strong> {itemDetails.originalQuantityAmount}</p>
+            <p><strong>Quantity Unit:</strong> {itemDetails.quantityUnit}</p>
           </div>
         )}
 
         <button
           className="add-note-button"
           onClick={() => setShowAddNotePopup(true)}
-        >
-          Add Note
-        </button>
+        >Add Note</button>
 
         <table className="notes-table">
           <thead>

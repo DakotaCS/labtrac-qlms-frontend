@@ -17,22 +17,22 @@
   
   .login-container form {
     width: 100%;
-    max-width: 400px; /* Ensures the form is centered and has a consistent width */
+    max-width: 400px;
   }
   
   .login-container label {
     display: block;
     margin-bottom: 5px;
-    text-align: left; /* Optional: aligns the label text to the left */
+    text-align: left;
   }
   
   .login-container input,
   .login-container button {
-    width: 100%;  /* Makes the input fields and button the same width */
+    width: 100%;
     padding: 8px;
     margin-top: 5px;
     margin-bottom: 15px;
-    box-sizing: border-box;  /* Ensures padding doesn't affect the element's width */
+    box-sizing: border-box;
   }
   
   .login-container .error {

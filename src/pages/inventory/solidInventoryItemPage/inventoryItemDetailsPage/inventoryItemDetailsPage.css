@@ -13,7 +13,7 @@
   .back-button {
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 24px;
     cursor: pointer;
     margin-right: 10px;
   }
@@ -35,8 +35,8 @@
   .item-details {
     margin-left: 20px;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Two equal columns */
-    gap: 10px 20px; /* Space between items */
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
     background-color: #f4f4f4;
     padding: 20px;
     border-radius: 8px;
@@ -53,7 +53,7 @@
   
   .item-details p strong {
     display: inline-block;
-    width: 140px; /* Ensure labels have a consistent width */
+    width: 140px;
     font-weight: bold;
   }
   
