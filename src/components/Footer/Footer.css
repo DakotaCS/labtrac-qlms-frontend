@@ -7,7 +7,7 @@
   width: 100%;
   z-index: 1001;
   display: flex;
-  justify-content: space-between; /* Add spacing between Logout and copyright */
+  justify-content: space-between;
 }
 
 .footer-content {
@@ -18,13 +18,13 @@
 }
 
 .logout-link {
-  color: white; /* Same color as footer text */
+  color: white;
   text-decoration: none;
   padding-left: 20px;
 }
 
 .logout-link:hover {
-  text-decoration: underline; /* Optional: Add hover effect */
+  text-decoration: underline;
 }
 
 .footer-text {
