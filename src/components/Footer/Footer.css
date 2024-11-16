@@ -11,20 +11,8 @@
 }
 
 .footer-content {
-  display: flex;
   justify-content: space-between;
-  align-items: center;
   width: 100%;
-}
-
-.logout-link {
-  color: white;
-  text-decoration: none;
-  padding-left: 20px;
-}
-
-.logout-link:hover {
-  text-decoration: underline;
 }
 
 .footer-text {
