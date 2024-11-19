@@ -47,12 +47,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ onToggle }) => {
     setCollapsed(!collapsed);
     onToggle();
     if (!collapsed) {
-      setExpandedParents([]); // Collapse all sub-menus when menu is collapsed
+      setExpandedParents([]);
     }
   };
 
   const toggleSubMenu = (parentId: number) => {
-    if (collapsed) return; // Prevent submenu toggle when collapsed
+    if (collapsed) return;
 
     setExpandedParents((prevExpanded) =>
       prevExpanded.includes(parentId)
