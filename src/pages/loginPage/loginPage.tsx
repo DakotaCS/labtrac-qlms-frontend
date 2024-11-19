@@ -6,6 +6,7 @@ import Header from '../../components/Header/Header';
 import logo from '../../assets/logo.png';
 import apiClient from '../../config/axiosConfig';
 import AuthContext from '../../config/authContext';
+import { useScanning } from '../../config/ScanningContext';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -13,6 +14,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
+  const { enableScanning } = useScanning();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +30,7 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('userName', userName);
 
       setIsAuthenticated(true);
+      enableScanning(); // Enable scanning upon successful login
       navigate('/landing');
     } catch (err) {
       setError('Invalid username or password');
