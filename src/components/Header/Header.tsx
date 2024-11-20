@@ -1,3 +1,9 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Header Component
+ */
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useScanning } from '../../config/ScanningContext';

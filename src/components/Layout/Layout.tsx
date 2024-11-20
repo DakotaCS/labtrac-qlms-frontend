@@ -1,4 +1,8 @@
-// ./src/components/Layout/Layout.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Layout Component
+ */
 
 import React, { useState } from 'react';
 import Header from '../Header/Header';

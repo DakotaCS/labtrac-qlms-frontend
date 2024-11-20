@@ -1,4 +1,9 @@
-// ./src/components/MeatballMenu/MeatballMenu.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Meatball Menu Component
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import './MeatballMenu.css';
 

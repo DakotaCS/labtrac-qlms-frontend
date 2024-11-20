@@ -1,7 +1,11 @@
-// ./src/components/SideMenu/SideMenu.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Side Menu Component
+ */
 
 import React, { useEffect, useState } from 'react';
-import apiClient from '../../config/axiosConfig'; // Import the configured Axios instance
+import apiClient from '../../config/axiosConfig';
 import { Link } from 'react-router-dom';
 import './sideMenu.css';
 

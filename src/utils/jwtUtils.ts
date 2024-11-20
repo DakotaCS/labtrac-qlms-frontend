@@ -1,6 +1,9 @@
-// src/utils/jwtUtils.ts
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description JWT Utils
+ */
 
-// Decode the JWT to extract the payload
 export function decodeJwt(token: string) {
     try {
       const base64Url = token.split('.')[1];

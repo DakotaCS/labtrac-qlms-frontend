@@ -1,4 +1,8 @@
-// ./src/components/MessagePopup.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Message Popup Component
+ */
 
 import React, { useEffect, useState } from 'react';
 import './MessagePopup.css';

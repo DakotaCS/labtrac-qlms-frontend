@@ -1,7 +1,7 @@
-// ./src/utils/printerUtils.ts
-
 /**
- * Handles all printing functinality, including: 
+ * @author Dakota Soares
+ * @version 1.1
+ * @description  Handles all printing functinality, including: 
  * - Single label printing for all components 
  * - Bulk label printing for all components
  */

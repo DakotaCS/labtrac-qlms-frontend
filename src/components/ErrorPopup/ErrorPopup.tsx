@@ -1,4 +1,8 @@
-// ./src/components/ErrorPopup.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Error Popup Component
+ */
 
 import React, { useEffect, useState } from 'react';
 import './ErrorPopup.css';

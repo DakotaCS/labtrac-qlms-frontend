@@ -1,3 +1,9 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Custom Dropdown Component
+ */
+
 import React, { useState, useRef, useEffect } from 'react';
 import './CustomDropdown.css';
 

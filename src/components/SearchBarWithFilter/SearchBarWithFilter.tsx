@@ -1,3 +1,9 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Error Popup Component
+ */
+
 import React from 'react';
 import './SearchBarWithFilter.css';
 

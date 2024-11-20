@@ -1,4 +1,9 @@
-// App.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description App
+ */
+
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginPage from './pages/loginPage/loginPage';
@@ -29,8 +34,10 @@ function App() {
     <Router>
       <AutoLogout /> {}
       <Routes>
+        {/* Login Route */}
         <Route path="/login" element={<LoginPage />} />
 
+        {/* Landing Route */}
         <Route path="/landing" element={isAuthenticated ? <LandingPage /> : <Navigate to="/login" />} />
 
         {/* Location Route */}
