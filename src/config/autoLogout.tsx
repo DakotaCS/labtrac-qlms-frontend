@@ -1,4 +1,9 @@
-// src/components/AutoLogout.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Auto Logout
+ */
+
 import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isTokenExpired, decodeJwt } from '../utils/jwtUtils';

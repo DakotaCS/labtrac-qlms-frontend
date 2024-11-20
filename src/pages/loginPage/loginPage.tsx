@@ -1,12 +1,18 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Login Page
+ */
+
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './loginPage.css';
 import Footer from '../../components/Footer/Footer';
 import Header from '../../components/Header/Header';
 import logo from '../../assets/logo.png';
 import apiClient from '../../config/axiosConfig';
 import AuthContext from '../../config/authContext';
 import { useScanning } from '../../config/ScanningContext';
+import './loginPage.css';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -16,6 +22,16 @@ const LoginPage: React.FC = () => {
   const { setIsAuthenticated } = useContext(AuthContext);
   const { enableScanning } = useScanning();
 
+    /**
+   * When called, do the following:
+   * 1. Retrieve the user details
+   * 2. Set the token in local storage
+   * 3. Retrieve the current user details
+   * 4. Set the user ID and user name
+   * 5. Enable the auth context
+   * 6. Enable scanning
+   * 7. Navigate to the Login Page
+   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -30,10 +46,10 @@ const LoginPage: React.FC = () => {
       localStorage.setItem('userName', userName);
 
       setIsAuthenticated(true);
-      enableScanning(); // Enable scanning upon successful login
+      enableScanning();
       navigate('/landing');
     } catch (err) {
-      setError('Invalid username or password');
+      setError('Error: The username or password is invalid');
     }
   };
 

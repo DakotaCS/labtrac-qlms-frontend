@@ -1,21 +1,19 @@
-// ./src/pages/CategoryPage.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Category Management Page
+ */
 
-import React, { useState, useEffect } from 'react';
-import apiClient from '../../../config/axiosConfig'; // Import the configured Axios instance
+import React, { useState, useEffect , useCallback } from 'react';
+import apiClient from '../../../config/axiosConfig';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
+import MessagePopup from '../../../components/MessagePopup/MessagePopup';
 import Popup from '../../../components/Popup/Popup';
 import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
 import SearchBarWithFilter from '../../../components/SearchBarWithFilter/SearchBarWithFilter';
+import { Category } from '../../../components/types';
 import './categoryPage.css';
-
-interface Category {
-  id: number;
-  categoryId: string;
-  name: string;
-  description: string;
-  createTime: string;
-}
 
 const CategoryPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -24,16 +22,25 @@ const CategoryPage: React.FC = () => {
   const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-
   const columns = ['Category ID', 'Name', 'Description', 'Date Created'];
-
   const [searchTerm, setSearchTerm] = useState('');
   const [searchColumn, setSearchColumn] = useState(columns[0]); // Defaults to 'Category ID'
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/system/category');
+      setCategories(response.data);
+      setFilteredCategories(response.data);
+    } catch (err: any) {
+      setError('Error: Could not retrieve the Category List');
+    }
+  }, []);
+
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
@@ -58,30 +65,14 @@ const CategoryPage: React.FC = () => {
     return columnMap[column];
   };
 
-  const fetchCategories = async () => {
-    try {
-      const response = await apiClient.get('/system/category');
-      setCategories(response.data);
-      setFilteredCategories(response.data); // Initialize filteredCategories
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${
-      err.response?.data?.message || err.message
-    }`;
-    setError(errorMessage);
-  };
-
   const handleAddCategory = async (name: string, description: string) => {
     try {
       await apiClient.post('/system/category', { name, description });
       fetchCategories();
       setShowAddPopup(false);
+      setMessage('Message: The category was added successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The category could not be added');
     }
   };
 
@@ -94,8 +85,9 @@ const CategoryPage: React.FC = () => {
       await apiClient.patch(`/system/category/${id}`, { name, description });
       fetchCategories();
       setShowUpdatePopup(false);
+      setMessage('Message: The category was updated successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The category could not be updated');
     }
   };
 
@@ -103,8 +95,9 @@ const CategoryPage: React.FC = () => {
     try {
       await apiClient.delete(`/system/category/${id}`);
       fetchCategories();
+      setMessage('Message: The category was deleted successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The category could not be deleted');
     }
   };
 
@@ -120,6 +113,7 @@ const CategoryPage: React.FC = () => {
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
+        {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <div className="button-container">
             <button className="add-category-button" onClick={() => setShowAddPopup(true)}>Add Category</button>

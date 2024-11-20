@@ -1,4 +1,8 @@
-// ./src/pages/solidInventoryItemPage/solidInventoryItemPage.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Solid Inventory Item Page
+ */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../../config/axiosConfig';
@@ -10,18 +14,13 @@ import CustomDropdown from '../../../components/CustomDropdown/CustomDropdown';
 import SearchBarWithFilter from '../../../components/SearchBarWithFilter/SearchBarWithFilter';
 import MessagePopup from '../../../components/MessagePopup/MessagePopup';
 import { printLabel } from '../../../utils/printerUtils';
-import { SolidInventoryItem, Category, Location } from '../../../components/types';
+import { SolidInventoryItem, Category, Location, Unit } from '../../../components/types';
 import './solidInventoryItemPage.css';
 
 declare global {
   interface Window {
     BrowserPrint: any;
   }
-}
-
-interface Unit {
-  quantityUnit: string;
-  quantityUnitCode: string;
 }
 
 const SolidChemicalInventoryPage: React.FC = () => {
@@ -51,15 +50,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchColumn, setSearchColumn] = useState('Inventory Item');
 
-  const handleError = useCallback((err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${
-      err.response?.data?.message || err.message
-    }`;
-    setError(errorMessage);
-  }, []);
-
-  const fetchInventoryItems = useCallback(
-    async (
+  const fetchInventoryItems = useCallback(async (
       searchColumn = 'Inventory Item',
       searchValue = '',
       page = 0,
@@ -78,38 +69,36 @@ const SolidChemicalInventoryPage: React.FC = () => {
         });
         setInventoryItems(response.data.content);
       } catch (err: any) {
-        handleError(err);
+        setError('Error: Could not retrieve the Inventory Item List');
       }
-    },
-    [handleError]
-  );
+    }, []);
 
   const fetchLocations = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/location');
       setLocations(response.data);
     } catch (err: any) {
-      handleError(err);
+      setError('Error: Could not retrieve the Location List');
     }
-  }, [handleError]);
+  }, []);
 
   const fetchCategories = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/category');
       setCategories(response.data);
     } catch (err: any) {
-      handleError(err);
+      setError('Error: Could not retrieve the Category List');
     }
-  }, [handleError]);
+  }, []);
 
   const fetchUnits = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/unit/solid');
       setUnits(response.data);
     } catch (err: any) {
-      handleError(err);
+      setError('Error: Could not retrieve the Unit List');
     }
-  }, [handleError]);
+  }, []);
 
   useEffect(() => {
     fetchInventoryItems();
@@ -131,8 +120,9 @@ const SolidChemicalInventoryPage: React.FC = () => {
       await apiClient.post('/inventory/solid', data);
       fetchInventoryItems();
       setShowAddPopup(false);
+      setMessage('Message: The inventory item was added successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The inventory item could not be added');
     }
   };
 
@@ -141,8 +131,9 @@ const SolidChemicalInventoryPage: React.FC = () => {
       await apiClient.patch(`/inventory/solid/${id}/quantity`, { quantityUsed });
       fetchInventoryItems();
       setShowUpdateQuantityPopup(false);
+      setMessage('Message: The quantity was updated successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The quantity could not be updated');
     }
   };
 
@@ -151,8 +142,9 @@ const SolidChemicalInventoryPage: React.FC = () => {
       await apiClient.patch(`/inventory/solid/${id}`, data);
       fetchInventoryItems();
       setShowUpdateDetailsPopup(false);
+      setMessage('Message: The inventory item details were updated successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The inventory item details could not be updated');
     }
   };
 
@@ -160,8 +152,9 @@ const SolidChemicalInventoryPage: React.FC = () => {
     try {
       await apiClient.delete(`/inventory/solid/${id}`);
       fetchInventoryItems();
+      setMessage('Message: The inventory item was deleted successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The inventory item could not be deleted');
     }
   };
 
@@ -182,9 +175,9 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const handlePrintLabel = async (item: SolidInventoryItem) => {
     try {
       await printLabel(item);
-      setMessage('Label printed successfully');
+      setMessage('Message: The label printed successfully');
     } catch (error) {
-      setError('Failed to print label:\n' + error);
+      setError('Error: The label could not be printed');
     }
   };
 
@@ -202,7 +195,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
 
   const handleBulkPrint = async () => {
     if (selectedItems.size < 1 || selectedItems.size > 50) {
-      setError('Please select between 1 and 50 items to print.');
+      setError('Error: The selection must be between 1 and 50 items');
       return;
     }
   
@@ -211,9 +204,9 @@ const SolidChemicalInventoryPage: React.FC = () => {
       for (const item of itemsToPrint) {
         await printLabel(item);
       }
-      setMessage('Bulk printing completed successfully.');
+      setMessage('Message: The bulk print job was completed successfully');
     } catch (error) {
-      setError('Failed to complete bulk printing:\n' + error);
+      setError('Error: The bulk print job failed');
     } finally {
       setSelectedItems(new Set());
     }
@@ -221,7 +214,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
 
   const clearSelections = () => {
     setSelectedItems(new Set());
-    setMessage('All selections have been cleared.');
+    setMessage('Message: All user selections have been cleared successfully');
   };
 
   return (
@@ -353,7 +346,6 @@ const SolidChemicalInventoryPage: React.FC = () => {
   );
 };
 
-// InventoryForm Component for Adding Inventory
 interface InventoryFormProps {
   locations: Location[];
   categories: Category[];
@@ -470,7 +462,6 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
   );
 };
 
-// UpdateQuantityForm Component
 interface UpdateQuantityFormProps {
   onSubmit: (quantityUsed: number) => void;
   onCancel: () => void;

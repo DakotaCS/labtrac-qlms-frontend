@@ -1,4 +1,9 @@
-// src/config/scanningContext.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Scanning Context
+ */
+
 import React, { createContext, useState, useContext, useEffect  } from 'react';
 import AuthContext from './authContext';
 
@@ -37,5 +42,4 @@ export const ScanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 };
 
 export const useScanning = () => useContext(ScanningContext);
-
 export default ScanningContext;

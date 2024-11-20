@@ -1,4 +1,9 @@
-// src/components/ScannerListener.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Scanning Listener
+ */
+
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useScanning } from '../config/ScanningContext';
 

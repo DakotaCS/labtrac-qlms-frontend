@@ -1,4 +1,8 @@
-// Types
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Global Type Definitions
+ */
 
 export interface Location {
     id: number;
@@ -48,4 +52,29 @@ export interface SolidInventoryItem {
     id: number;
     inventoryItemId: number;
     content: string;
+  }
+
+  export interface User {
+    id: number;
+    userName: string;
+    isDisabled: boolean;
+    userRole: string;
+    createTime: string;
+  }
+
+  export interface Printer {
+    name: string;
+    uid: string;
+    connection: string;
+    sendThenRead: (
+      data: string,
+      successCallback: (response: any) => void,
+      errorCallback: (error: any) => void
+    ) => void;
+  }
+
+  export interface Unit {
+    id: number;
+    quantityUnit: string;
+    quantityUnitCode: string;
   }

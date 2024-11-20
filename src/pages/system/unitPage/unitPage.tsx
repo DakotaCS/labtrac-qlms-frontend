@@ -1,18 +1,18 @@
-// ./src/pages/UnitPage.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Unit Management Page
+ */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../../config/axiosConfig';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
+import MessagePopup from '../../../components/MessagePopup/MessagePopup';
 import Popup from '../../../components/Popup/Popup';
 import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
+import { Unit } from '../../../components/types';
 import './unitPage.css';
-
-interface Unit {
-  id: number;
-  quantityUnit: string;
-  quantityUnitCode: string;
-}
 
 const UnitPage: React.FC = () => {
   const [solidUnits, setSolidUnits] = useState<Unit[]>([]);
@@ -24,45 +24,40 @@ const UnitPage: React.FC = () => {
   const [selectedSolidUnit, setSelectedSolidUnit] = useState<Unit | null>(null);
   const [selectedLiquidUnit, setSelectedLiquidUnit] = useState<Unit | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
 
-  useEffect(() => {
-    fetchSolidUnits();
-    fetchLiquidUnits();
-  }, []);
-
-  const fetchSolidUnits = async () => {
+  const fetchSolidUnits = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/unit/solid');
       setSolidUnits(response.data);
     } catch (err: any) {
-      handleError(err);
+      setError('Error: Could not retrieve the Solid Unit List');
     }
-  };
+  }, []);
 
-  const fetchLiquidUnits = async () => {
+  const fetchLiquidUnits = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/unit/liquid');
       setLiquidUnits(response.data);
     } catch (err: any) {
-      handleError(err);
+      setError('Error: Could not retrieve the Liquid Unit List');
     }
-  };
+  }, []);
 
-  const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${
-      err.response?.data?.message || err.message
-    }`;
-    setError(errorMessage);
-  };
+  useEffect(() => {
+    fetchSolidUnits();
+    fetchLiquidUnits();
+  }, [fetchLiquidUnits, fetchSolidUnits]);
 
   const handleAddSolidUnit = async (quantityUnit: string, quantityUnitCode: string) => {
     try {
       await apiClient.post('/system/unit/solid', { quantityUnit, quantityUnitCode });
       fetchSolidUnits();
       setShowAddSolidPopup(false);
+      setMessage('Message: The solid unit was added successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The solid unit could not be added');
     }
   };
 
@@ -71,8 +66,9 @@ const UnitPage: React.FC = () => {
       await apiClient.post('/system/unit/liquid', { quantityUnit, quantityUnitCode });
       fetchLiquidUnits();
       setShowAddLiquidPopup(false);
+      setMessage('Message: The liquid unit was added successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The liquid unit could not be added');
     }
   };
 
@@ -85,8 +81,9 @@ const UnitPage: React.FC = () => {
       await apiClient.patch(`/system/unit/solid/${id}`, { quantityUnit, quantityUnitCode });
       fetchSolidUnits();
       setShowUpdateSolidPopup(false);
+      setMessage('Message: The solid unit was updated successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The solid unit could not be updated');
     }
   };
 
@@ -99,8 +96,9 @@ const UnitPage: React.FC = () => {
       await apiClient.patch(`/system/unit/liquid/${id}`, { quantityUnit, quantityUnitCode });
       fetchLiquidUnits();
       setShowUpdateLiquidPopup(false);
+      setMessage('Message: The liquid unit was updated successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The liquid unit could not be updated');
     }
   };
 
@@ -108,8 +106,9 @@ const UnitPage: React.FC = () => {
     try {
       await apiClient.delete(`/system/unit/solid/${id}`);
       fetchSolidUnits();
+      setMessage('Message: The solid unit was deleted successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The solid unit could not be deleted');
     }
   };
 
@@ -117,8 +116,9 @@ const UnitPage: React.FC = () => {
     try {
       await apiClient.delete(`/system/unit/liquid/${id}`);
       fetchLiquidUnits();
+      setMessage('Message: The liquid unit was deleted successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The liquid unit could not be deleted');
     }
   };
 
@@ -139,6 +139,7 @@ const UnitPage: React.FC = () => {
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
+        {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <div className="unit-tables-container">
           <div className="unit-table-wrapper">

@@ -1,21 +1,19 @@
-// ./src/pages/locationPage/locationPage.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Location Page
+ */
 
-import React, { useState, useEffect } from 'react';
-import apiClient from '../../../config/axiosConfig'; // Import the configured Axios instance
+import React, { useState, useEffect, useCallback } from 'react';
+import apiClient from '../../../config/axiosConfig';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
+import MessagePopup from '../../../components/MessagePopup/MessagePopup';
 import Popup from '../../../components/Popup/Popup';
 import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
 import SearchBarWithFilter from '../../../components/SearchBarWithFilter/SearchBarWithFilter';
+import { Location } from '../../../components/types';
 import './locationPage.css';
-
-interface Location {
-  id: number;
-  locationId: string;
-  name: string;
-  description: string;
-  createTime: string;
-}
 
 const LocationPage: React.FC = () => {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -24,16 +22,25 @@ const LocationPage: React.FC = () => {
   const [showUpdatePopup, setShowUpdatePopup] = useState<boolean>(false);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-
   const columns = ['Location ID', 'Name', 'Description', 'Date Created'];
-
   const [searchTerm, setSearchTerm] = useState('');
   const [searchColumn, setSearchColumn] = useState(columns[0]); // Default to 'Location ID'
 
+  const fetchLocations = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/system/location');
+      setLocations(response.data);
+      setFilteredLocations(response.data);
+    } catch (err: any) {
+      setError('Error: Could not retrieve the Location List');
+    }
+  }, []);
+
   useEffect(() => {
     fetchLocations();
-  }, []);
+  }, [fetchLocations]);
 
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
@@ -58,30 +65,14 @@ const LocationPage: React.FC = () => {
     return columnMap[column];
   };
 
-  const fetchLocations = async () => {
-    try {
-      const response = await apiClient.get('/system/location');
-      setLocations(response.data);
-      setFilteredLocations(response.data);
-    } catch (err: any) {
-      handleError(err);
-    }
-  };
-
-  const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${
-      err.response?.data?.message || err.message
-    }`;
-    setError(errorMessage);
-  };
-
   const handleAddLocation = async (name: string, description: string) => {
     try {
       await apiClient.post('/system/location', { name, description });
       fetchLocations();
       setShowAddPopup(false);
+      setMessage('Message: The location was added successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The location could not be added');
     }
   };
 
@@ -94,8 +85,9 @@ const LocationPage: React.FC = () => {
       await apiClient.patch(`/system/location/${id}`, { name, description });
       fetchLocations();
       setShowUpdatePopup(false);
+      setMessage('Message: The location was updated successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The location could not be updated');
     }
   };
 
@@ -103,8 +95,9 @@ const LocationPage: React.FC = () => {
     try {
       await apiClient.delete(`/system/location/${id}`);
       fetchLocations();
+      setMessage('Message: The location was deleted successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The location could not be deleted');
     }
   };
 
@@ -120,6 +113,7 @@ const LocationPage: React.FC = () => {
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
+        {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <div className="button-container">
             <button className="add-location-button" onClick={() => setShowAddPopup(true)}>Add Location</button>

@@ -1,20 +1,18 @@
-// ./src/pages/UserManagementPage.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description User Management Page
+ */
 
-import React, { useState, useEffect } from 'react';
-import apiClient from '../../../config/axiosConfig'; // Import the configured Axios instance
+import React, { useState, useEffect, useCallback } from 'react';
+import apiClient from '../../../config/axiosConfig';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../../components/Popup/Popup';
+import MessagePopup from '../../../components/MessagePopup/MessagePopup';
 import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
+import { User } from '../../../components/types';
 import './userManagementPage.css';
-
-interface User {
-  id: number;
-  userName: string;
-  isDisabled: boolean;
-  userRole: string;
-  createTime: string;
-}
 
 const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -22,31 +20,24 @@ const UserManagementPage: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [newValue, setNewValue] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [menuCollapsed] = useState(false);
-
   const [newUsername, setNewUsername] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [newRole, setNewRole] = useState<string>('ADMIN');
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await apiClient.get('/system/user');
       setUsers(response.data);
     } catch (err: any) {
-      handleError(err);
+      setError('Error: Could not retrieve the User List');
     }
-  };
+  }, []);
 
-  const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${
-      err.response?.data?.message || err.message
-    }`;
-    setError(errorMessage);
-  };
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleAddUser = async () => {
     try {
@@ -60,8 +51,9 @@ const UserManagementPage: React.FC = () => {
       setNewUsername('');
       setNewPassword('');
       setNewRole('ADMIN');
+      setMessage('Message: The user was added successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The user could not be added');
     }
   };
 
@@ -70,8 +62,9 @@ const UserManagementPage: React.FC = () => {
       await apiClient.patch(url, body);
       fetchUsers();
       setShowDialog(null);
+      setMessage('Message: The user was updated successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The user could not be updated');
     }
   };
 
@@ -79,8 +72,9 @@ const UserManagementPage: React.FC = () => {
     try {
       await apiClient.delete(`/system/user/${userId}`);
       fetchUsers();
+      setMessage('Message: The user was deleted successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The user could not be deleted');
     }
   };
 
@@ -134,6 +128,7 @@ const UserManagementPage: React.FC = () => {
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
+        {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <button
           className="add-user-button"
@@ -192,7 +187,6 @@ const UserManagementPage: React.FC = () => {
           </tbody>
         </table>
 
-        {/* Add User Popup */}
         {showDialog === 'add-user' && (
           <Popup title="Add User" onClose={() => setShowDialog(null)}>
             <div className="user-form">
@@ -226,7 +220,6 @@ const UserManagementPage: React.FC = () => {
           </Popup>
         )}
 
-        {/* Update User Popup */}
         {showDialog && showDialog !== 'add-user' && (
           <Popup
             title={

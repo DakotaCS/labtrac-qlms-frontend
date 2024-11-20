@@ -1,8 +1,15 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Device Config Page
+ */
+
+import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../../config/axiosConfig';
 import Layout from '../../../components/Layout/Layout';
 import ErrorPopup from '../../../components/ErrorPopup/ErrorPopup';
 import MessagePopup from '../../../components/MessagePopup/MessagePopup';
+import { Printer } from '../../../components/types';
 import './deviceConfigurationPage.css';
 
 declare global {
@@ -11,26 +18,12 @@ declare global {
   }
 }
 
-interface Printer {
-  name: string;
-  uid: string;
-  connection: string;
-  sendThenRead: (
-    data: string,
-    successCallback: (response: any) => void,
-    errorCallback: (error: any) => void
-  ) => void;
-}
-
 const DeviceConfigurationPage: React.FC = () => {
   const [printers, setPrinters] = useState<Printer[]>([]);
   const [selectedPrinterUid, setSelectedPrinterUid] = useState<string>('');
   const [defaultPrinterUid, setDefaultPrinterUid] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-
-  const [isListening, setIsListening] = useState(false);
-  const scannerInputRef = useRef('');
 
   const fetchDefaultPrinter = useCallback(async () => {
     try {
@@ -104,56 +97,6 @@ const DeviceConfigurationPage: React.FC = () => {
     );
   };
 
-  // Handle scanner input
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    const ignoredKeys = [
-      'Shift',
-      'Control',
-      'Alt',
-      'Meta',
-      'CapsLock',
-      'Tab',
-      'Escape',
-      'ArrowUp',
-      'ArrowDown',
-      'ArrowLeft',
-      'ArrowRight',
-      'Insert',
-      'Delete',
-      'Home',
-      'End',
-      'PageUp',
-      'PageDown',
-      'NumLock',
-      'ScrollLock',
-      'Pause',
-      'ContextMenu',
-    ];
-
-    if (event.key === 'Enter') {
-      const url = scannerInputRef.current;
-      scannerInputRef.current = '';
-      setIsListening(false);
-      window.open(url, '_blank');
-    } else if (!ignoredKeys.includes(event.key) && event.key.length === 1) {
-      scannerInputRef.current += event.key;
-    }
-    // Prevent default behavior to avoid any side effects
-    event.preventDefault();
-  }, []);
-
-  useEffect(() => {
-    if (isListening) {
-      window.addEventListener('keydown', handleKeyDown);
-    } else {
-      window.removeEventListener('keydown', handleKeyDown);
-      scannerInputRef.current = ''; // Clear input when stopping listening
-    }
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isListening, handleKeyDown]);
-
   return (
     <Layout>
       <div className="printer-config-page">
@@ -206,15 +149,10 @@ const DeviceConfigurationPage: React.FC = () => {
           </table>
         </div>
 
-        {/* Scanner Configuration Section */}
         <h1 className="page-title">Scanner Configuration</h1>
         <hr className="page-divider" />
 
         <div className="scanner-config-container">
-          <button onClick={() => setIsListening(!isListening)}>
-            {isListening ? 'Stop Scanner Listening' : 'Start Scanner Listening'}
-          </button>
-          {isListening && <p>Listening for scanner input...</p>}
         </div>
       </div>
     </Layout>

@@ -1,4 +1,9 @@
-// AuthContext.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Auth Context
+ */
+
 import React from 'react';
 
 interface AuthContextProps {

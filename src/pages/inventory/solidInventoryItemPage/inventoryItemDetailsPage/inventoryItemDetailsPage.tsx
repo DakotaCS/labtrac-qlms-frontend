@@ -1,10 +1,15 @@
-// ./src/pages/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Solid Inventory Item Details Page
+ */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../../../config/axiosConfig';
 import Layout from '../../../../components/Layout/Layout';
 import ErrorPopup from '../../../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../../../components/Popup/Popup';
+import MessagePopup from '../../../../components/MessagePopup/MessagePopup';
 import MeatballMenu from '../../../../components/MeatballMenu/MeatballMenu';
 import { useParams, useNavigate } from 'react-router-dom';
 import './inventoryItemDetailsPage.css';
@@ -17,39 +22,33 @@ const InventoryItemDetailsPage: React.FC = () => {
   );
   const [notes, setNotes] = useState<Note[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [showAddNotePopup, setShowAddNotePopup] = useState<boolean>(false);
   const [showUpdateNotePopup, setShowUpdateNotePopup] = useState<boolean>(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
-  useEffect(() => {
-    fetchItemDetails();
-    fetchNotes();
-  }, []);
-
-  const fetchItemDetails = async () => {
+  const fetchItemDetails = useCallback(async () => {
     try {
       const response = await apiClient.get(`/inventory/solid/${id}`);
       setItemDetails(response.data);
     } catch (err: any) {
-      handleError(err);
+      setError('Error: Could not retrieve the Item Details');
     }
-  };
+  }, [id]);
 
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     try {
       const response = await apiClient.get(`/inventory/note/item/${id}`);
       setNotes(response.data);
     } catch (err: any) {
-      handleError(err);
+      setError('Error: Could not retrieve the Notes List');
     }
-  };
+  }, [id]);
 
-  const handleError = (err: any) => {
-    const errorMessage = `Error: ${err.response?.status} - ${
-      err.response?.data?.message || err.message
-    }`;
-    setError(errorMessage);
-  };
+  useEffect(() => {
+    fetchItemDetails();
+    fetchNotes();
+  }, [fetchItemDetails, fetchNotes]);
 
   const handleAddNote = async (content: string) => {
     try {
@@ -59,8 +58,9 @@ const InventoryItemDetailsPage: React.FC = () => {
       });
       fetchNotes();
       setShowAddNotePopup(false);
+      setMessage('Message: The note was added successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The note could not be added');
     }
   };
 
@@ -69,8 +69,9 @@ const InventoryItemDetailsPage: React.FC = () => {
       await apiClient.patch(`/inventory/note/${noteId}`, { content });
       fetchNotes();
       setShowUpdateNotePopup(false);
+      setMessage('Message: The note was updated successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The note could not be updated');
     }
   };
 
@@ -78,8 +79,9 @@ const InventoryItemDetailsPage: React.FC = () => {
     try {
       await apiClient.delete(`/inventory/note/${noteId}`);
       fetchNotes();
+      setMessage('Message: The note was deleted successfully');
     } catch (err: any) {
-      handleError(err);
+      setError('Error: The note could not be deleted');
     }
   };
 
@@ -105,6 +107,7 @@ const InventoryItemDetailsPage: React.FC = () => {
         <hr className="page-divider" />
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
+        {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         {itemDetails && (
           <div className="item-details">
@@ -185,7 +188,6 @@ const InventoryItemDetailsPage: React.FC = () => {
   );
 };
 
-// NoteForm Component
 interface NoteFormProps {
   initialContent?: string;
   onSubmit: (content: string) => void;

@@ -1,4 +1,8 @@
-// src/components/Logout.tsx
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description User Management Page
+ */
 
 import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -24,17 +28,13 @@ const Logout: React.FC = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
-    disableScanning(); // Disable scanning upon logout
+    disableScanning();
     setIsAuthenticated(false);
 
     navigate('/login');
   }, [navigate, disableScanning, setIsAuthenticated]);
 
-  return (
-    <div>
-      <p>Logging out...</p>
-    </div>
-  );
+  return null;
 };
 
 export default Logout;

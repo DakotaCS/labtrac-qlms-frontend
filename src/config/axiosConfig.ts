@@ -1,4 +1,9 @@
-// axiosConfig.ts
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Axios Configuration
+ */
+
 import axios from 'axios';
 
 const apiClient = axios.create({
