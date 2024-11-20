@@ -18,8 +18,9 @@ import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/i
 import DeviceConfigurationPage from './pages/system/deviceConfigurationPage/deviceConfigurationPage';
 import UnitPage from './pages/system/unitPage/unitPage';
 import AuthContext from './config/authContext';
-import { ScanningProvider } from './config/ScanningContext';
+import StorageListener from './config/storageListener';
 import ScannerListener from './config/ScannerListener';
+import { ScanningProvider } from './config/ScanningContext';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
@@ -29,9 +30,11 @@ function App() {
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, username, setUsername }}>
           <ScanningProvider>
-          <ScannerListener />
+
 
     <Router>
+    <ScannerListener />
+    <StorageListener />
       <AutoLogout /> {}
       <Routes>
         {/* Login Route */}

@@ -12,27 +12,31 @@ import { useScanning } from '../config/ScanningContext';
 
 const Logout: React.FC = () => {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated , setUsername} = useContext(AuthContext);
   const { disableScanning } = useScanning();
  
   /**
    * When called, do the following:
    * 1. Clear the auto logout timeout from the manager
    * 2. Remove storage cache from browser
-   * 3. Disable Scanning for URLs
-   * 4. Set isAuth to false for the auth context
-   * 5. Redirect to the login page
+   * 3. Add a logout item to the storage cache
+   *  for the tab storage listener
+   * 4. Disable Scanning for URLs
+   * 5. Set isAuth to false for the auth context
+   * 6. Redirect to the login page
    */
   useEffect(() => {
     AutoLogoutManager.clearTimeout();
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
+    localStorage.setItem('logout', Date.now().toString());
+    setUsername('');
     disableScanning();
     setIsAuthenticated(false);
 
     navigate('/login');
-  }, [navigate, disableScanning, setIsAuthenticated]);
+  }, [navigate, disableScanning, setIsAuthenticated, setUsername]);
 
   return null;
 };
