@@ -1,4 +1,9 @@
-/* ./src/pages/inventoryItemDetailsPage.css */
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Inventory item Details CSS
+ */
+
 .inventory-item-details-page {
     padding: 10px 20px;
   }

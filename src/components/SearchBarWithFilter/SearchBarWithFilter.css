@@ -1,3 +1,9 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Search Bar with Filter Component CSS
+ */
+
 .search-bar-container {
     display: flex;
     align-items: center;

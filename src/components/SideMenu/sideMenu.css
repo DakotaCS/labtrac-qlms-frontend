@@ -1,4 +1,9 @@
-/* Remove bullet points */
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Side Menu Component CSS
+ */
+
 ul {
   list-style-type: none;
   padding-left: 5px;

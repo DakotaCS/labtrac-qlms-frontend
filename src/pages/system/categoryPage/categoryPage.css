@@ -1,4 +1,9 @@
-/* ./src/pages/categoryPage.css */
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Category Page CSS
+ */
+
 .category-page {
     padding: 10px 20px;
     transition: margin-left 0.3s ease;

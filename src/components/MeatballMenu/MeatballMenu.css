@@ -1,4 +1,9 @@
-/* ./src/components/MeatballMenu/MeatballMenu.css */
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Meatball Menu Component CSS
+ */
+
 .meatball-menu-container {
     position: relative;
   }

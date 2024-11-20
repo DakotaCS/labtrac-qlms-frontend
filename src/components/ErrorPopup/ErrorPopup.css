@@ -1,4 +1,8 @@
-/* ./src/components/ErrorPopup.css */
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Error Popup Component CSS
+ */
 
 .error-popup {
     position: fixed;

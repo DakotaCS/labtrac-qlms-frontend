@@ -1,3 +1,9 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description User Management Page CSS
+ */
+
 .user-page {
   padding: 10px 20px;
   transition: margin-left 0.3s ease;
