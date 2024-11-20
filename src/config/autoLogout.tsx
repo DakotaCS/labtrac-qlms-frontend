@@ -4,15 +4,13 @@
  * @description Auto Logout
  */
 
-import React, { useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import { isTokenExpired, decodeJwt } from '../utils/jwtUtils';
 import AutoLogoutManager from './autoLogoutManager';
-import AuthContext from './authContext';
+import LogoutHelper from './logoutHelper';
 
 const AutoLogout: React.FC = () => {
-  const navigate = useNavigate();
-  const { setIsAuthenticated, setUsername } = useContext(AuthContext);
+  const logout = LogoutHelper();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -27,29 +25,21 @@ const AutoLogout: React.FC = () => {
         AutoLogoutManager.clearTimeout();
 
         const timeoutId = setTimeout(() => {
-          localStorage.removeItem('token');
-          localStorage.removeItem('userId');
-          localStorage.removeItem('userName');
-          setIsAuthenticated(false);
-          setUsername('');
-          navigate('/login');
+          logout();
+          localStorage.setItem('logout', Date.now().toString());
         }, timeUntilExpiration);
 
         AutoLogoutManager.setTimeoutId(timeoutId);
       } else {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('userName'); 
-        setIsAuthenticated(false);
-        setUsername('');
-        navigate('/login');
+        logout();
+        localStorage.setItem('logout', Date.now().toString());
       }
     }
 
     return () => {
       AutoLogoutManager.clearTimeout();
     };
-  }, [navigate, setIsAuthenticated, setUsername]);
+  }, [logout]);
 
   return null;
 };
