@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useScanning } from '../../config/ScanningContext';
+import { useScanning } from '../../config/scanningContext';
 import './Header.css';
 import logo from '../../assets/logo.png';
 import profilePic from '../../assets/icons/profile.png';

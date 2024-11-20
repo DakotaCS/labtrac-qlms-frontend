@@ -11,7 +11,7 @@ import LandingPage from './pages/landingPage/landingPage';
 import LocationPage from './pages/system/locationPage/locationPage';
 import CategoryPage from './pages/system/categoryPage/categoryPage';
 import UserManagementPage from './pages/system/userManagementPage/userManagementPage';
-import Logout from './pages/Logout';
+import Logout from './pages/logoutPage';
 import AutoLogout from './config/autoLogout';
 import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage/solidInventoryItemPage';
 import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
@@ -19,8 +19,8 @@ import DeviceConfigurationPage from './pages/system/deviceConfigurationPage/devi
 import UnitPage from './pages/system/unitPage/unitPage';
 import AuthContext from './config/authContext';
 import StorageListener from './config/storageListener';
-import ScannerListener from './config/ScannerListener';
-import { ScanningProvider } from './config/ScanningContext';
+import ScannerListener from './config/scannerListener';
+import { ScanningProvider } from './config/scanningContext';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));

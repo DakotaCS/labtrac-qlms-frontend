@@ -11,7 +11,7 @@ import Header from '../../components/Header/Header';
 import logo from '../../assets/logo.png';
 import apiClient from '../../config/axiosConfig';
 import AuthContext from '../../config/authContext';
-import { useScanning } from '../../config/ScanningContext';
+import { useScanning } from '../../config/scanningContext';
 import './loginPage.css';
 
 const LoginPage: React.FC = () => {

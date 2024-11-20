@@ -8,7 +8,7 @@ import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AutoLogoutManager from '../config/autoLogoutManager';
 import AuthContext from '../config/authContext';
-import { useScanning } from '../config/ScanningContext';
+import { useScanning } from '../config/scanningContext';
 
 const Logout: React.FC = () => {
   const navigate = useNavigate();

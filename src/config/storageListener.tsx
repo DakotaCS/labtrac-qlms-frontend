@@ -8,7 +8,7 @@ import { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from './authContext';
 import AutoLogoutManager from '../config/autoLogoutManager';
-import { useScanning } from './ScanningContext';
+import { useScanning } from './scanningContext';
 
 const StorageListener: React.FC = () => {
   const navigate = useNavigate();

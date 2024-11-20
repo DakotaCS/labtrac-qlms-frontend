@@ -5,7 +5,7 @@
  */
 
 import React, { useEffect, useRef, useCallback } from 'react';
-import { useScanning } from '../config/ScanningContext';
+import { useScanning } from './scanningContext';
 
 const ScannerListener: React.FC = () => {
   const { isScanningEnabled } = useScanning();
