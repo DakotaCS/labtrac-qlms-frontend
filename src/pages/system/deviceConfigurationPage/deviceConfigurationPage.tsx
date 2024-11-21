@@ -31,13 +31,13 @@ const DeviceConfigurationPage: React.FC = () => {
       setDefaultPrinterUid(response.data.defaultPrinterUid);
       setSelectedPrinterUid(response.data.defaultPrinterUid);
     } catch (err: any) {
-      setError('Printer Configuration: The default printer could not be found or is not set.');
+      setError('Error: The default printer could not be found or is not set.');
     }
   }, []);
 
   const fetchAvailablePrinters = useCallback(() => {
     if (!window.BrowserPrint) {
-      setError('Printer Configuration: Zebra Browser Print SDK not found.');
+      setError('Error: Zebra Browser Print SDK not found.');
       return;
     }
 
@@ -47,10 +47,10 @@ const DeviceConfigurationPage: React.FC = () => {
           (device) => device.connection === 'usb' || device.connection === 'network'
         );
         setPrinters(printerDevices);
-        setMessage('Printer list refreshed');
+        setMessage('Message: Printer list refreshed');
       },
       (error: any) => {
-        setError('Printer Configuration: Error Retrieving Printer List');
+        setError('Error: Printer list retrieval failed');
       },
       'printer'
     );
@@ -70,10 +70,10 @@ const DeviceConfigurationPage: React.FC = () => {
       await apiClient.patch('/system/print/default-printer', {
         defaultPrinterUid: selectedPrinterUid,
       });
-      setMessage('Printer Configuration: Default Printer saved');
+      setMessage('Message: Default Printer saved successfully');
       setDefaultPrinterUid(selectedPrinterUid);
     } catch (err: any) {
-      setError('Printer Configuration: The Default Printer could not be saved');
+      setError('Message: Default printer save failed');
     }
   };
 
@@ -82,17 +82,17 @@ const DeviceConfigurationPage: React.FC = () => {
       (p) => p.uid === selectedPrinterUid || p.connection === selectedPrinterUid
     );
     if (!printer) {
-      setMessage('Printer Configuration: Selected Printer not found');
+      setMessage('Error: Selected Printer not found');
       return;
     }
 
     printer.sendThenRead(
       '~HQES', // ZPL Printer Status command
       (response: any) => {
-        setMessage('Printer Configuration: Printer connection succeeded');
+        setMessage('Message: Printer connection succeeded');
       },
       (error: any) => {
-        setError('Failed to communicate with printer:\n' + error);
+        setError('Error: Printer communication failed');
       }
     );
   };
@@ -153,6 +153,25 @@ const DeviceConfigurationPage: React.FC = () => {
         <hr className="page-divider" />
 
         <div className="scanner-config-container">
+        <table className="info-table">
+            <thead>
+              <tr>
+                <th>Setting</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Scanner Settings</td>
+                <td>All 2D Scanners set to 'Real-Time' Mode using a US Keyboard Layout over 2.4Ghz or wired connections 
+                  are compatible with this application. USB-COM/Virtual Serial Port settings are not supported. </td>
+              </tr>
+              <tr>
+                <td>Scanner Compatibility</td>
+                <td>Tera 8100, 8100Y, HWOO15, HWOOO7-BT, HWOOO6 Pro, D5100, D5100Y</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </Layout>
