@@ -37,6 +37,10 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
 
+  const [page, setPage] = useState<number>(0);
+  const [size] = useState<number>(100);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
   const columns = [
     'Inventory Item',
     'Name',
@@ -49,29 +53,27 @@ const SolidChemicalInventoryPage: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchColumn, setSearchColumn] = useState('Inventory Item');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  const [debouncedSearchColumn, setDebouncedSearchColumn] = useState(searchColumn);
 
-  const fetchInventoryItems = useCallback(async (
-      searchColumn = 'Inventory Item',
-      searchValue = '',
-      page = 0,
-      size = 10
-    ) => {
-      try {
-        const params = {
-          searchColumn: searchColumn,
-          searchValue: searchValue,
-          page: page,
-          size: size,
-        };
+  const fetchInventoryItems = useCallback(async () => {
+    try {
+      const params = {
+        searchColumn: debouncedSearchColumn,
+        searchValue: debouncedSearchTerm,
+        page: page,
+        size: size,
+      };
 
-        const response = await apiClient.get('/inventory/solid/pageable', {
-          params,
-        });
-        setInventoryItems(response.data.content);
-      } catch (err: any) {
-        setError('Error: Could not retrieve the Inventory Item List');
-      }
-    }, []);
+      const response = await apiClient.get('/inventory/solid/pageable', {
+        params,
+      });
+      setInventoryItems(response.data.content);
+      setTotalPages(response.data.totalPages);
+    } catch (err: any) {
+      setError('Error: Could not retrieve the Inventory Item List');
+    }
+  }, [debouncedSearchColumn, debouncedSearchTerm, page, size]);
 
   const fetchLocations = useCallback(async () => {
     try {
@@ -109,11 +111,17 @@ const SolidChemicalInventoryPage: React.FC = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchInventoryItems(searchColumn, searchTerm);
+      setDebouncedSearchTerm(searchTerm);
+      setDebouncedSearchColumn(searchColumn);
+      setPage(0); // Reset to first page when search changes
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, searchColumn, fetchInventoryItems]);
+  }, [searchTerm, searchColumn]);
+
+  useEffect(() => {
+    fetchInventoryItems();
+  }, [fetchInventoryItems]);
 
   const handleAddInventoryItem = async (data: any) => {
     try {
@@ -198,9 +206,9 @@ const SolidChemicalInventoryPage: React.FC = () => {
       setError('Error: The selection must be between 1 and 50 items');
       return;
     }
-  
+
     try {
-      const itemsToPrint = inventoryItems.filter(item => selectedItems.has(item.id));
+      const itemsToPrint = inventoryItems.filter((item) => selectedItems.has(item.id));
       for (const item of itemsToPrint) {
         await printLabel(item);
       }
@@ -227,16 +235,21 @@ const SolidChemicalInventoryPage: React.FC = () => {
         {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
 
         <div className="button-container">
-            <button className="add-inventory-button" onClick={() => setShowAddPopup(true)}>Add Inventory</button>
-            <button className="bulk-print-button" onClick={handleBulkPrint}>Bulk Print</button>
-            <button className="clear-selection-button" onClick={clearSelections}>Clear Selection</button>
-            
-            <SearchBarWithFilter
-              columns={columns}
-              onSearch={(term) => setSearchTerm(term)}
-              onFilterChange={(filter) => setSearchColumn(filter)}
-            />
-          
+          <button className="add-inventory-button" onClick={() => setShowAddPopup(true)}>
+            Add Inventory
+          </button>
+          <button className="bulk-print-button" onClick={handleBulkPrint}>
+            Bulk Print
+          </button>
+          <button className="clear-selection-button" onClick={clearSelections}>
+            Clear Selection
+          </button>
+
+          <SearchBarWithFilter
+            columns={columns}
+            onSearch={(term) => setSearchTerm(term)}
+            onFilterChange={(filter) => setSearchColumn(filter)}
+          />
         </div>
 
         <table className="inventory-table">
@@ -301,6 +314,27 @@ const SolidChemicalInventoryPage: React.FC = () => {
           </tbody>
         </table>
 
+        {/* Pagination Controls */}
+        <div className="pagination-container">
+          <div className="pagination-controls">
+            <button onClick={() => setPage(page - 1)} disabled={page === 0}>
+              &lt;
+            </button>
+            <span>
+              Page {page + 1} of {totalPages}
+            </span>
+            <button onClick={() => setPage(page + 1)} disabled={page + 1 >= totalPages}>
+              &gt;
+            </button>
+          </div>
+          <button
+            className="go-to-top-button"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            Go to Top
+          </button>
+        </div>
+
         {showAddPopup && (
           <Popup title="Add Inventory" onClose={() => setShowAddPopup(false)}>
             <InventoryForm
@@ -314,24 +348,16 @@ const SolidChemicalInventoryPage: React.FC = () => {
         )}
 
         {showUpdateQuantityPopup && selectedItem && (
-          <Popup
-            title="Update Quantity"
-            onClose={() => setShowUpdateQuantityPopup(false)}
-          >
+          <Popup title="Update Quantity" onClose={() => setShowUpdateQuantityPopup(false)}>
             <UpdateQuantityForm
-              onSubmit={(quantityUsed) =>
-                handleUpdateQuantity(selectedItem.id, quantityUsed)
-              }
+              onSubmit={(quantityUsed) => handleUpdateQuantity(selectedItem.id, quantityUsed)}
               onCancel={() => setShowUpdateQuantityPopup(false)}
             />
           </Popup>
         )}
 
         {showUpdateDetailsPopup && selectedItem && (
-          <Popup
-            title="Update Details"
-            onClose={() => setShowUpdateDetailsPopup(false)}
-          >
+          <Popup title="Update Details" onClose={() => setShowUpdateDetailsPopup(false)}>
             <UpdateDetailsForm
               item={selectedItem}
               locations={locations}
