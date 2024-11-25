@@ -10,10 +10,11 @@ import Layout from '../../../../components/Layout/Layout';
 import ErrorPopup from '../../../../components/ErrorPopup/ErrorPopup';
 import Popup from '../../../../components/Popup/Popup';
 import MessagePopup from '../../../../components/MessagePopup/MessagePopup';
+import CustomDropdown from '../../../../components/CustomDropdown/CustomDropdown';
 import MeatballMenu from '../../../../components/MeatballMenu/MeatballMenu';
 import { useParams, useNavigate } from 'react-router-dom';
+import { SolidInventoryItemDetails, Note, Category, Location, SolidInventoryItem} from '../../../../components/types';
 import './inventoryItemDetailsPage.css';
-import { SolidInventoryItemDetails, Note } from "../../../../components/types";
 
 const InventoryItemDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +27,10 @@ const InventoryItemDetailsPage: React.FC = () => {
   const [showAddNotePopup, setShowAddNotePopup] = useState<boolean>(false);
   const [showUpdateNotePopup, setShowUpdateNotePopup] = useState<boolean>(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [showEditDetailsPopup, setShowEditDetailsPopup] = useState<boolean>(false);
+  const [showEditQuantityPopup, setShowEditQuantityPopup] = useState<boolean>(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
 
   const fetchItemDetails = useCallback(async () => {
     try {
@@ -45,10 +50,46 @@ const InventoryItemDetailsPage: React.FC = () => {
     }
   }, [id]);
 
+  const fetchMetadata = useCallback(async () => {
+    try {
+      const [categoriesResponse, locationsResponse] = await Promise.all([
+        apiClient.get('/system/category'),
+        apiClient.get('/system/location'),
+      ]);
+      setCategories(categoriesResponse.data);
+      setLocations(locationsResponse.data);
+    } catch (err) {
+      setError('Error: Could not retrieve metadata');
+    }
+  }, []);
+
   useEffect(() => {
     fetchItemDetails();
     fetchNotes();
-  }, [fetchItemDetails, fetchNotes]);
+    fetchMetadata();
+  }, [fetchItemDetails, fetchNotes, fetchMetadata]);
+
+  const handleUpdateDetails = async (data: any) => {
+    try {
+      await apiClient.patch(`/inventory/solid/${id}`, data);
+      fetchItemDetails();
+      setShowEditDetailsPopup(false);
+      setMessage('Message: The item details were updated successfully');
+    } catch (err) {
+      setError('Error: Could not update item details');
+    }
+  };
+
+  const handleUpdateQuantity = async (quantityUsed: number) => {
+    try {
+      await apiClient.patch(`/inventory/solid/${id}/quantity`, { quantityUsed });
+      fetchItemDetails();
+      setShowEditQuantityPopup(false);
+      setMessage('Message: The quantity was updated successfully');
+    } catch (err) {
+      setError('Error: Could not update quantity');
+    }
+  };
 
   const handleAddNote = async (content: string) => {
     try {
@@ -105,6 +146,36 @@ const InventoryItemDetailsPage: React.FC = () => {
         </div>
 
         <hr className="page-divider" />
+
+        <div className="button-container">
+          <button className="edit-button" onClick={() => setShowEditDetailsPopup(true)}>
+            Edit Item Details
+          </button>
+          <button className="edit-button" onClick={() => setShowEditQuantityPopup(true)}>
+            Edit Quantity
+          </button>
+        </div>
+
+        {showEditDetailsPopup && itemDetails && (
+          <Popup title="Edit Item Details" onClose={() => setShowEditDetailsPopup(false)}>
+            <UpdateDetailsForm
+              item={itemDetails}
+              locations={locations}
+              categories={categories}
+              onSubmit={handleUpdateDetails}
+              onCancel={() => setShowEditDetailsPopup(false)}
+            />
+          </Popup>
+        )}
+
+        {showEditQuantityPopup && (
+          <Popup title="Edit Quantity" onClose={() => setShowEditQuantityPopup(false)}>
+            <UpdateQuantityForm
+              onSubmit={handleUpdateQuantity}
+              onCancel={() => setShowEditQuantityPopup(false)}
+            />
+          </Popup>
+        )}
 
         {error && <ErrorPopup error={error} onClose={() => setError(null)} />}
         {message && <MessagePopup message={message} onClose={() => setMessage(null)} />}
@@ -217,5 +288,100 @@ const NoteForm: React.FC<NoteFormProps> = ({
     </div>
   );
 };
+
+interface UpdateQuantityFormProps {
+  onSubmit: (quantityUsed: number) => void;
+  onCancel: () => void;
+}
+
+const UpdateQuantityForm: React.FC<UpdateQuantityFormProps> = ({
+  onSubmit,
+  onCancel,
+}) => {
+  const [quantityUsed, setQuantityUsed] = useState<number>(0);
+
+  return (
+    <div className="update-quantity-form">
+      <label>Enter Quantity Used</label>
+      <input
+        type="number"
+        value={quantityUsed}
+        onChange={(e) => setQuantityUsed(Number(e.target.value))}
+        required
+      />
+      <div className="form-actions">
+        <button onClick={() => onSubmit(quantityUsed)}>Submit</button>
+        <button onClick={onCancel}>Cancel</button>
+      </div>
+    </div>
+  );
+};
+
+interface UpdateDetailsFormProps {
+  item: SolidInventoryItem;
+  locations: Location[];
+  categories: Category[];
+  onSubmit: (data: any) => void;
+  onCancel: () => void;
+}
+
+const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
+  item,
+  locations,
+  categories,
+  onSubmit,
+  onCancel,
+}) => {
+  const [name, setName] = useState(item.name);
+  const [casNumber, setCasNumber] = useState(item.casNumber || '');
+  const [locationId, setLocationId] = useState<number>(item.location.id);
+  const [categoryId, setCategoryId] = useState<number>(item.category.id);
+
+  const handleSubmit = () => {
+    const data = {
+      name,
+      casNumber,
+      categoryId,
+      locationId,
+    };
+    onSubmit(data);
+  };
+
+  return (
+    <div className="update-details-form">
+      <label>Name</label>
+      <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+
+      <label>CAS Number</label>
+      <input
+        type="text"
+        value={casNumber}
+        onChange={(e) => setCasNumber(e.target.value)}
+      />
+
+      <label>Storage Location</label>
+      <CustomDropdown
+        options={locations.map((loc) => ({ value: loc.id, label: loc.name }))}
+        value={locationId}
+        onChange={(value) => setLocationId(value)}
+        placeholder="Select Location"
+      />
+
+      <label>Chemical Category</label>
+      <CustomDropdown
+        options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
+        value={categoryId}
+        onChange={(value) => setCategoryId(value)}
+        placeholder="Select Category"
+      />
+
+      <div className="form-actions">
+        <button onClick={handleSubmit}>Submit</button>
+        <button onClick={onCancel}>Cancel</button>
+      </div>
+    </div>
+  );
+};
+
 
 export default InventoryItemDetailsPage;
