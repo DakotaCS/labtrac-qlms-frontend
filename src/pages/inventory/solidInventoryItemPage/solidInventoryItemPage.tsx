@@ -1,6 +1,6 @@
 /**
  * @author Dakota Soares
- * @version 1.1
+ * @version 1.2
  * @description Solid Inventory Item Page
  */
 
@@ -55,6 +55,8 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [searchColumn, setSearchColumn] = useState('Inventory Item');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [debouncedSearchColumn, setDebouncedSearchColumn] = useState(searchColumn);
+  const [showPrintLabelPopup, setShowPrintLabelPopup] = useState<boolean>(false);
+  const [addedItem, setAddedItem] = useState<SolidInventoryItem | null>(null);
 
   const fetchInventoryItems = useCallback(async () => {
     try {
@@ -125,10 +127,17 @@ const SolidChemicalInventoryPage: React.FC = () => {
 
   const handleAddInventoryItem = async (data: any) => {
     try {
-      await apiClient.post('/inventory/solid', data);
+      const response = await apiClient.post('/inventory/solid', data);
+      const newItemId = response.data.id;
+      const itemResponse = await apiClient.get(`/inventory/solid/${newItemId}`);
+      const newItem = itemResponse.data;
+
       fetchInventoryItems();
       setShowAddPopup(false);
       setMessage('Message: The inventory item was added successfully');
+
+      setAddedItem(newItem);
+      setShowPrintLabelPopup(true);
     } catch (err: any) {
       setError('Error: The inventory item could not be added');
     }
@@ -365,6 +374,21 @@ const SolidChemicalInventoryPage: React.FC = () => {
               onSubmit={(data) => handleUpdateDetails(selectedItem.id, data)}
               onCancel={() => setShowUpdateDetailsPopup(false)}
             />
+          </Popup>
+        )}
+
+        {showPrintLabelPopup && addedItem && (
+          <Popup title="Print Label" onClose={() => setShowPrintLabelPopup(false)}>
+            <p>Inventory Item Added Successfully. Would you like to print a label for this item?</p>
+            <div className="form-actions">
+              <button
+                onClick={() => {
+                  handlePrintLabel(addedItem);
+                  setShowPrintLabelPopup(false);
+                }}
+              >Yes</button>
+              <button onClick={() => setShowPrintLabelPopup(false)}>No</button>
+            </div>
           </Popup>
         )}
       </div>
