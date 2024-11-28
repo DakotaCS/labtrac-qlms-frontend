@@ -36,6 +36,8 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [menuCollapsed] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
+  const [lowQuantityAlarm] = useState(false);
+
 
   const [page, setPage] = useState<number>(0);
   const [size] = useState<number>(100);
@@ -129,8 +131,15 @@ const SolidChemicalInventoryPage: React.FC = () => {
     try {
       const response = await apiClient.post('/inventory/solid', data);
       const newItemId = response.data.id;
+
+      await apiClient.post('/inventory/notification', {
+        itemId: newItemId,
+        lowQuantityAlarm: lowQuantityAlarm,
+      });
+
       const itemResponse = await apiClient.get(`/inventory/solid/${newItemId}`);
       const newItem = itemResponse.data;
+      
 
       fetchInventoryItems();
       setShowAddPopup(false);
@@ -425,6 +434,7 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
   const [casNumber, setCasNumber] = useState('');
   const [originalQuantityAmount, setOriginalQuantityAmount] = useState<number>(0);
   const [quantityUnit, setQuantityUnit] = useState<string>(units[0]?.quantityUnit || '');
+  const [lowQuantityAlarm, setLowQuantityAlarm] = useState(false);
 
   const handleSubmit = () => {
     const data = {
@@ -437,6 +447,7 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
       casNumber,
       originalQuantityAmount,
       quantityUnit,
+      lowQuantityAlarm,
     };
     onSubmit(data);
   };
@@ -503,6 +514,16 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
         onChange={(value) => setQuantityUnit(value)}
         placeholder="Select Unit"
       />
+
+      <label className="low-quantity-alarm-label">
+      <input
+        type="checkbox"
+        checked={lowQuantityAlarm}
+        onChange={(e) => setLowQuantityAlarm(e.target.checked)}
+        className="low-quantity-alarm-checkbox"
+        />
+        Enable Low Quantity Notifications
+      </label>
 
       <div className="form-actions">
         <button onClick={handleSubmit}>Submit</button>

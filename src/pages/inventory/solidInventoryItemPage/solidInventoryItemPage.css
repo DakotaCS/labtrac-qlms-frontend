@@ -158,7 +158,6 @@
   transform: scale(1.2);
 }
 
-/* Pagination Styles */
 .pagination-container {
   display: flex;
   justify-content: flex-end;
@@ -197,4 +196,14 @@
 
 .go-to-top-button:hover {
   background-color: #ddd;
+}
+
+.low-quantity-alarm-label {
+  margin-top: 20px;
+}
+
+.low-quantity-alarm-checkbox {
+  margin-right: 10px;
+  transform: scale(1.2);
+  cursor: pointer;
 }
