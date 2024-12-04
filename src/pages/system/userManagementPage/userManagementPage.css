@@ -1,10 +1,10 @@
 /**
  * @author Dakota Soares
- * @version 1.1
+ * @version 1.2
  * @description User Management Page CSS
  */
 
-.user-page {
+ .user-page {
   padding: 10px 20px;
   transition: margin-left 0.3s ease;
 }
@@ -49,13 +49,49 @@
   width: calc(100% - 60px);
 }
 
-.user-table th, .user-table td {
+.user-table th,
+.user-table td {
   border: 1px solid #ddd;
   padding: 10px;
   text-align: left;
 }
 
 .user-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.section-title {
+  text-align: left;
+  margin-top: 30px;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.section-divider {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: none;
+  border-top: 2px solid #ddd;
+  margin-left: 20px;
+  width: calc(100% - 40px);
+}
+
+.notification-table {
+  width: calc(100% - 40px);
+  margin-left: 20px;
+  margin-right: 10px;
+  border-collapse: collapse;
+}
+
+.notification-table th,
+.notification-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.notification-table th {
   background-color: #f4f4f4;
   font-weight: bold;
 }

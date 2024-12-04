@@ -1,6 +1,6 @@
 /**
  * @author Dakota Soares
- * @version 1.1
+ * @version 1.2
  * @description User Management Page
  */
 
@@ -14,8 +14,16 @@ import MeatballMenu from '../../../components/MeatballMenu/MeatballMenu';
 import { User } from '../../../components/types';
 import './userManagementPage.css';
 
+type Notification = {
+  id: number;
+  userName: string;
+  inventoryLowQuantityNotification: boolean;
+  inventoryExpiryDateNotification: boolean;
+};
+
 const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showDialog, setShowDialog] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [newValue, setNewValue] = useState<string>('');
@@ -35,9 +43,19 @@ const UserManagementPage: React.FC = () => {
     }
   }, []);
 
+  const fetchNotifications = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/system/user/notification');
+      setNotifications(response.data);
+    } catch (err: any) {
+      setError('Error: Could not retrieve the User Notifications');
+    }
+  }, []);
+
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+    fetchNotifications();
+  }, [fetchUsers, fetchNotifications]);
 
   const handleAddUser = async () => {
     try {
@@ -121,6 +139,24 @@ const UserManagementPage: React.FC = () => {
     }
   };
 
+  const handleCheckboxChange = async (notificationId: number, newValue: boolean) => {
+    try {
+      await apiClient.patch(`/system/user/notification/${notificationId}`, {
+        inventoryLowQuantityNotification: newValue,
+      });
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
+          notification.id === notificationId
+            ? { ...notification, inventoryLowQuantityNotification: newValue }
+            : notification
+        )
+      );
+      setMessage('Message: Notification status updated successfully');
+    } catch (err: any) {
+      setError('Error: Could not update the notification status');
+    }
+  };
+
   return (
     <Layout>
       <div className={`user-page ${menuCollapsed ? 'collapsed' : ''}`}>
@@ -180,6 +216,34 @@ const UserManagementPage: React.FC = () => {
                         onClick: () => handleDeleteUser(user.id),
                       },
                     ]}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <h2 className="section-title">User Email Notification Configuration</h2>
+        <hr className="section-divider" />
+
+        <table className="notification-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Low Quantity Notification</th>
+            </tr>
+          </thead>
+          <tbody>
+            {notifications.map((notification) => (
+              <tr key={notification.id}>
+                <td>{notification.userName}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={notification.inventoryLowQuantityNotification}
+                    onChange={(e) =>
+                      handleCheckboxChange(notification.id, e.target.checked)
+                    }
                   />
                 </td>
               </tr>
