@@ -32,6 +32,12 @@ export interface SolidInventoryItem {
     casNumber: string;
   }
 
+  export interface InventoryItemNotification {
+    id: number;
+    itemId: number;
+    lowQuantityAlarm: boolean;
+  }
+  
   export interface SolidInventoryItemDetails {
     id: number;
     inventoryItemId: string;
@@ -46,6 +52,7 @@ export interface SolidInventoryItem {
     originalQuantityAmount: number;
     currentQuantityAmount: number;
     quantityUnit: string;
+    inventoryItemNotification?: InventoryItemNotification;
   }
   
   export interface Note {

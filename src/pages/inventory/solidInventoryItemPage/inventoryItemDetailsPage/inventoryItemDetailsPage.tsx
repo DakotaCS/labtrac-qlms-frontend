@@ -1,7 +1,7 @@
 /**
  * @author Dakota Soares
- * @version 1.1
- * @description Solid Inventory Item Details Page
+ * @version 1.2
+ * @description
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -13,14 +13,14 @@ import MessagePopup from '../../../../components/MessagePopup/MessagePopup';
 import CustomDropdown from '../../../../components/CustomDropdown/CustomDropdown';
 import MeatballMenu from '../../../../components/MeatballMenu/MeatballMenu';
 import { useParams, useNavigate } from 'react-router-dom';
-import { SolidInventoryItemDetails, Note, Category, Location, SolidInventoryItem} from '../../../../components/types';
+import {SolidInventoryItemDetails, Note, Category, Location, SolidInventoryItem } from '../../../../components/types';
 import './inventoryItemDetailsPage.css';
 
 const InventoryItemDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [itemDetails, setItemDetails] = useState<SolidInventoryItemDetails | null>(
-    null
-  );
+    null);
+
   const [notes, setNotes] = useState<Note[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -29,6 +29,7 @@ const InventoryItemDetailsPage: React.FC = () => {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [showEditDetailsPopup, setShowEditDetailsPopup] = useState<boolean>(false);
   const [showEditQuantityPopup, setShowEditQuantityPopup] = useState<boolean>(false);
+  const [showUpdateNotificationsPopup, setShowUpdateNotificationsPopup] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
@@ -126,6 +127,17 @@ const InventoryItemDetailsPage: React.FC = () => {
     }
   };
 
+  const handleUpdateNotifications = async (settings: any) => {
+    try {
+      await apiClient.patch(`/inventory/notification/item/${id}`, settings);
+      fetchItemDetails();
+      setShowUpdateNotificationsPopup(false);
+      setMessage('Message: Notifications updated successfully');
+    } catch (err: any) {
+      setError('Error: Could not update notifications');
+    }
+  };
+
   const openUpdateNotePopup = (note: Note) => {
     setSelectedNote(note);
     setShowUpdateNotePopup(true);
@@ -141,18 +153,22 @@ const InventoryItemDetailsPage: React.FC = () => {
     <Layout>
       <div className="inventory-item-details-page">
         <div className="header-row">
-          <button className="back-button" onClick={goBack}>←</button>
+          <button className="back-button" onClick={goBack}>
+            ←
+          </button>
           <h1 className="page-title">Inventory Item Details</h1>
         </div>
-
         <hr className="page-divider" />
-
         <div className="button-container">
           <button className="edit-button" onClick={() => setShowEditDetailsPopup(true)}>
             Edit Item Details
           </button>
           <button className="edit-button" onClick={() => setShowEditQuantityPopup(true)}>
             Edit Quantity
+          </button>
+          <button
+            className="edit-button" onClick={() => setShowUpdateNotificationsPopup(true)}>
+            Update Notifications
           </button>
         </div>
 
@@ -173,6 +189,21 @@ const InventoryItemDetailsPage: React.FC = () => {
             <UpdateQuantityForm
               onSubmit={handleUpdateQuantity}
               onCancel={() => setShowEditQuantityPopup(false)}
+            />
+          </Popup>
+        )}
+
+        {showUpdateNotificationsPopup && itemDetails && (
+          <Popup
+            title="Update Notifications"
+            onClose={() => setShowUpdateNotificationsPopup(false)}
+          >
+            <UpdateNotificationsForm
+              initialSettings={
+                itemDetails.inventoryItemNotification || { lowQuantityAlarm: false }
+              }
+              onSubmit={handleUpdateNotifications}
+              onCancel={() => setShowUpdateNotificationsPopup(false)}
             />
           </Popup>
         )}
@@ -199,9 +230,37 @@ const InventoryItemDetailsPage: React.FC = () => {
         )}
 
         <button
-          className="add-note-button"
-          onClick={() => setShowAddNotePopup(true)}
-        >Add Note</button>
+            className="note-and-notification-button" onClick={() => setShowUpdateNotificationsPopup(true)}>
+            Update Notifications
+          </button>
+
+        {itemDetails && itemDetails.inventoryItemNotification && (
+          <div className="notification-settings">
+
+            <table className="notification-table">
+              <thead>
+                <tr>
+                  <th>Notification Type</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Low Quantity Alarm</td>
+                  <td>
+                    {itemDetails.inventoryItemNotification.lowQuantityAlarm
+                      ? 'Enabled'
+                      : 'Disabled'}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <button className="note-and-notification-button" onClick={() => setShowAddNotePopup(true)}>
+          Add Note
+        </button>
 
         <table className="notes-table">
           <thead>
@@ -243,10 +302,7 @@ const InventoryItemDetailsPage: React.FC = () => {
         )}
 
         {showUpdateNotePopup && selectedNote && (
-          <Popup
-            title="Update Note"
-            onClose={() => setShowUpdateNotePopup(false)}
-          >
+          <Popup title="Update Note" onClose={() => setShowUpdateNotePopup(false)}>
             <NoteForm
               initialContent={selectedNote.content}
               onSubmit={(content) => handleUpdateNote(selectedNote.id, content)}
@@ -353,11 +409,7 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
       <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
 
       <label>CAS Number</label>
-      <input
-        type="text"
-        value={casNumber}
-        onChange={(e) => setCasNumber(e.target.value)}
-      />
+      <input type="text" value={casNumber} onChange={(e) => setCasNumber(e.target.value)} />
 
       <label>Storage Location</label>
       <CustomDropdown
@@ -383,5 +435,37 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
   );
 };
 
+interface UpdateNotificationsFormProps {
+  initialSettings: { lowQuantityAlarm: boolean };
+  onSubmit: (settings: { lowQuantityAlarm: boolean }) => void;
+  onCancel: () => void;
+}
+
+const UpdateNotificationsForm: React.FC<UpdateNotificationsFormProps> = ({
+  initialSettings,
+  onSubmit,
+  onCancel,
+}) => {
+  const [lowQuantityAlarm, setLowQuantityAlarm] = useState<boolean>(
+    initialSettings.lowQuantityAlarm
+  );
+
+  return (
+    <div className="update-notifications-form">
+      <label>
+        <input
+          type="checkbox"
+          checked={lowQuantityAlarm}
+          onChange={(e) => setLowQuantityAlarm(e.target.checked)}
+        />
+        Low Quantity Alarm
+      </label>
+      <div className="form-actions">
+        <button onClick={() => onSubmit({ lowQuantityAlarm })}>Submit</button>
+        <button onClick={onCancel}>Cancel</button>
+      </div>
+    </div>
+  );
+};
 
 export default InventoryItemDetailsPage;
