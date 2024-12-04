@@ -433,7 +433,7 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
   });
   const [casNumber, setCasNumber] = useState('');
   const [originalQuantityAmount, setOriginalQuantityAmount] = useState<number>(0);
-  const [quantityUnit, setQuantityUnit] = useState<string>(units[0]?.quantityUnit || '');
+  const [quantityUnitCode, setQuantityUnitCode] = useState<string>(units[0]?.quantityUnitCode || '');
   const [lowQuantityAlarm, setLowQuantityAlarm] = useState(false);
 
   const handleSubmit = () => {
@@ -446,7 +446,7 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
       expirationDate,
       casNumber,
       originalQuantityAmount,
-      quantityUnit,
+      quantityUnit: quantityUnitCode,
       lowQuantityAlarm,
     };
     onSubmit(data);
@@ -506,14 +506,13 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
 
       <label>Units</label>
       <CustomDropdown
-        options={units.map((unit) => ({
-          value: unit.quantityUnit,
-          label: unit.quantityUnit,
-        }))}
-        value={quantityUnit}
-        onChange={(value) => setQuantityUnit(value)}
-        placeholder="Select Unit"
-      />
+      options={units.map((unit) => ({
+      value: unit.quantityUnitCode,
+      label: unit.quantityUnit,}))}
+      value={quantityUnitCode}
+      onChange={(value) => setQuantityUnitCode(value)}
+      placeholder="Select Unit"
+/>
 
       <label className="low-quantity-alarm-label">
       <input
