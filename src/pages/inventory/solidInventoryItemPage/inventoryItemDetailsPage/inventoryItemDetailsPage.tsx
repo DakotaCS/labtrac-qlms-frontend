@@ -166,10 +166,6 @@ const InventoryItemDetailsPage: React.FC = () => {
           <button className="edit-button" onClick={() => setShowEditQuantityPopup(true)}>
             Edit Quantity
           </button>
-          <button
-            className="edit-button" onClick={() => setShowUpdateNotificationsPopup(true)}>
-            Update Notifications
-          </button>
         </div>
 
         {showEditDetailsPopup && itemDetails && (
