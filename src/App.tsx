@@ -14,7 +14,9 @@ import UserManagementPage from './pages/system/userManagementPage/userManagement
 import Logout from './pages/logoutPage';
 import AutoLogout from './config/autoLogout';
 import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage/solidInventoryItemPage';
-import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/solidInventoryItemDetailsPage';
+import SolidInventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/solidInventoryItemDetailsPage';
+import LiquidChemicalInventoryPage from './pages/inventory/liquidInventoryItemPage/liquidInventoryItemPage';
+import LiquidInventoryItemDetailsPage from './pages/inventory/liquidInventoryItemPage/inventoryItemDetailsPage/liquidInventoryItemDetailsPage';
 import DeviceConfigurationPage from './pages/system/deviceConfigurationPage/deviceConfigurationPage';
 import UnitPage from './pages/system/unitPage/unitPage';
 import AuthContext from './config/authContext';
@@ -30,7 +32,6 @@ function App() {
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, username, setUsername }}>
           <ScanningProvider>
-
 
     <Router>
     <ScannerListener />
@@ -65,7 +66,13 @@ function App() {
         <Route path="/inventory/solid" element={isAuthenticated ? <SolidChemicalInventoryPage /> : <Navigate to="/login" />}/>
 
         {/* Inventory Item Details Route */}
-        <Route path="/inventory/solid/:id" element={isAuthenticated ? <InventoryItemDetailsPage /> : <Navigate to="/login" />}/>
+        <Route path="/inventory/solid/:id" element={isAuthenticated ? <SolidInventoryItemDetailsPage /> : <Navigate to="/login" />}/>
+        
+        {/* Liquid Chemical Inventory Route */}
+        <Route path="/inventory/liquid" element={isAuthenticated ? <LiquidChemicalInventoryPage /> : <Navigate to="/login" />}/>
+
+        {/* Inventory Item Details Route */}
+        <Route path="/inventory/liquid/:id" element={isAuthenticated ? <LiquidInventoryItemDetailsPage /> : <Navigate to="/login" />}/>
 
         {/* Default route */}
         <Route path="/" element={<Navigate to={isAuthenticated ? '/landing' : '/login'} />}

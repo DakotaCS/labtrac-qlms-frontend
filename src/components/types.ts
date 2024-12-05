@@ -20,6 +20,12 @@ export interface Category {
     createTime: string;
   }
 
+  export interface InventoryItemNotification {
+    id: number;
+    itemId: number;
+    lowQuantityAlarm: boolean;
+  }
+
 export interface SolidInventoryItem {
     id: number;
     inventoryItemId: string;
@@ -32,13 +38,36 @@ export interface SolidInventoryItem {
     casNumber: string;
   }
 
-  export interface InventoryItemNotification {
+  export interface LiquidInventoryItem {
     id: number;
-    itemId: number;
-    lowQuantityAlarm: boolean;
+    inventoryItemId: string;
+    name: string;
+    location: Location;
+    category: Category;
+    status: string;
+    currentQuantityAmount: number;
+    quantityUnit: string;
+    casNumber: string;
   }
   
   export interface SolidInventoryItemDetails {
+    id: number;
+    inventoryItemId: string;
+    name: string;
+    type: string | null;
+    importDate: string;
+    location: Location;
+    category: Category;
+    status: string;
+    casNumber: string;
+    expirationDate: string;
+    originalQuantityAmount: number;
+    currentQuantityAmount: number;
+    quantityUnit: string;
+    inventoryItemNotification?: InventoryItemNotification;
+  }
+
+  export interface LiquidInventoryItemDetails {
     id: number;
     inventoryItemId: string;
     name: string;
