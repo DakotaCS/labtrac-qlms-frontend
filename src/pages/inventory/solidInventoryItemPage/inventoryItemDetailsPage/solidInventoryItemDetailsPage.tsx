@@ -14,7 +14,7 @@ import CustomDropdown from '../../../../components/CustomDropdown/CustomDropdown
 import MeatballMenu from '../../../../components/MeatballMenu/MeatballMenu';
 import { useParams, useNavigate } from 'react-router-dom';
 import {SolidInventoryItemDetails, Note, Category, Location, SolidInventoryItem } from '../../../../components/types';
-import './inventoryItemDetailsPage.css';
+import './solidInventoryItemDetailsPage.css';
 
 const InventoryItemDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

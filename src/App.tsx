@@ -14,7 +14,7 @@ import UserManagementPage from './pages/system/userManagementPage/userManagement
 import Logout from './pages/logoutPage';
 import AutoLogout from './config/autoLogout';
 import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage/solidInventoryItemPage';
-import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/inventoryItemDetailsPage';
+import InventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/solidInventoryItemDetailsPage';
 import DeviceConfigurationPage from './pages/system/deviceConfigurationPage/deviceConfigurationPage';
 import UnitPage from './pages/system/unitPage/unitPage';
 import AuthContext from './config/authContext';
