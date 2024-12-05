@@ -1,0 +1,47 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Meatball Menu Component CSS
+ */
+
+.meatball-menu-container {
+    position: relative;
+  }
+  
+  .meatball-menu {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  .meatball-menu-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 100px;
+  }
+  
+  .meatball-menu-options.expand-upwards {
+    bottom: 100%;
+    top: auto;
+  }
+  
+  .menu-option {
+    display: block;
+    width: 100%;
+    background-color: #f4f4f4;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .menu-option:hover {
+    background-color: #ddd;
+  }
+  

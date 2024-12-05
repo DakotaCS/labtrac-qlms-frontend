@@ -1,0 +1,112 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Device Configuration Page CSS
+ */
+
+.printer-config-page {
+  padding: 10px 20px;
+}
+
+.page-title {
+  text-align: left;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.page-divider {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: none;
+  border-top: 2px solid #ddd;
+  margin-left: 20px;
+  width: calc(100% - 40px);
+}
+
+.config-container {
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.printer-selection-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.printer-selection-row label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.printer-selection-row select {
+  width: 100%;
+  max-width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.button-group {
+  margin-top: 10px;
+}
+
+.button-group button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  margin-top: 10px;
+  background-color: #f4f4f4;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button-group button:hover {
+  background-color: #ddd;
+}
+
+.info-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.info-table th,
+.info-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.info-table th {
+  background-color: #f4f4f4;
+}
+
+.info-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.scanner-config-container {
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.scanner-config-container button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  margin-top: 10px;
+  background-color: #f4f4f4;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.scanner-config-container button:hover {
+  background-color: #ddd;
+}
+
+.scanner-config-container p {
+  margin-top: 10px;
+}

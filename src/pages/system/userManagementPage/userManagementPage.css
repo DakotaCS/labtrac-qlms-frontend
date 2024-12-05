@@ -1,0 +1,176 @@
+/**
+ * @author Dakota Soares
+ * @version 1.2
+ * @description User Management Page CSS
+ */
+
+ .user-page {
+  padding: 10px 20px;
+  transition: margin-left 0.3s ease;
+}
+
+.page-title {
+  text-align: left;
+  margin-top: 20px;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.page-divider {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: none;
+  border-top: 2px solid #ddd;
+  margin-left: 20px;
+  width: calc(100% - 40px);
+}
+
+.add-user-button {
+  margin-left: 20px;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.user-table {
+  width: calc(100% - 40px);
+  margin-left: 20px;
+  margin-right: 10px;
+  border-collapse: collapse;
+  transition: margin-left 0.3s ease;
+}
+
+.user-page.collapsed .user-table {
+  width: calc(100% - 60px);
+}
+
+.user-table th,
+.user-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.user-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.section-title {
+  text-align: left;
+  margin-top: 30px;
+  margin-left: 20px;
+  font-weight: bold;
+}
+
+.section-divider {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: none;
+  border-top: 2px solid #ddd;
+  margin-left: 20px;
+  width: calc(100% - 40px);
+}
+
+.notification-table {
+  width: calc(100% - 40px);
+  margin-left: 20px;
+  margin-right: 10px;
+  border-collapse: collapse;
+}
+
+.notification-table th,
+.notification-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.notification-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.meatball-menu-container {
+  position: relative;
+}
+
+.meatball-menu {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.meatball-menu-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 130px;
+}
+
+.menu-option {
+  display: block;
+  width: 100%;
+  background-color: #f4f4f4;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.menu-option:hover {
+  background-color: #ddd;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.user-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.user-form input,
+.user-form select {
+  margin-bottom: 15px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  background-color: #f4f4f4;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-actions button:hover {
+  background-color: #ddd;
+}
+
+.form-actions button + button {
+  margin-left: 10px;
+}

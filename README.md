@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# General Notes
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+IMPORTANT NOTE: The front-end demo passes back raw credentials right now (user accounts are for testing only). This is not a recommended practice. The design will be updated to hash user passwords enroute to POST /login later this week. 
 
 ## Available Scripts
 

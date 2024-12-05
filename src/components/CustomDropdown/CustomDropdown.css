@@ -1,0 +1,49 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Custom Dropdown Component CSS
+ */
+
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+  }
+  
+  .dropdown-toggle {
+    width: 100%;
+    padding: 8px;
+    text-align: left;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  
+  .dropdown-toggle .arrow {
+    float: right;
+  }
+  
+  .dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  
+  .dropdown-option {
+    padding: 8px;
+    cursor: pointer;
+  }
+  
+  .dropdown-option:hover {
+    background-color: #f4f4f4;
+  }
+  

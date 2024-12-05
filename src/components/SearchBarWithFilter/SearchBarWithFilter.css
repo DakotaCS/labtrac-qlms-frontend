@@ -1,0 +1,26 @@
+/**
+ * @author Dakota Soares
+ * @version 1.1
+ * @description Search Bar with Filter Component CSS
+ */
+
+.search-bar-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-input {
+    width: 400px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+  }
+  
+  .search-filter-dropdown {
+    padding: 9px;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    background-color: #fff;
+  }
+  
