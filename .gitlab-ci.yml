@@ -62,7 +62,7 @@ deploy_to_ec2:
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
   script:
-    - echo "Deploying to EC2 instance: $EC2_USER@$EC2_HOST"
+    - echo "Deploying to EC2 instance"
 
     # Optionally stop and remove old container before pulling and running new one
     # Update the container name as needed, e.g., "my_running_container"
