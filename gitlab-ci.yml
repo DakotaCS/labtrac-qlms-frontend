@@ -1,0 +1,94 @@
+image: docker:20.10.16
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
+  REGISTRY: $CI_REGISTRY
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+
+stages:
+  - build
+  - push
+  - deploy
+  - cleanup
+
+# Build the Docker image
+build_container:
+  stage: build
+  only:
+    - main
+  script:
+    - echo "Logging into GitLab registry..."
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - echo "Building Docker image..."
+    - docker build -t "$IMAGE_NAME:latest" .
+  artifacts:
+    paths:
+      - Dockerfile
+
+# Push the Docker image to the GitLab registry
+push_container:
+  stage: push
+  only:
+    - main
+  dependencies:
+    - build_container
+  script:
+    - echo "Pushing image to GitLab registry..."
+    - docker push "$IMAGE_NAME:latest"
+  when: on_success
+
+# Deploy to EC2 via SSH
+# We'll run commands on the EC2 instance to:
+# - Login to the registry
+# - Pull the new Docker image
+# - Stop/remove old container if needed
+# - Run the new container
+deploy_to_ec2:
+  stage: deploy
+  only:
+    - main
+  image: alpine:latest
+  dependencies:
+    - push_container
+  before_script:
+    # Install SSH client
+    - apk update && apk add --no-cache openssh-client
+    # Setup SSH key
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+  script:
+    - echo "Deploying to EC2 instance: $EC2_USER@$EC2_HOST"
+
+    # Optionally stop and remove old container before pulling and running new one
+    # Update the container name as needed, e.g., "my_running_container"
+    # The commands are combined in a single SSH call for clarity
+    - ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" "
+        echo 'Logging into Docker registry...' &&
+        docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY &&
+        
+        echo 'Pulling latest image...' &&
+        docker pull $IMAGE_NAME:latest &&
+        
+        echo 'Stopping old container if exists...' &&
+        docker ps -q -f name=my_running_container && docker stop my_running_container || true &&
+        docker ps -aq -f name=my_running_container && docker rm my_running_container || true &&
+        
+        echo 'Starting new container...' &&
+        docker run -d --name my_running_container -p 80:80 $IMAGE_NAME:latest
+      "
+
+cleanup_old_containers:
+  stage: cleanup
+  only:
+    - main
+  script:
+    # If you need to manually clean up old containers in the GitLab registry, consider:
+    # - Using GitLab's built-in cleanup policies
+    # - Using API calls here
+    # Placeholder command:
+    - echo "Consider using GitLab registry retention policies for old image cleanup."
