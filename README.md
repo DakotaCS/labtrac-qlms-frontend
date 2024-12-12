@@ -1,6 +1,6 @@
 # General Notes
 
-IMPORTANT NOTE: The front-end demo passes back raw credentials right now (user accounts are for testing only). This is not a recommended practice. The design will be updated to hash user passwords enroute to POST /login later this week. 
+None.
 
 ## Available Scripts
 
