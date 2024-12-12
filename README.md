@@ -1,6 +1,11 @@
 # General Notes
 
-IMPORTANT NOTE: The front-end demo passes back raw credentials right now (user accounts are for testing only). This is not a recommended practice. The design will be updated to hash user passwords enroute to POST /login later this week. 
+Note: Because we are using WSS, Port 3000 must be exposed in the AWS ALB Target Group. 
+Therefore outbound rules for the ALB are as follows: 
+1. HTTPS:443 (stickiness off, Security Policy enabled, Default SSL quantuslms.ca)
+2. HTTP:80 (stickiness off, Security policy disabled, Default SSL disabled)
+3. HTTPS:3000 (stickiness off, Security policy enabled, Default SSL quantuslms.ca)
+
 
 ## Available Scripts
 
