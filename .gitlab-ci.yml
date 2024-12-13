@@ -47,15 +47,4 @@ deploy_to_ec2:
     - echo "Deploying to EC2 instance"
     - echo $EC2_USER
     - echo $EC2_HOST
-    - ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" 
-    "echo 'Logging into Docker registry...' && 
-    sudo docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && 
-    echo 'Pulling latest image...' && 
-    sudo docker pull $IMAGE_NAME:latest && 
-    echo 'Stopping old container if exists...' && 
-    sudo docker ps -q -f name=my_running_container && 
-    sudo docker stop my_running_container || true && 
-    sudo docker ps -aq -f name=my_running_container && 
-    sudo docker rm my_running_container || true && 
-    echo 'Starting new container...' && 
-    sudo docker run -d --name my_running_container -p 80:3000 $IMAGE_NAME:latest"
+    - ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" "echo 'Logging into Docker registry...' && sudo docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && echo 'Pulling latest image...' && sudo docker pull $IMAGE_NAME:latest && echo 'Stopping old container if exists...' && sudo docker ps -q -f name=my_running_container && sudo docker stop my_running_container || true && sudo docker ps -aq -f name=my_running_container && sudo docker rm my_running_container || true && echo 'Starting new container...' && sudo docker run -d --name my_running_container -p 80:3000 $IMAGE_NAME:latest"
