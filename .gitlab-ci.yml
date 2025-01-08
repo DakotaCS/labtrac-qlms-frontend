@@ -8,22 +8,19 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   REGISTRY: $CI_REGISTRY
   IMAGE_NAME: $CI_REGISTRY_IMAGE
+  CONTAINER_NAME: labtrac-frontend-main-build
 
 stages:
   - build
   - deploy
 
-# Build and Push the Docker image to the GitLab registry
 build_and_push_container:
   stage: build
   only:
     - main
   script:
-    - echo "Logging into GitLab registry..."
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
-    - echo "Building Docker image..."
     - docker build -t "$IMAGE_NAME:latest" .
-    - echo "Pushing image to GitLab registry..."
     - docker push "$IMAGE_NAME:latest"
   artifacts:
     paths:
@@ -37,14 +34,23 @@ deploy_to_ec2:
   dependencies:
     - build_and_push_container
   before_script:
-    # Install SSH client
     - apk update && apk add --no-cache openssh-client
-    # Setup SSH key
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
   script:
-    - echo "Deploying to EC2 instance"
-    - echo $EC2_USER
-    - echo $EC2_HOST
-    - ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" "echo 'Logging into Docker registry...' && sudo docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && echo 'Pulling latest image...' && sudo docker pull $IMAGE_NAME:latest && echo 'Stopping old container if exists...' && sudo docker ps -q -f name=my_running_container && sudo docker stop my_running_container || true && sudo docker ps -aq -f name=my_running_container && sudo docker rm my_running_container || true && echo 'Starting new container...' && sudo docker run -d --name my_running_container -p 80:3000 $IMAGE_NAME:latest"
+    - ssh -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" << EOF
+        sudo docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+        sudo docker pull "$IMAGE_NAME:latest"
+
+        if [ \$(sudo docker ps -q -f name=$CONTAINER_NAME) ]; then
+          sudo docker stop $CONTAINER_NAME
+          sudo docker rm $CONTAINER_NAME
+        elif [ \$(sudo docker ps -a -q -f name=$CONTAINER_NAME) ]; then
+          sudo docker rm $CONTAINER_NAME
+        fi
+
+        sudo docker run -d --name $CONTAINER_NAME -p 80:3000 "$IMAGE_NAME:latest"
+
+        sudo docker system prune -f
+EOF
