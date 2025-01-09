@@ -51,6 +51,6 @@ deploy_to_ec2:
           sudo docker rm $CONTAINER_NAME
         fi
 
-        sudo docker run -d --name $CONTAINER_NAME -p 80:3000 "$IMAGE_NAME:latest"
+        sudo docker run -d --name $CONTAINER_NAME -p 3000:3000 "$IMAGE_NAME:latest"
         sudo docker system prune -f
       EOF
