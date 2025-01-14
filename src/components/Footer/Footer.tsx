@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
-        <p className="footer-text">&copy; 2024 DKS Technical Solutions</p>
+        <p className="footer-text">&copy; 2025 DKS Technical Solutions</p>
       </div>
     </footer>
   );
