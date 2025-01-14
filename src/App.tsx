@@ -17,6 +17,7 @@ import SolidChemicalInventoryPage from './pages/inventory/solidInventoryItemPage
 import SolidInventoryItemDetailsPage from './pages/inventory/solidInventoryItemPage/inventoryItemDetailsPage/solidInventoryItemDetailsPage';
 import LiquidChemicalInventoryPage from './pages/inventory/liquidInventoryItemPage/liquidInventoryItemPage';
 import LiquidInventoryItemDetailsPage from './pages/inventory/liquidInventoryItemPage/inventoryItemDetailsPage/liquidInventoryItemDetailsPage';
+import UnclassifiedInventoryPage from './pages/inventory/unclassifiedInventoryPage/unclassifiedInventoryItemPage';
 import DeviceConfigurationPage from './pages/system/deviceConfigurationPage/deviceConfigurationPage';
 import UnitPage from './pages/system/unitPage/unitPage';
 import AuthContext from './config/authContext';
@@ -73,6 +74,9 @@ function App() {
 
         {/* Inventory Item Details Route */}
         <Route path="/inventory/liquid/:id" element={isAuthenticated ? <LiquidInventoryItemDetailsPage /> : <Navigate to="/login" />}/>
+
+        {/* Unclassified Chemical Inventory Route */}
+        <Route path="/inventory/unclassified" element={isAuthenticated ? <UnclassifiedInventoryPage /> : <Navigate to="/login" />}/>
 
         {/* Default route */}
         <Route path="/" element={<Navigate to={isAuthenticated ? '/landing' : '/login'} />}

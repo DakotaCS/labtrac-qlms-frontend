@@ -83,6 +83,15 @@ export interface SolidInventoryItem {
     quantityUnit: string;
     inventoryItemNotification?: InventoryItemNotification;
   }
+
+  export interface UnclassifiedInventoryItem {
+    id: number;
+    inventoryItemId: string;
+    name: string;
+    location: Location;
+    category: Category;
+    casNumber: string;
+  }
   
   export interface Note {
     id: number;
