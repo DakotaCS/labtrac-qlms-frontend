@@ -131,6 +131,8 @@ const UnclassifiedInventoryItemPage: React.FC = () => {
       setMessage('Message: Bulk print completed successfully.');
     } catch (err) {
       setError('Error: Could not complete bulk print.');
+    } finally {
+      setSelectedItems(new Set());
     }
   };
 
