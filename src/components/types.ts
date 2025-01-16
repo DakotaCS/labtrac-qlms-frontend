@@ -88,6 +88,7 @@ export interface SolidInventoryItem {
     id: number;
     inventoryItemId: string;
     name: string;
+    type: string | null;
     location: Location;
     category: Category;
     casNumber: string;

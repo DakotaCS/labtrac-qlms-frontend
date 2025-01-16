@@ -7,7 +7,7 @@
  */
 
 import apiClient from '../config/axiosConfig';
-import { SolidInventoryItem } from '../components/types'
+import { SolidInventoryItem, UnclassifiedInventoryItem } from '../components/types'
 
 declare global {
   interface Window {
@@ -40,6 +40,35 @@ export const sendZplToPrinter = (printer: any, zpl: string): Promise<void> => {
 };
 
 export const printLabel = async (item: SolidInventoryItem): Promise<void> => {
+  try {
+    const zplResponse = await apiClient.post('/system/print/item', {
+      itemId: item.id,
+      inventoryItemId: item.inventoryItemId,
+      name: item.name,
+      location: item.location.name,
+    });
+    const zplString = zplResponse.data.zplString;
+
+    const defaultPrinterResponse = await apiClient.get('/system/print/default-printer');
+    const defaultPrinterUid = defaultPrinterResponse.data.defaultPrinterUid;
+
+    const printers = await getAvailablePrinters();
+    const selectedPrinter = printers.find(
+      (printer: any) =>
+        printer.uid === defaultPrinterUid || printer.connection === defaultPrinterUid
+    );
+
+    if (!selectedPrinter) {
+      throw new Error('Default printer not found');
+    }
+
+    await sendZplToPrinter(selectedPrinter, zplString);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const printUnclassifiedInventoryItemLabel = async (item: UnclassifiedInventoryItem): Promise<void> => {
   try {
     const zplResponse = await apiClient.post('/system/print/item', {
       itemId: item.id,

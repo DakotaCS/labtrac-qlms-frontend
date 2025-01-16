@@ -38,7 +38,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
   const [lowQuantityAlarm] = useState(false);
 
-
+  
   const [page, setPage] = useState<number>(0);
   const [size] = useState<number>(100);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -525,8 +525,8 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
       </label>
 
       <div className="form-actions">
-        <button onClick={handleSubmit}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
@@ -553,8 +553,8 @@ const UpdateQuantityForm: React.FC<UpdateQuantityFormProps> = ({
         required
       />
       <div className="form-actions">
-        <button onClick={() => onSubmit(quantityUsed)}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={() => onSubmit(quantityUsed)}>Submit</button>
       </div>
     </div>
   );
@@ -619,8 +619,8 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
       />
 
       <div className="form-actions">
-        <button onClick={handleSubmit}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );

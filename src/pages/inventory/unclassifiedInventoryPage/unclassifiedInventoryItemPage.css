@@ -1,6 +1,5 @@
 /**
- * @author
- * Dakota Soares
+ * @authorDakota Soares
  * @version 1.1
  * @description Unclassified Inventory Item Page CSS
  */
@@ -108,46 +107,6 @@
   background-color: #ddd;
 }
 
-.pagination-container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 10px;
-  margin-right: 30px;
-}
-
-.pagination-controls {
-  display: flex;
-  align-items: center;
-}
-
-.pagination-controls button {
-  padding: 5px 10px;
-  margin: 0 5px;
-  background-color: #f4f4f4;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.pagination-controls button:disabled {
-  background-color: #e0e0e0;
-  cursor: not-allowed;
-}
-
-.go-to-top-button {
-  padding: 5px 10px;
-  margin-left: 20px;
-  background-color: #f4f4f4;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.go-to-top-button:hover {
-  background-color: #ddd;
-}
-
 .inventory-form,
 .update-details-form,
 .transfer-item-form {
@@ -197,15 +156,6 @@
   margin-left: 10px;
 }
 
-.low-quantity-alarm-label {
-  margin-top: 20px;
-}
-
-.low-quantity-alarm-checkbox {
-  margin-right: 10px;
-  transform: scale(1.2);
-  cursor: pointer;
-}
 
 .pagination-container {
   display: flex;
@@ -245,14 +195,4 @@
 
 .go-to-top-button:hover {
   background-color: #ddd;
-}
-
-.low-quantity-alarm-label {
-  margin-top: 20px;
-}
-
-.low-quantity-alarm-checkbox {
-  margin-right: 10px;
-  transform: scale(1.2);
-  cursor: pointer;
 }
