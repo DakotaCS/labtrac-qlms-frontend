@@ -337,8 +337,8 @@ const NoteForm: React.FC<NoteFormProps> = ({
         rows={5}
       />
       <div className="form-actions">
-        <button onClick={() => onSubmit(content)}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={() => onSubmit(content)}>Submit</button>
       </div>
     </div>
   );
@@ -365,8 +365,8 @@ const UpdateQuantityForm: React.FC<UpdateQuantityFormProps> = ({
         required
       />
       <div className="form-actions">
-        <button onClick={() => onSubmit(quantityUsed)}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={() => onSubmit(quantityUsed)}>Submit</button>
       </div>
     </div>
   );
@@ -427,8 +427,8 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
       />
 
       <div className="form-actions">
-        <button onClick={handleSubmit}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
@@ -460,8 +460,8 @@ const UpdateNotificationsForm: React.FC<UpdateNotificationsFormProps> = ({
         Low Quantity Alarm
       </label>
       <div className="form-actions">
-        <button onClick={() => onSubmit({ lowQuantityAlarm })}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={() => onSubmit({ lowQuantityAlarm })}>Submit</button>
       </div>
     </div>
   );

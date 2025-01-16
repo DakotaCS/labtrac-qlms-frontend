@@ -523,8 +523,8 @@ const InventoryForm: React.FC<InventoryFormProps> = ({
       </label>
 
       <div className="form-actions">
-        <button onClick={handleSubmit}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
@@ -548,8 +548,8 @@ const UpdateQuantityForm: React.FC<UpdateQuantityFormProps> = ({ onSubmit, onCan
         required
       />
       <div className="form-actions">
-        <button onClick={() => onSubmit(quantityUsed)}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={() => onSubmit(quantityUsed)}>Submit</button>
       </div>
     </div>
   );
@@ -610,8 +610,8 @@ const UpdateDetailsForm: React.FC<UpdateDetailsFormProps> = ({
       />
 
       <div className="form-actions">
-        <button onClick={handleSubmit}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );

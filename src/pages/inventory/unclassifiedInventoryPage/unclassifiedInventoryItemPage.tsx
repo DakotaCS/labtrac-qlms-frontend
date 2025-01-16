@@ -356,8 +356,8 @@ const InventoryForm: React.FC<{
       />
 
       <div className="form-actions">
-        <button onClick={handleSubmit}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
@@ -408,8 +408,8 @@ const UpdateDetailsForm: React.FC<{
       />
 
       <div className="form-actions">
-        <button onClick={handleSubmit}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
@@ -438,8 +438,8 @@ const TransferItemForm: React.FC<{
       />
 
       <div className="form-actions">
-        <button onClick={handleSubmit}>Submit</button>
         <button onClick={onCancel}>Cancel</button>
+        <button onClick={handleSubmit}>Submit</button>
       </div>
     </div>
   );
