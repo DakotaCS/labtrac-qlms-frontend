@@ -38,7 +38,7 @@ const SolidChemicalInventoryPage: React.FC = () => {
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
   const [lowQuantityAlarm] = useState(false);
 
-
+  
   const [page, setPage] = useState<number>(0);
   const [size] = useState<number>(100);
   const [totalPages, setTotalPages] = useState<number>(1);

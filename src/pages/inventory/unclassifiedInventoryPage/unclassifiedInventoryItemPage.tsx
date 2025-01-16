@@ -32,6 +32,8 @@ const UnclassifiedInventoryItemPage: React.FC = () => {
   const [page, setPage] = useState<number>(0);
   const [size] = useState<number>(10);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [showPrintLabelPopup, setShowPrintLabelPopup] = useState<boolean>(false);
+  const [addedItem, setAddedItem] = useState<UnclassifiedInventoryItem | null>(null);
 
   const columns = ['Inventory Item', 'Name', 'Location Name', 'Category Name'];
 
@@ -73,10 +75,20 @@ const UnclassifiedInventoryItemPage: React.FC = () => {
 
   const handleAddInventoryItem = async (data: any) => {
     try {
-      await apiClient.post('/inventory/unclassified', data);
+      const response = await apiClient.post('/inventory/unclassified', data);
+      const newItemId = response.data.id;
+
+      //We do not need to call the POST /inventory/notification API here because
+      //unclassified items do not have low quantity status notifications.
+
+      const itemResponse = await apiClient.get(`/inventory/unclassified/${newItemId}`);
+      const newItem = itemResponse.data;
+
       fetchInventoryItems();
       setShowAddPopup(false);
       setMessage('Message: Inventory item added successfully.');
+      setAddedItem(newItem);
+      setShowPrintLabelPopup(true);
     } catch (err) {
       setError('Error: The inventory item could not be added.');
     }
@@ -171,6 +183,11 @@ const UnclassifiedInventoryItemPage: React.FC = () => {
     });
   };
 
+  const clearSelections = () => {
+    setSelectedItems(new Set());
+    setMessage('Message: All user selections have been cleared successfully');
+  };
+
   return (
     <Layout>
       <div className="unclassified-inventory-page">
@@ -184,6 +201,7 @@ const UnclassifiedInventoryItemPage: React.FC = () => {
           <button className="add-inventory-button" onClick={() => setShowAddPopup(true)}>Add Inventory</button>
           <button className="bulk-print-button" onClick={handleBulkPrint}>Bulk Print</button>
           <button className="bulk-transfer-button" onClick={() => handleBulkTransfer('LIQUID')}>Bulk Transfer</button>
+          <button className="clear-selection-button" onClick={clearSelections}>Clear Selection</button>
           <SearchBarWithFilter
             columns={columns}
             onSearch={(term) => {
@@ -209,8 +227,8 @@ const UnclassifiedInventoryItemPage: React.FC = () => {
               <tr key={item.id}>
                 <td>{item.inventoryItemId}</td>
                 <td>{item.name}</td>
-                <td>{item.location.name}</td>
-                <td>{item.category.name}</td>
+                <td>{item.location?.name}</td>
+                <td>{item.category?.name}</td>
                 <td>
                   <input
                     type="checkbox"
@@ -301,6 +319,21 @@ const UnclassifiedInventoryItemPage: React.FC = () => {
             />
           </Popup>
         )}
+
+        {showPrintLabelPopup && addedItem && (
+          <Popup title="Print Label" onClose={() => setShowPrintLabelPopup(false)}>
+            <p>Inventory Item Added Successfully. Would you like to print a label for this item?</p>
+            <div className="form-actions">
+              <button
+                onClick={() => {
+                  handlePrintLabel(addedItem);
+                  setShowPrintLabelPopup(false);
+                }}
+              >Yes</button>
+              <button onClick={() => setShowPrintLabelPopup(false)}>No</button>
+            </div>
+          </Popup>
+        )}
       </div>
     </Layout>
   );
@@ -319,6 +352,7 @@ const InventoryForm: React.FC<{
 
   const handleSubmit = () => {
     const data = {
+      type: 'LIQUID',
       name,
       casNumber,
       location: { id: locationId },
